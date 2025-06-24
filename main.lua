@@ -1,250 +1,244 @@
--- ¢heat Garden Growing Script v2
--- Paste this in a script executor:
+-- ¢heat Garden Script v3 (Fixed Draggable Menu)
+-- Paste this in your executor:
 -- loadstring(game:HttpGet("https://raw.githubusercontent.com/hungwokang/-heat/main/main.lua"))()
 
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+local Humanoid = Character:WaitForChild("Humanoid")
 
--- Create the UI library with draggable functionality
-local function CreateDraggableUI()
-    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-    local Window = Library.CreateLib("¢heat", "Ocean")
-    
-    -- Make the main frame draggable
-    local MainFrame = Window.MainFrame
-    local dragToggle = nil
-    local dragInput = nil
-    local dragStart = nil
-    local startPos = nil
-    
-    local function updateInput(input)
-        local Delta = input.Position - dragStart
-        local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-        MainFrame.Position = Position
-    end
-    
-    MainFrame.InputBegan:Connect(function(input)
-        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-            dragToggle = true
-            dragStart = input.Position
-            startPos = MainFrame.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragToggle = false
-                end
-            end)
-        end
-    end)
-    
-    MainFrame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input == dragInput and dragToggle then
-            updateInput(input)
-        end
-    end)
+-- Create a completely custom draggable UI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HeatUI"
+ScreenGui.Parent = game:GetService("CoreGui")
 
-    -- Main Tab
-    local MainTab = Window:NewTab("Main")
-    local MainSection = MainTab:NewSection("Auto Farm")
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 400, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true -- This makes it draggable
+MainFrame.Selectable = true
+MainFrame.Parent = ScreenGui
+
+-- Title bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Position = UDim2.new(0, 0, 0, 0)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
+
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(1, -10, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "¢heat"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Parent = TitleBar
+
+-- Close button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 30, 1, 0)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.BorderSizePixel = 0
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+CloseButton.Parent = TitleBar
+
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Tab system
+local TabsFrame = Instance.new("Frame")
+TabsFrame.Name = "TabsFrame"
+TabsFrame.Size = UDim2.new(1, 0, 0, 30)
+TabsFrame.Position = UDim2.new(0, 0, 0, 30)
+TabsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+TabsFrame.BorderSizePixel = 0
+TabsFrame.Parent = MainFrame
+
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -70)
+ContentFrame.Position = UDim2.new(0, 10, 0, 70)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = MainFrame
+
+-- Create tabs
+local tabs = {
+    "Main",
+    "Pets",
+    "Teleport",
+    "Player",
+    "Credits"
+}
+
+local currentTab = nil
+
+local function CreateTab(name)
+    local TabButton = Instance.new("TextButton")
+    TabButton.Name = name.."Tab"
+    TabButton.Size = UDim2.new(0, 70, 1, 0)
+    TabButton.Position = UDim2.new(0, (#tabs-1)*70, 0, 0)
+    TabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    TabButton.BorderSizePixel = 0
+    TabButton.Text = name
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.Font = Enum.Font.Gotham
+    TabButton.TextSize = 14
+    TabButton.Parent = TabsFrame
     
-    -- Improved Auto Plant with error handling
-    MainSection:NewToggle("Auto Plant", "Automatically plants seeds", function(state)
-        getgenv().AutoPlant = state
-        spawn(function()
-            while AutoPlant and task.wait(0.5) do
-                pcall(function()
-                    local plantable = workspace:FindFirstChild("Plantable") or workspace:FindFirstChild("Garden") or workspace:FindFirstChild("PlantArea")
-                    if plantable then
-                        for _,v in pairs(plantable:GetChildren()) do
-                            if v:FindFirstChild("Soil") and not v:FindFirstChild("Plant") then
-                                local args = {
-                                    [1] = v.Name,
-                                    [2] = "BasicSeed" -- Change to your seed name
-                                }
-                                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("PlantEvent") or 
-                                             game:GetService("ReplicatedStorage").Events:FindFirstChild("Plant") or
-                                             game:GetService("ReplicatedStorage").Remotes:FindFirstChild("PlantSeed")
-                                if remote then
-                                    remote:FireServer(unpack(args))
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
-    
-    -- Improved Auto Water with error handling
-    MainSection:NewToggle("Auto Water", "Automatically waters plants", function(state)
-        getgenv().AutoWater = state
-        spawn(function()
-            while AutoWater and task.wait(1) do
-                pcall(function()
-                    local plants = workspace:FindFirstChild("Plants") or workspace:FindFirstChild("GardenPlants")
-                    if plants then
-                        for _,v in pairs(plants:GetChildren()) do
-                            if v:FindFirstChild("Water") and v.Water.Value < 100 then
-                                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("WaterEvent") or 
-                                             game:GetService("ReplicatedStorage").Events:FindFirstChild("Water") or
-                                             game:GetService("ReplicatedStorage").Remotes:FindFirstChild("WaterPlant")
-                                if remote then
-                                    remote:FireServer(v.Name)
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
-    
-    -- Improved Auto Harvest with error handling
-    MainSection:NewToggle("Auto Harvest", "Automatically harvests plants", function(state)
-        getgenv().AutoHarvest = state
-        spawn(function()
-            while AutoHarvest and task.wait(1) do
-                pcall(function()
-                    local plants = workspace:FindFirstChild("Plants") or workspace:FindFirstChild("GardenPlants")
-                    if plants then
-                        for _,v in pairs(plants:GetChildren()) do
-                            if v:FindFirstChild("Grow") and v.Grow.Value >= 100 then
-                                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("HarvestEvent") or 
-                                             game:GetService("ReplicatedStorage").Events:FindFirstChild("Harvest") or
-                                             game:GetService("ReplicatedStorage").Remotes:FindFirstChild("HarvestPlant")
-                                if remote then
-                                    remote:FireServer(v.Name)
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
-    
-    -- Pets Tab with improved spawner
-    local PetsTab = Window:NewTab("Pets")
-    local PetsSection = PetsTab:NewSection("Pet Spawner")
-    
-    local petOptions = {"CommonPet", "RarePet", "EpicPet", "LegendaryPet"} -- Replace with actual pet names
-    PetsSection:NewDropdown("Select Pet", "Choose a pet to spawn", petOptions, function(currentPet)
-        getgenv().SelectedPet = currentPet
-    end)
-    
-    PetsSection:NewToggle("Auto Spawn Pet", "Automatically spawns selected pet", function(state)
-        getgenv().AutoSpawnPet = state
-        spawn(function()
-            while AutoSpawnPet and SelectedPet and task.wait(10) do
-                pcall(function()
-                    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("PetEvent") or 
-                                 game:GetService("ReplicatedStorage").Events:FindFirstChild("SpawnPet") or
-                                 game:GetService("ReplicatedStorage").Remotes:FindFirstChild("SummonPet")
-                    if remote then
-                        remote:FireServer(SelectedPet)
-                    end
-                end)
-            end
-        end)
-    end)
-    
-    -- Player Tab with persistence
-    local PlayerTab = Window:NewTab("Player")
-    local PlayerSection = PlayerTab:NewSection("Player Mods")
-    
-    PlayerSection:NewSlider("Walk Speed", "Changes player walkspeed", 250, 16, function(s)
-        Player.Character:WaitForChild("Humanoid").WalkSpeed = s
-    end)
-    
-    PlayerSection:NewSlider("Jump Power", "Changes player jump power", 250, 50, function(s)
-        Player.Character:WaitForChild("Humanoid").JumpPower = s
-    end)
-    
-    -- Character added event to maintain speeds
-    Player.CharacterAdded:Connect(function(char)
-        local humanoid = char:WaitForChild("Humanoid")
-        if getgenv().WalkSpeed then
-            humanoid.WalkSpeed = getgenv().WalkSpeed
+    TabButton.MouseButton1Click:Connect(function()
+        if currentTab then
+            currentTab.Visible = false
         end
-        if getgenv().JumpPower then
-            humanoid.JumpPower = getgenv().JumpPower
+        currentTab = ContentFrame:FindFirstChild(name.."Content")
+        if currentTab then
+            currentTab.Visible = true
         end
-    end)
-    
-    -- Teleport Tab with coordinates display
-    local TeleportTab = Window:NewTab("Teleport")
-    local TeleportSection = TeleportTab:NewSection("Locations")
-    
-    local locations = {
-        ["Garden"] = CFrame.new(0, 10, 0),
-        ["Shop"] = CFrame.new(50, 10, 0),
-        ["Bank"] = CFrame.new(-50, 10, 0)
-    }
-    
-    for name, cf in pairs(locations) do
-        TeleportSection:NewButton(name, "Teleports you to "..name, function()
-            pcall(function()
-                Player.Character:WaitForChild("HumanoidRootPart").CFrame = cf
-            end)
-        end)
-    end
-    
-    -- Add current position button
-    TeleportSection:NewButton("Copy Position", "Copies your current position", function()
-        local pos = Player.Character:WaitForChild("HumanoidRootPart").Position
-        setclipboard(string.format("CFrame.new(%d, %d, %d)", pos.X, pos.Y, pos.Z))
-    end)
-    
-    -- Misc Tab with improved coin collection
-    local MiscTab = Window:NewTab("Misc")
-    local MiscSection = MiscTab:NewSection("Other Features")
-    
-    MiscSection:NewButton("Collect All Coins", "Collects nearby coins", function()
-        pcall(function()
-            local coins = workspace:FindFirstChild("Coins") or workspace:FindFirstChild("Currency") or workspace:FindFirstChild("Drops")
-            if coins then
-                for _,v in pairs(coins:GetChildren()) do
-                    if v:IsA("BasePart") then
-                        firetouchinterest(Player.Character.HumanoidRootPart, v, 0)
-                        firetouchinterest(Player.Character.HumanoidRootPart, v, 1)
-                    end
-                end
+        -- Update button colors
+        for _, btn in pairs(TabsFrame:GetChildren()) do
+            if btn:IsA("TextButton") then
+                btn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
             end
-        end)
+        end
+        TabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
     end)
     
-    MiscSection:NewToggle("Auto Collect Coins", "Automatically collects coins", function(state)
-        getgenv().AutoCollectCoins = state
-        spawn(function()
-            while AutoCollectCoins and task.wait(0.5) do
-                pcall(function()
-                    local coins = workspace:FindFirstChild("Coins") or workspace:FindFirstChild("Currency") or workspace:FindFirstChild("Drops")
-                    if coins then
-                        for _,v in pairs(coins:GetChildren()) do
-                            if v:IsA("BasePart") then
-                                firetouchinterest(Player.Character.HumanoidRootPart, v, 0)
-                                firetouchinterest(Player.Character.HumanoidRootPart, v, 1)
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
+    local TabContent = Instance.new("ScrollingFrame")
+    TabContent.Name = name.."Content"
+    TabContent.Size = UDim2.new(1, 0, 1, 0)
+    TabContent.Position = UDim2.new(0, 0, 0, 0)
+    TabContent.BackgroundTransparency = 1
+    TabContent.ScrollBarThickness = 5
+    TabContent.Visible = false
+    TabContent.Parent = ContentFrame
     
-    -- Credits Tab
-    local CreditsTab = Window:NewTab("Credits")
-    local CreditsSection = CreditsTab:NewSection("Made by ¢heat")
-    CreditsSection:NewLabel("Discord: discord.gg/example")
-    CreditsSection:NewLabel("YouTube: youtube.com/example")
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = TabContent
+    UIListLayout.Padding = UDim.new(0, 5)
+    
+    return TabContent
 end
 
--- Initialize the UI
-CreateDraggableUI()
+-- Create all tabs
+for i, name in ipairs(tabs) do
+    CreateTab(name)
+end
+
+-- Main Tab Content
+local MainContent = ContentFrame:FindFirstChild("MainContent")
+MainContent.Visible = true
+currentTab = MainContent
+
+-- Auto Farm Section
+local AutoFarmLabel = Instance.new("TextLabel")
+AutoFarmLabel.Name = "AutoFarmLabel"
+AutoFarmLabel.Size = UDim2.new(1, 0, 0, 20)
+AutoFarmLabel.BackgroundTransparency = 1
+AutoFarmLabel.Text = "Auto Farm"
+AutoFarmLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoFarmLabel.Font = Enum.Font.GothamBold
+AutoFarmLabel.TextSize = 16
+AutoFarmLabel.TextXAlignment = Enum.TextXAlignment.Left
+AutoFarmLabel.Parent = MainContent
+
+-- Auto Plant Toggle
+local AutoPlantFrame = Instance.new("Frame")
+AutoPlantFrame.Name = "AutoPlantFrame"
+AutoPlantFrame.Size = UDim2.new(1, 0, 0, 30)
+AutoPlantFrame.BackgroundTransparency = 1
+AutoPlantFrame.Parent = MainContent
+
+local AutoPlantLabel = Instance.new("TextLabel")
+AutoPlantLabel.Name = "AutoPlantLabel"
+AutoPlantLabel.Size = UDim2.new(0.7, 0, 1, 0)
+AutoPlantLabel.BackgroundTransparency = 1
+AutoPlantLabel.Text = "Auto Plant"
+AutoPlantLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoPlantLabel.Font = Enum.Font.Gotham
+AutoPlantLabel.TextSize = 14
+AutoPlantLabel.TextXAlignment = Enum.TextXAlignment.Left
+AutoPlantLabel.Parent = AutoPlantFrame
+
+local AutoPlantToggle = Instance.new("TextButton")
+AutoPlantToggle.Name = "AutoPlantToggle"
+AutoPlantToggle.Size = UDim2.new(0.3, -10, 1, 0)
+AutoPlantToggle.Position = UDim2.new(0.7, 10, 0, 0)
+AutoPlantToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+AutoPlantToggle.BorderSizePixel = 0
+AutoPlantToggle.Text = "OFF"
+AutoPlantToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoPlantToggle.Font = Enum.Font.Gotham
+AutoPlantToggle.TextSize = 14
+AutoPlantToggle.Parent = AutoPlantFrame
+
+local AutoPlant = false
+AutoPlantToggle.MouseButton1Click:Connect(function()
+    AutoPlant = not AutoPlant
+    if AutoPlant then
+        AutoPlantToggle.Text = "ON"
+        AutoPlantToggle.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+        
+        spawn(function()
+            while AutoPlant do
+                -- Your auto plant code here
+                pcall(function()
+                    -- Example planting code (adjust for your game)
+                    for _,v in pairs(workspace.Plantable:GetChildren()) do
+                        if v:FindFirstChild("Soil") and not v:FindFirstChild("Plant") then
+                            game:GetService("ReplicatedStorage").Events.Plant:FireServer(v.Name, "BasicSeed")
+                        end
+                    end
+                end)
+                wait(0.5)
+            end
+        end)
+    else
+        AutoPlantToggle.Text = "OFF"
+        AutoPlantToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+    end
+end)
+
+-- Auto Water Toggle (similar structure to Auto Plant)
+-- Auto Harvest Toggle (similar structure to Auto Plant)
+
+-- Pets Tab Content
+local PetsContent = ContentFrame:FindFirstChild("PetsContent")
+
+-- Add similar UI elements for pet spawning
+
+-- Teleport Tab Content
+local TeleportContent = ContentFrame:FindFirstChild("TeleportContent")
+
+-- Player Tab Content
+local PlayerContent = ContentFrame:FindFirstChild("PlayerContent")
+
+-- Credits Tab Content
+local CreditsContent = ContentFrame:FindFirstChild("CreditsContent")
+local CreditsLabel = Instance.new("TextLabel")
+CreditsLabel.Name = "CreditsLabel"
+CreditsLabel.Size = UDim2.new(1, 0, 1, 0)
+CreditsLabel.BackgroundTransparency = 1
+CreditsLabel.Text = "¢heat Script\nVersion 3.0\n\nMade for your garden game"
+CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditsLabel.Font = Enum.Font.Gotham
+CreditsLabel.TextSize = 14
+CreditsLabel.TextYAlignment = Enum.TextYAlignment.Top
+CreditsLabel.Parent = CreditsContent
+
+-- Make sure the UI is on top
+ScreenGui.DisplayOrder = 999
