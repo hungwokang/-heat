@@ -1,4 +1,4 @@
--- ¢heat v2 - Premium Menu
+-- ¢heat v2 - Premium Menu (Pet Spawner Edition)
 -- Load with: loadstring(game:HttpGet("https://raw.githubusercontent.com/hungwokang/-heat/main/main.lua"))()
 
 local Players = game:GetService("Players")
@@ -175,7 +175,7 @@ end
 -- ===== CREATE TABS =====
 local MovementTab = CreateTab("Movement")
 local VisualsTab = CreateTab("Visuals")
-local AutoFarmTab = CreateTab("AutoFarm")
+local PetsTab = CreateTab("Pets")
 
 -- ===== MOVEMENT FEATURES =====
 local originalSpeed = Humanoid.WalkSpeed
@@ -212,36 +212,6 @@ JumpToggle.MouseButton1Click:Connect(function()
         Humanoid.JumpPower = originalJump
         JumpToggle.Text = "Jump: OFF ("..originalJump..")"
         JumpToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
-    end
-end)
-
--- Noclip Toggle
-local NoclipToggle = CreateToggle(MovementTab, "Noclip", false)
-local noclipEnabled = false
-local noclipConnection
-
-NoclipToggle.MouseButton1Click:Connect(function()
-    noclipEnabled = not noclipEnabled
-    if noclipEnabled then
-        NoclipToggle.Text = "Noclip: ON"
-        NoclipToggle.BackgroundColor3 = Color3.fromRGB(120, 70, 70)
-        
-        noclipConnection = RunService.Stepped:Connect(function()
-            if Character then
-                for _, part in pairs(Character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end)
-    else
-        NoclipToggle.Text = "Noclip: OFF"
-        NoclipToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
-        
-        if noclipConnection then
-            noclipConnection:Disconnect()
-        end
     end
 end)
 
@@ -329,219 +299,54 @@ FlyToggle.MouseButton1Click:Connect(function()
     end
 end)
 
--- Speed Slider
-local SpeedSlider = Instance.new("TextLabel")
-SpeedSlider.Name = "SpeedSlider"
-SpeedSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
-SpeedSlider.BorderSizePixel = 0
-SpeedSlider.Size = UDim2.new(1, 0, 0, 40)
-SpeedSlider.Font = Enum.Font.Gotham
-SpeedSlider.Text = "Speed: 50"
-SpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpeedSlider.TextSize = 14
-SpeedSlider.Parent = MovementTab
+-- ===== PET SPAWNER =====
+local petFolder = Instance.new("Folder", workspace)
+petFolder.Name = "SpawnedPets"
 
-local SpeedValue = Instance.new("TextButton")
-SpeedValue.Name = "SpeedValue"
-SpeedValue.BackgroundTransparency = 1
-SpeedValue.Size = UDim2.new(0, 40, 0, 40)
-SpeedValue.Position = UDim2.new(1, -40, 0, 0)
-SpeedValue.Font = Enum.Font.GothamBold
-SpeedValue.Text = "50"
-SpeedValue.TextColor3 = Color3.fromRGB(255, 215, 0)
-SpeedValue.TextSize = 14
-SpeedValue.Parent = SpeedSlider
+local petModels = {
+    ["Dragon"] = "rbxassetid://YOUR_DRAGON_MODEL_ID",
+    ["Dog"] = "rbxassetid://YOUR_DOG_MODEL_ID",
+    ["Cat"] = "rbxassetid://YOUR_CAT_MODEL_ID"
+}
 
-local Slider = Instance.new("Frame")
-Slider.Name = "Slider"
-Slider.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-Slider.BorderSizePixel = 0
-Slider.Position = UDim2.new(0, 10, 0, 25)
-Slider.Size = UDim2.new(1, -60, 0, 5)
-Slider.Parent = SpeedSlider
+local currentPet = nil
 
-local SliderFill = Instance.new("Frame")
-SliderFill.Name = "SliderFill"
-SliderFill.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-SliderFill.BorderSizePixel = 0
-SliderFill.Size = UDim2.new(0.5, 0, 1, 0)
-SliderFill.Parent = Slider
+local function SpawnPet(petName)
+    -- Remove existing pet
+    if currentPet then
+        currentPet:Destroy()
+        currentPet = nil
+    end
 
-local SliderButton = Instance.new("TextButton")
-SliderButton.Name = "SliderButton"
-SliderButton.BackgroundTransparency = 1
-SliderButton.Size = UDim2.new(1, 0, 1, 0)
-SliderButton.Text = ""
-SliderButton.Parent = Slider
-
-SliderButton.MouseButton1Down:Connect(function()
-    local MouseMove, MouseKill
-    local XSize = Slider.AbsoluteSize.X
+    -- Load and clone pet model
+    local model = game:GetService("InsertService"):LoadAsset(petModels[petName]):GetChildren()[1]
+    local pet = model:Clone()
+    pet.Parent = petFolder
+    pet:SetPrimaryPartCFrame(Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
     
-    MouseMove = game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            local X = math.clamp(input.Position.X - Slider.AbsolutePosition.X, 0, XSize)
-            local Ratio = X / XSize
-            SliderFill.Size = UDim2.new(Ratio, 0, 1, 0)
-            local NewSpeed = math.floor(16 + (Ratio * (100 - 16)))
-            SpeedValue.Text = tostring(NewSpeed)
-            flySpeed = NewSpeed
-            if speedEnabled then
-                Humanoid.WalkSpeed = NewSpeed
-                SpeedToggle.Text = "Speed: ON ("..NewSpeed..")"
-            else
-                SpeedToggle.Text = "Speed: OFF ("..originalSpeed..")"
-            end
-        end
-    end)
+    -- Make pet follow player
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = Character.HumanoidRootPart
+    weld.Part1 = pet.PrimaryPart
+    weld.Parent = pet
     
-    MouseKill = game:GetService("UserInputService").InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            MouseMove:Disconnect()
-            MouseKill:Disconnect()
-        end
-    end)
-end)
+    currentPet = pet
+end
 
--- ===== VISUALS FEATURES =====
--- ESP Toggle
-local ESPToggle = CreateToggle(VisualsTab, "Player ESP", false)
-local espEnabled = false
-local espBoxes = {}
-
-local function CreateESP(player)
-    if espBoxes[player] then return end
-    
-    local Box = Instance.new("BoxHandleAdornment")
-    Box.Name = player.Name.."ESP"
-    Box.Adornee = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    Box.AlwaysOnTop = true
-    Box.ZIndex = 10
-    Box.Size = Vector3.new(3, 6, 3)
-    Box.Transparency = 0.7
-    Box.Color3 = player.TeamColor.Color
-    Box.Parent = player.Character and player.Character.HumanoidRootPart
-    
-    espBoxes[player] = Box
-    
-    player.CharacterAdded:Connect(function(char)
-        if not espEnabled then return end
-        task.wait(1)
-        if char:FindFirstChild("HumanoidRootPart") then
-            Box.Adornee = char.HumanoidRootPart
-            Box.Parent = char.HumanoidRootPart
-        end
+-- Create pet buttons
+for petName, _ in pairs(petModels) do
+    local petButton = CreateButton(PetsTab, "Spawn "..petName, Color3.fromRGB(80, 120, 80))
+    petButton.MouseButton1Click:Connect(function()
+        SpawnPet(petName)
     end)
 end
 
-ESPToggle.MouseButton1Click:Connect(function()
-    espEnabled = not espEnabled
-    if espEnabled then
-        ESPToggle.Text = "Player ESP: ON"
-        ESPToggle.BackgroundColor3 = Color3.fromRGB(120, 70, 120)
-        
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer and player.Character then
-                CreateESP(player)
-            end
-        end
-        
-        Players.PlayerAdded:Connect(function(player)
-            if espEnabled then
-                player.CharacterAdded:Connect(function()
-                    CreateESP(player)
-                end)
-            end
-        end)
-    else
-        ESPToggle.Text = "Player ESP: OFF"
-        ESPToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
-        
-        for _, box in pairs(espBoxes) do
-            box:Destroy()
-        end
-        espBoxes = {}
-    end
-end)
-
--- Fullbright Toggle
-local FullbrightToggle = CreateToggle(VisualsTab, "Fullbright", false)
-local fullbrightEnabled = false
-local originalLighting = {}
-
-FullbrightToggle.MouseButton1Click:Connect(function()
-    fullbrightEnabled = not fullbrightEnabled
-    if fullbrightEnabled then
-        FullbrightToggle.Text = "Fullbright: ON"
-        FullbrightToggle.BackgroundColor3 = Color3.fromRGB(120, 120, 70)
-        
-        originalLighting.Ambient = game:GetService("Lighting").Ambient
-        originalLighting.Brightness = game:GetService("Lighting").Brightness
-        originalLighting.GlobalShadows = game:GetService("Lighting").GlobalShadows
-        
-        game:GetService("Lighting").Ambient = Color3.new(1, 1, 1)
-        game:GetService("Lighting").Brightness = 1
-        game:GetService("Lighting").GlobalShadows = false
-    else
-        FullbrightToggle.Text = "Fullbright: OFF"
-        FullbrightToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
-        
-        game:GetService("Lighting").Ambient = originalLighting.Ambient or Color3.new(0.5, 0.5, 0.5)
-        game:GetService("Lighting").Brightness = originalLighting.Brightness or 1
-        game:GetService("Lighting").GlobalShadows = originalLighting.GlobalShadows or true
-    end
-end)
-
--- ===== AUTO FARM FEATURES =====
-local AutoFarmToggle = CreateToggle(AutoFarmTab, "Auto Farm", false)
-local autofarmEnabled = false
-local autofarmConnection
-
--- Example auto-farm function (customize for your game)
-local function AutoFarm()
-    while autofarmEnabled and Character and Humanoid.Health > 0 do
-        -- Find nearest target (customize this for your game)
-        local nearest = nil
-        local nearestDist = math.huge
-        
-        for _, npc in pairs(workspace:GetChildren()) do
-            if npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
-                local dist = (npc:FindFirstChild("HumanoidRootPart").Position - Character.HumanoidRootPart.Position).Magnitude
-                if dist < nearestDist then
-                    nearest = npc
-                    nearestDist = dist
-                end
-            end
-        end
-        
-        if nearest then
-            -- Move to target
-            Humanoid:MoveTo(nearest.HumanoidRootPart.Position)
-            Humanoid.Jump = true
-            task.wait(0.5)
-            
-            -- Attack (customize for your game)
-            if nearest:FindFirstChild("Humanoid") then
-                nearest.Humanoid:TakeDamage(10)
-            end
-        end
-        
-        task.wait(0.1)
-    end
-end
-
-AutoFarmToggle.MouseButton1Click:Connect(function()
-    autofarmEnabled = not autofarmEnabled
-    if autofarmEnabled then
-        AutoFarmToggle.Text = "Auto Farm: ON"
-        AutoFarmToggle.BackgroundColor3 = Color3.fromRGB(70, 120, 120)
-        autofarmConnection = task.spawn(AutoFarm)
-    else
-        AutoFarmToggle.Text = "Auto Farm: OFF"
-        AutoFarmToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
-        if autofarmConnection then
-            task.cancel(autofarmConnection)
-        end
+-- Remove Pet button
+local removePetButton = CreateButton(PetsTab, "Remove Pet", Color3.fromRGB(120, 80, 80))
+removePetButton.MouseButton1Click:Connect(function()
+    if currentPet then
+        currentPet:Destroy()
+        currentPet = nil
     end
 end)
 
@@ -551,7 +356,7 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
     Humanoid = Character:WaitForChild("Humanoid")
     
     if speedEnabled then
-        Humanoid.WalkSpeed = tonumber(SpeedValue.Text) or 50
+        Humanoid.WalkSpeed = 50
     else
         Humanoid.WalkSpeed = originalSpeed
     end
@@ -565,16 +370,6 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
     if flyEnabled then
         Fly()
     end
-    
-    if noclipEnabled then
-        noclipConnection = RunService.Stepped:Connect(function()
-            for _, part in pairs(Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end)
-    end
 end)
 
 -- Initialize first tab
@@ -586,4 +381,4 @@ for _, btn in pairs(TabButtons:GetChildren()) do
 end
 TabButtons:FindFirstChild("MovementTab").TextColor3 = Color3.fromRGB(255, 215, 0)
 
-return "¢heat v2 successfully loaded!"
+return "¢heat v2 (Pet Edition) loaded successfully!"
