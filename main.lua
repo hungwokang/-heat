@@ -1,97 +1,128 @@
--- Grow a Garden Menu Script
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local Title = Instance.new("TextLabel")
-local LoadBtn = Instance.new("TextButton")
-local PetBtn = Instance.new("TextButton")
-local FarmBtn = Instance.new("TextButton")
-local dragging, dragInput, dragStart, startPos
+-- ¢heat Garden Growing Script
+-- Paste this in a script executor:
+-- loadstring(game:HttpGet("https://raw.githubusercontent.com/hungwokang/-heat/main/main.lua"))()
 
--- Enable GUI
-ScreenGui.Name = "GrowGardenMenu"
-ScreenGui.Parent = game.CoreGui
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("¢heat", "Ocean")
 
--- Frame Setup
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.Position = UDim2.new(0.3, 0, 0.3, 0)
-Frame.Size = UDim2.new(0, 300, 0, 220)
-Frame.Active = true
-Frame.Draggable = true
-UICorner.Parent = Frame
+-- Main Tab
+local MainTab = Window:NewTab("Main")
+local MainSection = MainTab:NewSection("Auto Farm")
 
--- Title
-Title.Parent = Frame
-Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "🌱 Grow A Garden Menu"
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
-
--- Load Button
-LoadBtn.Parent = Frame
-LoadBtn.Position = UDim2.new(0.1, 0, 0.3, 0)
-LoadBtn.Size = UDim2.new(0.8, 0, 0, 40)
-LoadBtn.Text = "Load Main Script"
-LoadBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 60)
-LoadBtn.TextColor3 = Color3.new(1,1,1)
-LoadBtn.Font = Enum.Font.Gotham
-LoadBtn.TextSize = 16
-LoadBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hungwokang/-heat/main/main.lua"))()
-end)
-
--- Pet Button
-PetBtn.Parent = Frame
-PetBtn.Position = UDim2.new(0.1, 0, 0.55, 0)
-PetBtn.Size = UDim2.new(0.8, 0, 0, 40)
-PetBtn.Text = "Spawn Pet"
-PetBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 120)
-PetBtn.TextColor3 = Color3.new(1,1,1)
-PetBtn.Font = Enum.Font.Gotham
-PetBtn.TextSize = 16
-PetBtn.MouseButton1Click:Connect(function()
-    local char = game.Players.LocalPlayer.Character
-    if not char then return end
-    local pet = Instance.new("Part", workspace)
-    pet.Name = "Pet"
-    pet.Size = Vector3.new(1, 1, 1)
-    pet.Shape = Enum.PartType.Ball
-    pet.Color = Color3.fromRGB(255, 200, 0)
-    pet.Anchored = false
-    pet.CanCollide = false
-    local weld = Instance.new("WeldConstraint", pet)
-    weld.Part0 = pet
-    weld.Part1 = char:WaitForChild("HumanoidRootPart")
-    pet.Position = char.HumanoidRootPart.Position + Vector3.new(2, 1, 0)
-end)
-
--- Auto Farm Button
-FarmBtn.Parent = Frame
-FarmBtn.Position = UDim2.new(0.1, 0, 0.8, 0)
-FarmBtn.Size = UDim2.new(0.8, 0, 0, 40)
-FarmBtn.Text = "Auto Farm"
-FarmBtn.BackgroundColor3 = Color3.fromRGB(120, 60, 60)
-FarmBtn.TextColor3 = Color3.new(1,1,1)
-FarmBtn.Font = Enum.Font.Gotham
-FarmBtn.TextSize = 16
-
-local farming = false
-FarmBtn.MouseButton1Click:Connect(function()
-    farming = not farming
-    FarmBtn.Text = farming and "Stop Farming" or "Auto Farm"
-    while farming do
-        local crops = workspace:FindFirstChild("Crops") or workspace:FindFirstChildOfClass("Folder")
-        if crops then
-            for _, v in ipairs(crops:GetDescendants()) do
-                if v:IsA("ClickDetector") then
-                    fireclickdetector(v)
-                    wait(0.1)
-                end
+MainSection:NewToggle("Auto Plant", "Automatically plants seeds", function(state)
+    getgenv().AutoPlant = state
+    while AutoPlant do
+        wait(0.5)
+        for _,v in pairs(game:GetService("Workspace").Plantable:GetChildren()) do
+            if v:FindFirstChild("Soil") and not v:FindFirstChild("Plant") then
+                game:GetService("ReplicatedStorage").Events.Plant:FireServer(v.Name, "BasicSeed") -- Change seed type as needed
             end
         end
-        wait(1)
     end
 end)
+
+MainSection:NewToggle("Auto Water", "Automatically waters plants", function(state)
+    getgenv().AutoWater = state
+    while AutoWater do
+        wait(1)
+        for _,v in pairs(game:GetService("Workspace").Plants:GetChildren()) do
+            if v:FindFirstChild("Water") and v.Water.Value < 100 then
+                game:GetService("ReplicatedStorage").Events.Water:FireServer(v.Name)
+            end
+        end
+    end
+end)
+
+MainSection:NewToggle("Auto Harvest", "Automatically harvests plants", function(state)
+    getgenv().AutoHarvest = state
+    while AutoHarvest do
+        wait(1)
+        for _,v in pairs(game:GetService("Workspace").Plants:GetChildren()) do
+            if v:FindFirstChild("Grow") and v.Grow.Value >= 100 then
+                game:GetService("ReplicatedStorage").Events.Harvest:FireServer(v.Name)
+            end
+        end
+    end
+end)
+
+-- Pets Tab
+local PetsTab = Window:NewTab("Pets")
+local PetsSection = PetsTab:NewSection("Pet Spawner")
+
+local petOptions = {}
+-- Add pet names from your game here
+for _,pet in pairs({"CommonPet", "RarePet", "EpicPet", "LegendaryPet"}) do -- Replace with actual pet names
+    table.insert(petOptions, pet)
+end
+
+PetsSection:NewDropdown("Select Pet", "Choose a pet to spawn", petOptions, function(currentPet)
+    getgenv().SelectedPet = currentPet
+end)
+
+PetsSection:NewToggle("Auto Spawn Pet", "Automatically spawns selected pet", function(state)
+    getgenv().AutoSpawnPet = state
+    while AutoSpawnPet and SelectedPet do
+        game:GetService("ReplicatedStorage").Events.SpawnPet:FireServer(SelectedPet)
+        wait(10) -- Adjust cooldown as needed
+    end
+end)
+
+-- Player Tab
+local PlayerTab = Window:NewTab("Player")
+local PlayerSection = PlayerTab:NewSection("Player Mods")
+
+PlayerSection:NewSlider("Walk Speed", "Changes player walkspeed", 250, 16, function(s)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+
+PlayerSection:NewSlider("Jump Power", "Changes player jump power", 250, 50, function(s)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = s
+end)
+
+-- Teleport Tab
+local TeleportTab = Window:NewTab("Teleport")
+local TeleportSection = TeleportTab:NewSection("Locations")
+
+local locations = {
+    ["Garden"] = CFrame.new(0, 10, 0), -- Replace with actual coordinates
+    ["Shop"] = CFrame.new(50, 10, 0),  -- Replace with actual coordinates
+    ["Bank"] = CFrame.new(-50, 10, 0)  -- Replace with actual coordinates
+}
+
+for name, cf in pairs(locations) do
+    TeleportSection:NewButton(name, "Teleports you to "..name, function()
+        game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = cf
+    end)
+end
+
+-- Misc Tab
+local MiscTab = Window:NewTab("Misc")
+local MiscSection = MiscTab:NewSection("Other Features")
+
+MiscSection:NewButton("Collect All Coins", "Collects nearby coins", function()
+    for _,v in pairs(game:GetService("Workspace").Coins:GetChildren()) do
+        if v:IsA("BasePart") then
+            firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, v, 0)
+            firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, v, 1)
+        end
+    end
+end)
+
+MiscSection:NewToggle("Auto Collect Coins", "Automatically collects coins", function(state)
+    getgenv().AutoCollectCoins = state
+    while AutoCollectCoins do
+        wait(1)
+        for _,v in pairs(game:GetService("Workspace").Coins:GetChildren()) do
+            if v:IsA("BasePart") then
+                firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, v, 0)
+                firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, v, 1)
+            end
+        end
+    end
+end)
+
+-- Credits
+local CreditsTab = Window:NewTab("Credits")
+local CreditsSection = CreditsTab:NewSection("Made by ¢heat")
+CreditsSection:NewLabel("Discord: discord.gg/example")
+CreditsSection:NewLabel("YouTube: youtube.com/example")
