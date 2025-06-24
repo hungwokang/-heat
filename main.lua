@@ -1,163 +1,192 @@
---[[
-  ¢heat - Grow a Garden Script
+-- ¢heat | Simple Grow a Garden GUI
 
-  Disclaimer: This script is for educational purposes only. 
-  Using scripts to exploit games can violate their terms of service.
+--[[
+    Instructions:
+    1. Paste this entire script into your executor.
+    2. Execute the script.
+    3. A small menu will appear on your screen.
+    4. Drag the menu by its title bar to move it.
 ]]
 
--- ================== GUI Library ==================
--- In a real script, a GUI library (like a custom one or a publicly available one)
--- would be included here to create the menu interface. For this example, we'll
--- use a simplified structure to represent the menu.
+-- Create the main window (ScreenGui)
+local CheatsMenu = Instance.new("ScreenGui")
+CheatsMenu.Name = "CheatMenu"
+CheatsMenu.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+CheatsMenu.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
-local function createMenu()
-    -- Main menu container
-    local menu = Instance.new("ScreenGui")
-    menu.Name = "¢heatMenu"
-    menu.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    menu.ZIndexBehavior = Enum.ZIndexBehavior.Global
+-- Create the main frame (the background of the menu)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 220, 0, 260) -- Small size
+MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0) -- Position on the left side
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+MainFrame.BorderColor3 = Color3.fromRGB(120, 0, 255)
+MainFrame.BorderSizePixel = 2
+MainFrame.Draggable = true
+MainFrame.Active = true
+MainFrame.Parent = CheatsMenu
 
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Name = "MainFrame"
-    mainFrame.Size = UDim2.new(0, 500, 0, 300)
-    mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    mainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    mainFrame.BorderSizePixel = 2
-    mainFrame.Draggable = true
-    mainFrame.Active = true
-    mainFrame.Parent = menu
+-- Title bar
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.Text = "¢heat"
+Title.TextSize = 16
+Title.Parent = MainFrame
 
-    local title = Instance.new("TextLabel")
-    title.Name = "Title"
-    title.Size = UDim2.new(1, 0, 0, 30)
-    title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    title.TextColor3 = Color3.fromRGB(255, 0, 0)
-    title.Font = Enum.Font.SourceSansBold
-    title.Text = "¢heat - Grow a Garden"
-    title.Parent = mainFrame
+-- Section for Auto Farming
+local AutoFarmLabel = Instance.new("TextLabel")
+AutoFarmLabel.Name = "AutoFarmLabel"
+AutoFarmLabel.Size = UDim2.new(1, -10, 0, 20)
+AutoFarmLabel.Position = UDim2.new(0, 5, 0, 35)
+AutoFarmLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+AutoFarmLabel.BorderSizePixel = 0
+AutoFarmLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+AutoFarmLabel.Font = Enum.Font.SourceSans
+AutoFarmLabel.Text = "Auto Farm:"
+AutoFarmLabel.TextXAlignment = Enum.TextXAlignment.Left
+AutoFarmLabel.TextSize = 14
+AutoFarmLabel.Parent = MainFrame
 
-    -- Tabs for different features
-    local tabsFrame = Instance.new("Frame")
-    tabsFrame.Size = UDim2.new(1, 0, 0.1, 0)
-    tabsFrame.Position = UDim2.new(0, 0, 0.1, 0)
-    tabsFrame.Parent = mainFrame
-    
-    -- Add tabs for Auto Farm, Pet Spawner, Seed Spawner here...
+local AutoFarmButton = Instance.new("TextButton")
+AutoFarmButton.Name = "AutoFarmButton"
+AutoFarmButton.Size = UDim2.new(1, -10, 0, 25)
+AutoFarmButton.Position = UDim2.new(0, 5, 0, 55)
+AutoFarmButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+AutoFarmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoFarmButton.Font = Enum.Font.SourceSansBold
+AutoFarmButton.Text = "Start Auto Farm"
+AutoFarmButton.TextSize = 14
+AutoFarmButton.Parent = MainFrame
 
-    -- ================== Feature Frames ==================
-    -- A frame for each feature would be created and made visible/invisible
-    -- based on the selected tab.
+-- Section for Seed Spawner
+local SeedLabel = Instance.new("TextLabel")
+SeedLabel.Name = "SeedLabel"
+SeedLabel.Size = UDim2.new(1, -10, 0, 20)
+SeedLabel.Position = UDim2.new(0, 5, 0, 90)
+SeedLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+SeedLabel.BorderSizePixel = 0
+SeedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+SeedLabel.Font = Enum.Font.SourceSans
+SeedLabel.Text = "Seed Spawner:"
+SeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+SeedLabel.TextSize = 14
+SeedLabel.Parent = MainFrame
 
-    -- Auto Farm Frame
-    local autoFarmFrame = Instance.new("Frame")
-    autoFarmFrame.Name = "AutoFarmFrame"
-    -- ... (Positioning and styling)
-    autoFarmFrame.Visible = true -- Default visible frame
-    autoFarmFrame.Parent = mainFrame
+local SeedInput = Instance.new("TextBox")
+SeedInput.Name = "SeedInput"
+SeedInput.Size = UDim2.new(1, -10, 0, 25)
+SeedInput.Position = UDim2.new(0, 5, 0, 110)
+SeedInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+SeedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+SeedInput.PlaceholderText = "Type seed name (e.g., Carrot)"
+SeedInput.Font = Enum.Font.SourceSans
+SeedInput.TextSize = 14
+SeedInput.Parent = MainFrame
 
-    local autoFarmToggle = Instance.new("TextButton")
-    autoFarmToggle.Name = "AutoFarmToggle"
-    autoFarmToggle.Size = UDim2.new(0, 150, 0, 30)
-    autoFarmToggle.Position = UDim2.new(0.5, -75, 0.3, 0)
-    autoFarmToggle.Text = "Toggle Auto Farm"
-    -- ... (Styling)
-    autoFarmToggle.Parent = autoFarmFrame
-    
-    local autoFarmStatus = Instance.new("TextLabel")
-    autoFarmStatus.Name = "AutoFarmStatus"
-    autoFarmStatus.Text = "Status: Disabled"
-    -- ... (Styling)
-    autoFarmStatus.Parent = autoFarmFrame
+local SpawnSeedButton = Instance.new("TextButton")
+SpawnSeedButton.Name = "SpawnSeedButton"
+SpawnSeedButton.Size = UDim2.new(1, -10, 0, 25)
+SpawnSeedButton.Position = UDim2.new(0, 5, 0, 140)
+SpawnSeedButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+SpawnSeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpawnSeedButton.Font = Enum.Font.SourceSansBold
+SpawnSeedButton.Text = "Spawn Seed"
+SpawnSeedButton.TextSize = 14
+SpawnSeedButton.Parent = MainFrame
 
-    -- Pet Spawner Frame
-    local petSpawnerFrame = Instance.new("Frame")
-    petSpawnerFrame.Name = "PetSpawnerFrame"
-    -- ... (Positioning and styling)
-    petSpawnerFrame.Visible = false
-    petSpawnerFrame.Parent = mainFrame
+-- Section for Pet Spawner
+local PetLabel = Instance.new("TextLabel")
+PetLabel.Name = "PetLabel"
+PetLabel.Size = UDim2.new(1, -10, 0, 20)
+PetLabel.Position = UDim2.new(0, 5, 0, 175)
+PetLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+PetLabel.BorderSizePixel = 0
+PetLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+PetLabel.Font = Enum.Font.SourceSans
+PetLabel.Text = "Pet Spawner:"
+PetLabel.TextXAlignment = Enum.TextXAlignment.Left
+PetLabel.TextSize = 14
+PetLabel.Parent = MainFrame
 
-    local petNameInput = Instance.new("TextBox")
-    petNameInput.Name = "PetNameInput"
-    petNameInput.PlaceholderText = "Enter Pet Name"
-    -- ... (Styling)
-    petNameInput.Parent = petSpawnerFrame
-    
-    local spawnPetButton = Instance.new("TextButton")
-    spawnPetButton.Name = "SpawnPetButton"
-    spawnPetButton.Text = "Spawn Pet"
-    -- ... (Styling)
-    spawnPetButton.Parent = petSpawnerFrame
+local PetInput = Instance.new("TextBox")
+PetInput.Name = "PetInput"
+PetInput.Size = UDim2.new(1, -10, 0, 25)
+PetInput.Position = UDim2.new(0, 5, 0, 195)
+PetInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+PetInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+PetInput.PlaceholderText = "Type pet name (e.g., Bee)"
+PetInput.Font = Enum.Font.SourceSans
+PetInput.TextSize = 14
+PetInput.Parent = MainFrame
 
-    -- Seed Spawner Frame
-    local seedSpawnerFrame = Instance.new("Frame")
-    seedSpawnerFrame.Name = "SeedSpawnerFrame"
-    -- ... (Positioning and styling)
-    seedSpawnerFrame.Visible = false
-    seedSpawnerFrame.Parent = mainFrame
+local SpawnPetButton = Instance.new("TextButton")
+SpawnPetButton.Name = "SpawnPetButton"
+SpawnPetButton.Size = UDim2.new(1, -10, 0, 25)
+SpawnPetButton.Position = UDim2.new(0, 5, 0, 225)
+SpawnPetButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+SpawnPetButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpawnPetButton.Font = Enum.Font.SourceSansBold
+SpawnPetButton.Text = "Spawn Pet"
+SpawnPetButton.TextSize = 14
+SpawnPetButton.Parent = MainFrame
 
-    local seedSearchBox = Instance.new("TextBox")
-    seedSearchBox.Name = "SeedSearchBox"
-    seedSearchBox.PlaceholderText = "Search for a seed..."
-    -- ... (Styling)
-    seedSearchBox.Parent = seedSpawnerFrame
+-- --- SCRIPT FUNCTIONALITY ---
+-- NOTE: The code below requires finding the game's actual RemoteEvents.
+-- These are placeholders to show how the buttons would work.
+-- Real working functions depend on the game's internal structure.
 
-    local seedList = Instance.new("ScrollingFrame")
-    -- ... (Styling and positioning)
-    seedList.Parent = seedSpawnerFrame
-    
-    -- Populate seedList with buttons for each seed...
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-    -- ================== Core Logic ==================
+-- Placeholder for the game's main remote folder
+local GameRemotes = ReplicatedStorage:FindFirstChild("Default") -- This is a common name, but might be different
 
-    -- A real script would require analyzing the game's network traffic 
-    -- and client-side code to find the remote events or functions that
-    -- handle farming, pet creation, and seed planting. This is a complex
-    -- process and the functions would be specific to the game's code.
+-- AUTO FARM
+local autoFarming = false
+AutoFarmButton.MouseButton1Click:Connect(function()
+    autoFarming = not autoFarming
+    if autoFarming then
+        AutoFarmButton.Text = "Stop Auto Farm"
+        -- This is a simplified loop. A real script would be more complex.
+        while autoFarming do
+            pcall(function()
+                for i, v in pairs(workspace.Plots:GetChildren()) do
+                    if v.Owner.Value == LocalPlayer.Name and v:FindFirstChild("Harvest") then
+                        fireproximityprompt(v.Harvest)
+                    end
+                end
+            end)
+            task.wait(2)
+        end
+    else
+        AutoFarmButton.Text = "Start Auto Farm"
+    end
+end)
 
-    local seeds = {
-        "Carrot", "Strawberry", "Blueberry", "Tomato", "Corn",
-        "Daffodil", "Watermelon", "Pumpkin", "Apple", "Bamboo",
-        "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape",
-        "Mushroom", "Pepper", "Cacao", "Beanstalk", "Sugar Apple",
-        -- This list would be much longer and would need to be kept up-to-date
-        -- with the game's latest additions.
-    }
-
-    -- Populate the seed list
-    for _, seedName in ipairs(seeds) do
-        local seedButton = Instance.new("TextButton")
-        seedButton.Name = seedName
-        seedButton.Text = seedName
-        -- ... (Styling)
-        seedButton.Parent = seedList
-
-        seedButton.MouseButton1Click:Connect(function()
-            -- Placeholder for seed spawning logic
-            print("Attempting to spawn: " .. seedName)
-            -- In a real script, this would call the game's internal function
-            -- for planting a seed, likely passing the seed name as an argument.
+-- SEED SPAWNER
+SpawnSeedButton.MouseButton1Click:Connect(function()
+    local seedName = SeedInput.Text
+    if seedName ~= "" and GameRemotes then
+        pcall(function()
+            -- This is a guess. The remote event name and arguments will be different.
+            GameRemotes.Plant:FireServer(seedName) 
         end)
     end
+end)
 
-    autoFarmToggle.MouseButton1Click:Connect(function()
-        -- Placeholder for auto-farm logic
-        local isEnabled = not autoFarmStatus.Text:find("Enabled")
-        autoFarmStatus.Text = "Status: " .. (isEnabled and "Enabled" or "Disabled")
-        -- Auto-farm logic would go here. This would likely involve a loop
-        -- that finds mature plants and harvests them, and then replants seeds.
-    end)
+-- PET SPAWNER
+SpawnPetButton.MouseButton1Click:Connect(function()
+    local petName = PetInput.Text
+    if petName ~= "" and GameRemotes then
+        pcall(function()
+            -- This is a guess. The remote event name for spawning pets is unknown.
+            GameRemotes.SpawnPet:FireServer(petName)
+        end)
+    end
+end)
 
-    spawnPetButton.MouseButton1Click:Connect(function()
-        local petName = petNameInput.Text
-        if petName and petName ~= "" then
-            -- Placeholder for pet spawning logic
-            print("Attempting to spawn pet: " .. petName)
-            -- This would call the game's remote event or function for
-            -- creating a pet. This is often heavily secured by the game developers.
-        end
-    end)
-end
-
--- ================== Execution ==================
-createMenu()
