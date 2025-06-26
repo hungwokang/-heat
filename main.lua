@@ -1,168 +1,203 @@
--- Fixed Brainrot Auto-Steal Script
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/hungwokang/-heat/main/main.lua"))()
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- Enhanced remote finder with multiple detection methods
-local function FindStealRemote()
-    -- Method 1: Check ReplicatedStorage
-    for _,v in pairs(ReplicatedStorage:GetDescendants()) do
-        if (v:IsA("RemoteEvent") and (v.Name:lower():find("steal") or v.Name:lower():find("rob")) then
-            return v
-        end
-    end
-    
-    -- Method 2: Check game GC
-    for _,v in pairs(getgc(true)) do
-        if typeof(v) == "table" and rawget(v, "InvokeServer") then
-            if tostring(v):find("Steal") or tostring(v):find("Rob") then
-                return v
-            end
-        end
-    end
-    
-    -- Method 3: Check client scripts
-    for _,v in pairs(getscripts()) do
-        if v.ClassName == "LocalScript" then
-            for _,k in pairs(debug.getconstants(v)) do
-                if type(k) == "string" and (k:lower():find("steal") or k:lower():find("rob")) then
-                    local consts = debug.getconstants(v)
-                    for i,c in pairs(consts) do
-                        if c == k then
-                            local bytecode = debug.getproto(v, 0).bytecode
-                            if bytecode:find("RemoteEvent") or bytecode:find("RemoteFunction") then
-                                return getupvalue(v, i)
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    
-    return nil
-end
-
-local StealRemote = FindStealRemote()
-
--- Create GUI
 local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
+local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local AutoStealBtn = Instance.new("TextButton")
-local Status = Instance.new("TextLabel")
+local MinimizeButton = Instance.new("TextButton")
+local ToggleContainer = Instance.new("Frame")
+local HighJump = Instance.new("TextButton")
+local ESP = Instance.new("TextButton")
 
-ScreenGui.Name = "BrainrotStealV2"
-ScreenGui.Parent = game.CoreGui
+-- Main GUI setup
+ScreenGui.Name = "SimpleCheatMenu"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.8, 0, 0.3, 0)
-Frame.Size = UDim2.new(0, 200, 0, 120)
-Frame.Active = true
-Frame.Draggable = true
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BackgroundTransparency = 0.2
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+MainFrame.Size = UDim2.new(0, 200, 0, 150) -- Adjusted height for two buttons
+MainFrame.Active = true
+MainFrame.Draggable = true
 
-Title.Parent = Frame
-Title.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "CASH MULTIS"
-Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+-- Title bar with minimize button
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.BackgroundTransparency = 1
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Position = UDim2.new(0, 0, 0, 0)
+
+-- Title text
+Title.Name = "Title"
+Title.Parent = TitleBar
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 10, 0, 5)
+Title.Size = UDim2.new(0.7, 0, 1, -10)
+Title.Font = Enum.Font.Gotham
+Title.Text = "Game Tools"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
-AutoStealBtn.Parent = Frame
-AutoStealBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-AutoStealBtn.Position = UDim2.new(0.1, 0, 0.3, 0)
-AutoStealBtn.Size = UDim2.new(0.8, 0, 0, 30)
-AutoStealBtn.Font = Enum.Font.Gotham
-AutoStealBtn.Text = "AUTO STEAL: OFF"
-AutoStealBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-AutoStealBtn.TextSize = 14
+-- Minimize button
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Parent = TitleBar
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Position = UDim2.new(1, -30, 0, 5)
+MinimizeButton.Size = UDim2.new(0, 25, 0, 20)
+MinimizeButton.Font = Enum.Font.Gotham
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 16
 
-Status.Parent = Frame
-Status.BackgroundTransparency = 1
-Status.Position = UDim2.new(0.1, 0, 0.7, 0)
-Status.Size = UDim2.new(0.8, 0, 0, 30)
-Status.Font = Enum.Font.Gotham
-Status.Text = StealRemote and "READY" or "FALLBACK MODE"
-Status.TextColor3 = StealRemote and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 165, 0)
-Status.TextSize = 14
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 6)
+corner.Parent = MinimizeButton
 
--- Enhanced stealing function with fallback
-local function Steal(target)
-    if not target or not target:FindFirstChild("HumanoidRootPart") then return false end
+-- Toggle container
+ToggleContainer.Name = "ToggleContainer"
+ToggleContainer.Parent = MainFrame
+ToggleContainer.BackgroundTransparency = 1
+ToggleContainer.Position = UDim2.new(0, 10, 0, 40)
+ToggleContainer.Size = UDim2.new(1, -20, 0, 100)
+
+-- Function to create clean toggle buttons
+local function createToggleButton(name, position)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Parent = ToggleContainer
+    button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    button.BorderSizePixel = 0
+    button.Position = position
+    button.Size = UDim2.new(1, 0, 0, 40) -- Taller buttons for better touch
+    button.Font = Enum.Font.Gotham
+    button.Text = name .. ": OFF"
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
+    button.AutoButtonColor = false
     
-    -- Method 1: Use found remote
-    if StealRemote then
-        if StealRemote:IsA("RemoteEvent") then
-            StealRemote:FireServer(target)
-            return true
-        elseif typeof(StealRemote) == "table" then
-            StealRemote:InvokeServer(target)
-            return true
-        end
-    end
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = button
     
-    -- Method 2: Fallback - touch interest
-    local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        local originalPos = hrp.CFrame
-        hrp.CFrame = target.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
-        task.wait(0.1)
-        for _,v in pairs(target:GetDescendants()) do
-            if v:IsA("BasePart") then
-                firetouchinterest(hrp, v, 0)
-                firetouchinterest(hrp, v, 1)
-            end
-        end
-        hrp.CFrame = originalPos
-        return true
-    end
-    
-    return false
+    return button
 end
 
--- Auto Steal System
-local AutoSteal = false
-local Connection
+-- Create toggle buttons
+HighJump = createToggleButton("High Jump", UDim2.new(0, 0, 0, 0))
+ESP = createToggleButton("ESP", UDim2.new(0, 0, 0, 50))
 
-AutoStealBtn.MouseButton1Click:Connect(function()
-    AutoSteal = not AutoSteal
-    AutoStealBtn.Text = "AUTO STEAL: " .. (AutoSteal and "ON" or "OFF")
-    AutoStealBtn.BackgroundColor3 = AutoSteal and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(50, 50, 60)
+-- Toggle functionality
+local function toggleButton(button)
+    if button.Text:find("OFF") then
+        button.Text = button.Text:gsub("OFF", "ON")
+        button.BackgroundColor3 = Color3.fromRGB(70, 150, 70)
+    else
+        button.Text = button.Text:gsub("ON", "OFF")
+        button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    end
+end
+
+-- Minimize functionality
+local minimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        MainFrame.Size = UDim2.new(0, 200, 0, 30)
+        ToggleContainer.Visible = false
+        MinimizeButton.Text = "+"
+    else
+        MainFrame.Size = UDim2.new(0, 200, 0, 150)
+        ToggleContainer.Visible = true
+        MinimizeButton.Text = "-"
+    end
+end)
+
+-- High Jump functionality
+HighJump.MouseButton1Click:Connect(function()
+    toggleButton(HighJump)
+    local Player = game.Players.LocalPlayer
+    if HighJump.Text:find("ON") then
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = 120
+            humanoid.UseJumpPower = true
+        end
+    else
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = 50
+        end
+    end
+end)
+
+-- ESP functionality
+ESP.MouseButton1Click:Connect(function()
+    toggleButton(ESP)
+    local Player = game.Players.LocalPlayer
     
-    if AutoSteal then
-        Connection = RunService.Heartbeat:Connect(function()
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer and player.Character then
-                    local success = Steal(player.Character)
-                    if success then
-                        Status.Text = "STEALING: " .. player.Name
-                        task.wait(0.15) -- Natural delay
-                    end
+    if ESP.Text:find("ON") then
+        -- Create ESP for existing players
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= Player and player.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "EnhancedESP"
+                highlight.FillColor = Color3.fromRGB(255, 50, 50)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.OutlineTransparency = 0
+                highlight.FillTransparency = 0.4
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.Parent = player.Character
+            end
+        end
+
+        -- ESP for new players
+        local playerAdded
+        playerAdded = game.Players.PlayerAdded:Connect(function(player)
+            player.CharacterAdded:Connect(function(char)
+                if ESP.Text:find("ON") then
+                    local highlight = Instance.new("Highlight")
+                    highlight.Name = "EnhancedESP"
+                    highlight.FillColor = Color3.fromRGB(255, 50, 50)
+                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    highlight.OutlineTransparency = 0
+                    highlight.FillTransparency = 0.4
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    highlight.Parent = char
+                end
+            end)
+        end)
+
+        -- Cleanup when toggled off
+        coroutine.wrap(function()
+            repeat task.wait() until ESP.Text:find("OFF")
+            playerAdded:Disconnect()
+            for _, player in ipairs(game.Players:GetPlayers()) do
+                if player ~= Player and player.Character then
+                    local esp = player.Character:FindFirstChild("EnhancedESP")
+                    if esp then esp:Destroy() end
                 end
             end
-        end)
-    elseif Connection then
-        Connection:Disconnect()
-        Status.Text = StealRemote and "READY" or "FALLBACK MODE"
+        end)()
+    else
+        -- Turn off ESP immediately
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= Player and player.Character then
+                local esp = player.Character:FindFirstChild("EnhancedESP")
+                if esp then esp:Destroy() end
+            end
+        end
     end
 end)
 
--- Auto-reconnect if game updates
-game:GetService("ScriptContext").Error:Connect(function(message)
-    if message:find("Steal") or message:find("Rob") then
-        StealRemote = FindStealRemote()
-        Status.Text = StealRemote and "RECONNECTED" or "FALLBACK MODE"
-        Status.TextColor3 = StealRemote and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 165, 0)
+-- Cleanup on character respawn
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    if HighJump.Text:find("ON") then
+        local humanoid = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+        humanoid.JumpPower = 120
+        humanoid.UseJumpPower = true
     end
-end)
-
--- Cleanup
-LocalPlayer.OnTeleport:Connect(function()
-    ScreenGui:Destroy()
 end)
