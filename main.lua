@@ -19,7 +19,7 @@ local aimConnection
 local floatConnection
 local isFloating = false
 local lastFloatTime = 0
-local floatCooldown = 1 -- seconds
+local floatCooldown = 0.5 -- seconds
 
 -- Rainbow color animation
 local rainbowColors = {
