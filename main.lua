@@ -19,7 +19,7 @@ local aimConnection
 local floatConnection
 local isFloating = false
 local lastFloatTime = 0
-local floatCooldown = 3 -- seconds
+local floatCooldown = 1 -- seconds
 
 -- Rainbow color animation
 local rainbowColors = {
@@ -312,7 +312,7 @@ local function handleJump()
         end
         
         -- Check time limit (1.5 seconds)
-        if tick() - startTime >= 1.5 then
+        if tick() - startTime >= 1 then
             isFloating = false
             floatBV:Destroy()
             particles:Destroy()
