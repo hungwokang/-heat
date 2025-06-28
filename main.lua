@@ -312,7 +312,7 @@ local function handleJump()
         end
         
         -- Check time limit (1.5 seconds)
-        if tick() - startTime >= 1 then
+        if tick() - startTime >= 1.5 then
             isFloating = false
             floatBV:Destroy()
             particles:Destroy()
