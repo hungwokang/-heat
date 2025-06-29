@@ -14,9 +14,11 @@ local gui, minimized = nil, false
 local espEnabled = false
 local aimbotEnabled = false
 local floatEnabled = false
+local noClipEnabled = false
 local espConnections = {}
 local aimConnection
 local floatConnection
+local noClipConnection
 local isFloating = false
 local lastFloatTime = 0
 local floatCooldown = 0.5 -- seconds
@@ -367,6 +369,32 @@ local function toggleFloat(state)
     end
 end
 
+-- NoClip function (unrubberbanded)
+local function toggleNoClip(state)
+    if state then
+        noClipConnection = RunService.Stepped:Connect(function()
+            if player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noClipConnection then
+            noClipConnection:Disconnect()
+            if player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end
+    end
+end
+
 -- Menu
 local function createMenu()
     if gui then gui:Destroy() end
@@ -439,7 +467,7 @@ local function createMenu()
     local playerTab = Instance.new("ScrollingFrame", tabContent)
     playerTab.Size = UDim2.new(1, 0, 1, 0)
     playerTab.BackgroundTransparency = 1
-    playerTab.CanvasSize = UDim2.new(0, 0, 0, 140) -- Reduced height since high jump was removed
+    playerTab.CanvasSize = UDim2.new(0, 0, 0, 140)
     playerTab.ScrollBarThickness = 4
     playerTab.Visible = true
     playerTab.Name = "PLAYER"
@@ -488,7 +516,8 @@ local function createMenu()
         return btn
     end
     
-    -- PLAYER Tab buttons (only Aimbot and Float remain)
+    -- PLAYER Tab buttons (NoClip, Aimbot, Float)
+    local noClipBtn = createButton(playerTab, "NO CLIP")
     local aimbotBtn = createButton(playerTab, "AIMBOT")
     local floatBtn = createButton(playerTab, "FLOAT")
     
@@ -497,6 +526,11 @@ local function createMenu()
     local serverHopBtn = createButton(interfaceTab, "CHANGE SERVER")
     
     -- Connect button functionality
+    noClipBtn.MouseButton1Click:Connect(function()
+        noClipEnabled = toggleButton(noClipBtn)
+        toggleNoClip(noClipEnabled)
+    end)
+    
     aimbotBtn.MouseButton1Click:Connect(function()
         aimbotEnabled = toggleButton(aimbotBtn)
         toggleAimbot(aimbotEnabled)
