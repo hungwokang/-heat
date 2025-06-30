@@ -192,21 +192,22 @@ function antiStun(on)
     end
 end
 
+-- AIMBOT LOGIC: MODIFIED TO PRIORITIZE NEARBY PLAYERS
+local aimbotRange = 100 -- Set a range for aimbot targeting (e.g., 100 studs)
 
 local function getClosestAimbotTarget()
-    local closestPlayer, shortestDist = nil, math.huge
-    local cam = Workspace.CurrentCamera
+    if not root then return nil end -- Ensure player's root part exists
+
+    local closestPlayer, shortestDist = nil, aimbotRange -- Initialize shortestDist with the aimbot range
+    
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChildOfClass("Humanoid") and p.Character.Humanoid.Health > 0 then
             local targetHRP = p.Character.HumanoidRootPart
-            local screenPoint, onScreen = cam:WorldToViewportPoint(targetHRP.Position)
-            if onScreen then
-                local mousePos = UserInputService:GetMouseLocation()
-                local dist = (Vector2.new(mousePos.X, mousePos.Y) - Vector2.new(screenPoint.X, screenPoint.Y)).Magnitude
-                if dist < shortestDist then
-                    closestPlayer = p
-                    shortestDist = dist
-                end
+            local dist = (root.Position - targetHRP.Position).Magnitude -- Calculate distance from player's root to target's root
+            
+            if dist < shortestDist then
+                closestPlayer = p
+                shortestDist = dist
             end
         end
     end
@@ -220,6 +221,7 @@ local function toggleAimbot(state)
             if target and target.Character and char and root and humanoid then
                 local targetHrp = target.Character:FindFirstChild("HumanoidRootPart")
                 if targetHrp then
+                    -- Face the target's HumanoidRootPart, maintaining current Y position
                     root.CFrame = CFrame.lookAt(root.Position, Vector3.new(targetHrp.Position.X, root.Position.Y, targetHrp.Position.Z))
                 end
             end
@@ -368,13 +370,13 @@ local function createMenu()
     minimize.Size = UDim2.new(0, 25, 0, 25) -- Smaller button
     minimize.Position = UDim2.new(1, -25, 0, 0)
     minimize.Text = "-"
-    minimize.BackgroundTransparency = 1
+    minimize.BackgroundTransparency = 1 -- Still transparent, as it's part of the title bar
     minimize.TextColor3 = Color3.new(1,1,1)
     minimize.Font = Enum.Font.GothamBold
     minimize.TextSize = 16
     rainbowElements[minimize] = "TextColor"
     
-    local tabs = {"PLAYER", "VISUAL", "CHEAT"} -- Shortened tab names
+    local tabs = {"CHEAT", "PLAYER", "VISUAL"}
     local tabButtons = {}
     local tabFrames = {}
 
@@ -400,7 +402,9 @@ local function createMenu()
         end
         for _, btn in ipairs(tabButtons) do
             local isSelected = (btn.Name == tabName)
-            btn.BackgroundColor3 = isSelected and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(50, 50, 50)
+            -- Set background color for all tabs, but slightly darker for selected
+            btn.BackgroundColor3 = isSelected and Color3.fromRGB(50, 50, 50) or Color3.fromRGB(60, 60, 60)
+            btn.BackgroundTransparency = 0 -- Make all tab buttons visible
         end
     end
 
@@ -409,14 +413,15 @@ local function createMenu()
         tabBtn.Name = tabName
         tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
         tabBtn.Text = tabName
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        tabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
+        tabBtn.BackgroundTransparency = 0 -- Make background visible
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.Font = Enum.Font.GothamBold
         tabBtn.TextSize = 10 -- Smaller text
         Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 4)
         tabBtn.MouseButton1Click:Connect(function() switchTab(tabName) end)
         table.insert(tabButtons, tabBtn)
-
+        
         local tabFrame = Instance.new("ScrollingFrame", tabContentContainer)
         tabFrame.Name = tabName
         tabFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -424,7 +429,7 @@ local function createMenu()
         tabFrame.BorderSizePixel = 0
         tabFrame.ScrollBarThickness = 4
         tabFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        tabFrame.Visible = (i == 1)
+        tabFrame.Visible = false -- Initially all hidden, will be set by switchTab
         local layout = Instance.new("UIListLayout", tabFrame)
         layout.Padding = UDim.new(0, 4) -- Reduced padding
         layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -435,7 +440,8 @@ local function createMenu()
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
+        btn.BackgroundTransparency = 0 -- Make background visible always
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
@@ -445,7 +451,7 @@ local function createMenu()
         local state = false
         btn.MouseButton1Click:Connect(function()
             state = not state
-            btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            -- Background remains solid, only text changes for toggle indication
             btn.Text = name..(state and ": ON" or ": OFF")
             callback(state)
         end)
@@ -457,7 +463,8 @@ local function createMenu()
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
+        btn.BackgroundTransparency = 0 -- Make background visible always
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
         btn.Font = Enum.Font.GothamBold
@@ -476,14 +483,14 @@ local function createMenu()
         boostJumpEnabled = state
     end)
     
-    -- Visual Tab (renamed from VISUALS)
+    -- Visual Tab
     createToggleButton(tabFrames["VISUAL"], "ESP", toggleESP)
     createToggleButton(tabFrames["VISUAL"], "INVISIBLE", setInvisible)
 
     -- Cheat Tab
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT UP", teleportToSky)
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT DOWN", teleportToGround)
-    createOneShotButton(tabFrames["VISUAL"], "ZSERVER HOP", serverHop)
+    createOneShotButton(tabFrames["CHEAT"], "ZSERVER HOP", serverHop)
 
     -- UI INTERACTIONS
     minimize.MouseButton1Click:Connect(function()
@@ -497,8 +504,10 @@ local function createMenu()
 
     -- Initialize Rainbow Effect
     RunService.Heartbeat:Connect(updateRainbowColors)
+    
+    -- Initialize selected tab (e.g., "VISUAL" if that's the default you want to start with)
+    switchTab("VISUAL") 
 end
 
 -- Initialize Menu
 createMenu()
-
