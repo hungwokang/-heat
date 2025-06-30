@@ -400,8 +400,7 @@ local function createMenu()
         end
         for _, btn in ipairs(tabButtons) do
             local isSelected = (btn.Name == tabName)
-            -- UPDATED: Set unselected tabs to the desired color, keeping the selected tab distinct.
-            btn.BackgroundColor3 = isSelected and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(60, 60, 60)
+            btn.BackgroundColor3 = isSelected and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(50, 50, 50)
         end
     end
 
@@ -411,8 +410,6 @@ local function createMenu()
         tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
         tabBtn.Text = tabName
         
-        -- UPDATED: Set initial background color for tabs
-        tabBtn.BackgroundColor3 = (i == 1) and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(60, 60, 60)
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.Font = Enum.Font.GothamBold
         tabBtn.TextSize = 10 -- Smaller text
@@ -438,10 +435,7 @@ local function createMenu()
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        
-        -- ADDED: Set background color to match the ZSERVER HOP button
         btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
@@ -507,3 +501,5 @@ end
 
 -- Initialize Menu
 createMenu()
+
+i want all the buttons background color same as ZSERVER HOP Button background color
