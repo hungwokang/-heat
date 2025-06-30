@@ -346,167 +346,148 @@ local function createMenu()
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     local main = Instance.new("Frame", gui)
-    main.Size = UDim2.new(0, 180, 0, 200) -- Smaller size
-    main.Position = UDim2.new(0.5, -90, 0.5, -100)
+    main.Size = UDim2.new(0, 250, 0, 350) -- Adjusted size to fit more options vertically
+    main.Position = UDim2.new(0.5, -125, 0.5, -175) -- Center the frame
     main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     main.Active = true
     main.Draggable = true
     Instance.new("UICorner", main).CornerRadius = UDim.new(0, 6)
 
     local titleBar = Instance.new("Frame", main)
-    titleBar.Size = UDim2.new(1, 0, 0, 25) -- Smaller title bar
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
     titleBar.BackgroundTransparency = 1
 
     local title = Instance.new("TextLabel", titleBar)
-    title.Size = UDim2.new(1, -25, 1, 0)
-    title.Position = UDim2.new(0, 10, 0, 0)
+    title.Size = UDim2.new(1, 0, 1, 0)
     title.Text = "Server v1"
     title.Font = Enum.Font.GothamBold
-    title.TextSize = 14 -- Smaller text
+    title.TextSize = 20
     title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.new(1, 1, 1) -- Initial color before rainbow takes over
     rainbowElements[title] = "TextColor"
+    title.TextScaled = true -- Allow text to scale to fit
+    title.MinimumFontSize = 12
 
-    local minimize = Instance.new("TextButton", titleBar)
-    minimize.Size = UDim2.new(0, 25, 0, 25) -- Smaller button
-    minimize.Position = UDim2.new(1, -25, 0, 0)
-    minimize.Text = "-"
-    minimize.BackgroundTransparency = 1 -- Still transparent, as it's part of the title bar
-    minimize.TextColor3 = Color3.new(1,1,1)
-    minimize.Font = Enum.Font.GothamBold
-    minimize.TextSize = 16
-    rainbowElements[minimize] = "TextColor"
-    
-    local tabs = {"CHEAT", "PLAYER", "VISUAL"}
-    local tabButtons = {}
-    local tabFrames = {}
+    local scrollFrame = Instance.new("ScrollingFrame", main)
+    scrollFrame.Size = UDim2.new(1, -10, 1, -40) -- Adjusted size for content area
+    scrollFrame.Position = UDim2.new(0, 5, 0, 35)
+    scrollFrame.BackgroundTransparency = 1
+    scrollFrame.BorderSizePixel = 0
+    scrollFrame.ScrollBarThickness = 6
+    scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scrollFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+    scrollFrame.CanvasSize = UDim2.new(0,0,0,0) -- Set by AutomaticCanvasSize.Y
 
-    local tabContainer = Instance.new("Frame", main)
-    tabContainer.Size = UDim2.new(1, -10, 0, 25) -- Smaller tab bar
-    tabContainer.Position = UDim2.new(0, 5, 0, 30)
-    tabContainer.BackgroundTransparency = 1
-    local tabLayout = Instance.new("UIListLayout", tabContainer)
-    tabLayout.FillDirection = Enum.FillDirection.Horizontal
-    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    tabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    tabLayout.Padding = UDim.new(0, 2) -- Reduced padding
+    local layout = Instance.new("UIListLayout", scrollFrame)
+    layout.Padding = UDim.new(0, 6)
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    layout.FillDirection = Enum.FillDirection.Vertical
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    local tabContentContainer = Instance.new("Frame", main)
-    tabContentContainer.Size = UDim2.new(1, -10, 1, -65) -- Adjusted for smaller UI
-    tabContentContainer.Position = UDim2.new(0, 5, 0, 60)
-    tabContentContainer.BackgroundTransparency = 1
-    tabContentContainer.ClipsDescendants = true
+    local uiPadding = Instance.new("UIPadding", scrollFrame)
+    uiPadding.PaddingTop = UDim.new(0, 5)
+    uiPadding.PaddingBottom = UDim.new(0, 5)
 
-    local function switchTab(tabName)
-        for name, frame in pairs(tabFrames) do
-            frame.Visible = (name == tabName)
-        end
-        for _, btn in ipairs(tabButtons) do
-            local isSelected = (btn.Name == tabName)
-            -- Set background color for all tabs, but slightly darker for selected
-            btn.BackgroundColor3 = isSelected and Color3.fromRGB(50, 50, 50) or Color3.fromRGB(60, 60, 60)
-            btn.BackgroundTransparency = 0 -- Make all tab buttons visible
-        end
-    end
-
-    for i, tabName in ipairs(tabs) do
-        local tabBtn = Instance.new("TextButton", tabContainer)
-        tabBtn.Name = tabName
-        tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
-        tabBtn.Text = tabName
-        tabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
-        tabBtn.BackgroundTransparency = 0 -- Make background visible
-        tabBtn.TextColor3 = Color3.new(1, 1, 1)
-        tabBtn.Font = Enum.Font.GothamBold
-        tabBtn.TextSize = 10 -- Smaller text
-        Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 4)
-        tabBtn.MouseButton1Click:Connect(function() switchTab(tabName) end)
-        table.insert(tabButtons, tabBtn)
-        
-        local tabFrame = Instance.new("ScrollingFrame", tabContentContainer)
-        tabFrame.Name = tabName
-        tabFrame.Size = UDim2.new(1, 0, 1, 0)
-        tabFrame.BackgroundTransparency = 1
-        tabFrame.BorderSizePixel = 0
-        tabFrame.ScrollBarThickness = 4
-        tabFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        tabFrame.Visible = false -- Initially all hidden, will be set by switchTab
-        local layout = Instance.new("UIListLayout", tabFrame)
-        layout.Padding = UDim.new(0, 4) -- Reduced padding
-        layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-        tabFrames[tabName] = tabFrame
+    local function createHeader(parent, text)
+        local header = Instance.new("TextLabel", parent)
+        header.Size = UDim2.new(1, 0, 0, 25)
+        header.Text = text
+        header.Font = Enum.Font.GothamBold
+        header.TextSize = 16
+        header.BackgroundTransparency = 1
+        header.TextColor3 = Color3.new(1, 1, 1)
+        header.TextXAlignment = Enum.TextXAlignment.Left
+        header.TextScaled = true
+        header.MinimumFontSize = 10
+        header.LayoutOrder = -1 -- Ensures headers appear at the top of their section
+        rainbowElements[header] = "TextColor"
+        return header
     end
 
     local function createToggleButton(parent, name, callback)
-        local btn = Instance.new("TextButton", parent)
-        btn.Name = name
-        btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
-        btn.BackgroundTransparency = 0 -- Make background visible always
-        btn.TextColor3 = Color3.new(1, 1, 1)
-        btn.Text = name..": OFF" -- Initial state
-        btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 10 -- Smaller text
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+        local frame = Instance.new("Frame", parent)
+        frame.Size = UDim2.new(1, -10, 0, 30) -- Wider button frame
+        frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        frame.BackgroundTransparency = 0
+        Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+
+        local textLabel = Instance.new("TextLabel", frame)
+        textLabel.Size = UDim2.new(1, -40, 1, 0) -- Make space for indicator
+        textLabel.Position = UDim2.new(0, 10, 0, 0) -- Padding from left
+        textLabel.Text = name
+        textLabel.Font = Enum.Font.GothamBold
+        textLabel.TextSize = 14
+        textLabel.TextXAlignment = Enum.TextXAlignment.Left
+        textLabel.BackgroundTransparency = 1
+        textLabel.TextColor3 = Color3.new(1, 1, 1)
+
+        local indicator = Instance.new("Frame", frame)
+        indicator.Size = UDim2.new(0, 18, 0, 18)
+        indicator.Position = UDim2.new(1, -25, 0.5, -9) -- Aligned right, centered vertically
+        indicator.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Red for OFF
+        Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0) -- Circle
 
         local state = false
+        local function updateIndicator()
+            indicator.BackgroundColor3 = state and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 50, 50)
+        end
+        updateIndicator()
+
+        local btn = Instance.new("TextButton", frame)
+        btn.Size = UDim2.new(1, 0, 1, 0)
+        btn.BackgroundTransparency = 1
+        btn.Text = "" -- No text, frame contains it
         btn.MouseButton1Click:Connect(function()
             state = not state
-            -- Background remains solid, only text changes for toggle indication
-            btn.Text = name..(state and ": ON" or ": OFF")
+            updateIndicator()
             callback(state)
         end)
         
-        rainbowElements[btn] = "TextColor"
+        return btn -- Return the clickable part for potential further reference
     end
     
     local function createOneShotButton(parent, name, callback)
         local btn = Instance.new("TextButton", parent)
-        btn.Name = name
-        btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Consistent background color
-        btn.BackgroundTransparency = 0 -- Make background visible always
+        btn.Size = UDim2.new(1, -10, 0, 30) -- Wider button
+        btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        btn.BackgroundTransparency = 0
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 10 -- Smaller text
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+        btn.TextSize = 14
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
         btn.MouseButton1Click:Connect(callback)
-        rainbowElements[btn] = "TextColor"
+        return btn
     end
 
-    -- POPULATE TABS WITH BUTTONS
-    -- Player Tab
-    createToggleButton(tabFrames["PLAYER"], "GODMODE", setGodMode)
-    createToggleButton(tabFrames["PLAYER"], "AIMBOT", toggleAimbot)
-    createToggleButton(tabFrames["PLAYER"], "ANTI-STUN", antiStun)
-    createToggleButton(tabFrames["PLAYER"], "BOOST JUMP", function(state)
+    -- POPULATE UI WITH HEADERS AND BUTTONS
+    
+    -- PLAYER SETTINGS
+    createHeader(scrollFrame, "PLAYER SETTINGS")
+    createToggleButton(scrollFrame, "GODMODE", setGodMode)
+    createToggleButton(scrollFrame, "AIMBOT", toggleAimbot)
+    createToggleButton(scrollFrame, "ANTI-STUN", antiStun)
+    createToggleButton(scrollFrame, "BOOST JUMP", function(state)
         boostJumpEnabled = state
     end)
     
-    -- Visual Tab
-    createToggleButton(tabFrames["VISUAL"], "ESP", toggleESP)
-    createToggleButton(tabFrames["VISUAL"], "INVISIBLE", setInvisible)
+    -- VISUAL SETTINGS
+    createHeader(scrollFrame, "VISUAL SETTINGS")
+    createToggleButton(scrollFrame, "ESP", toggleESP)
+    createToggleButton(scrollFrame, "INVISIBLE", setInvisible) -- Renamed from VISIBILITY for clarity with function name
 
-    -- Cheat Tab
-    createOneShotButton(tabFrames["CHEAT"], "TELEPORT UP", teleportToSky)
-    createOneShotButton(tabFrames["CHEAT"], "TELEPORT DOWN", teleportToGround)
-    createOneShotButton(tabFrames["VISUAL"], "ZCHANGE SERVER", serverHop)
+    -- STEAL SETTINGS (Based on the example's "Copy Identity Player" and "Complete All Tasks" - not directly implemented)
+    -- As per your request, these will be "TELEPORT SKY" and "TELEPORT GROUND"
+    createHeader(scrollFrame, "STEAL SETTINGS")
+    createOneShotButton(scrollFrame, "TELEPORT SKY", teleportToSky)
+    createOneShotButton(scrollFrame, "TELEPORT GROUND", teleportToGround)
 
-    -- UI INTERACTIONS
-    minimize.MouseButton1Click:Connect(function()
-        minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 180, 0, 25) or UDim2.new(0, 180, 0, 200)
-        TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Quad), { Size = targetSize }):Play()
-        tabContainer.Visible = not minimized
-        tabContentContainer.Visible = not minimized
-        minimize.Text = minimized and "+" or "-"
-    end)
+    -- WORLD
+    createHeader(scrollFrame, "WORLD")
+    createOneShotButton(scrollFrame, "CHANGE SERVER", serverHop)
 
     -- Initialize Rainbow Effect
     RunService.Heartbeat:Connect(updateRainbowColors)
-    
-    -- Initialize selected tab (e.g., "VISUAL" if that's the default you want to start with)
-    switchTab("VISUAL") 
 end
 
 -- Initialize Menu
