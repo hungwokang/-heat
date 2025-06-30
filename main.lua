@@ -1,5 +1,4 @@
-
-local Players = game:GetService("Players")
+Local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -401,7 +400,8 @@ local function createMenu()
         end
         for _, btn in ipairs(tabButtons) do
             local isSelected = (btn.Name == tabName)
-            btn.BackgroundColor3 = isSelected and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(50, 50, 50)
+            -- UPDATED: Set unselected tabs to the desired color, keeping the selected tab distinct.
+            btn.BackgroundColor3 = isSelected and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(60, 60, 60)
         end
     end
 
@@ -411,6 +411,8 @@ local function createMenu()
         tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
         tabBtn.Text = tabName
         
+        -- UPDATED: Set initial background color for tabs
+        tabBtn.BackgroundColor3 = (i == 1) and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(60, 60, 60)
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.Font = Enum.Font.GothamBold
         tabBtn.TextSize = 10 -- Smaller text
@@ -437,10 +439,13 @@ local function createMenu()
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
         
+        -- ADDED: Set background color to match the ZSERVER HOP button
+        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 8 -- Smaller text
+        btn.TextSize = 10 -- Smaller text
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
 
         local state = false
@@ -462,7 +467,7 @@ local function createMenu()
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 8 -- Smaller text
+        btn.TextSize = 10 -- Smaller text
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
         btn.MouseButton1Click:Connect(callback)
         rainbowElements[btn] = "TextColor"
