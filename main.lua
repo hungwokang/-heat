@@ -409,7 +409,7 @@ local function createMenu()
         tabBtn.Name = tabName
         tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
         tabBtn.Text = tabName
-        
+        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.Font = Enum.Font.GothamBold
         tabBtn.TextSize = 10 -- Smaller text
@@ -435,6 +435,7 @@ local function createMenu()
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
+        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
@@ -444,7 +445,7 @@ local function createMenu()
         local state = false
         btn.MouseButton1Click:Connect(function()
             state = not state
-            
+            btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
             btn.Text = name..(state and ": ON" or ": OFF")
             callback(state)
         end)
