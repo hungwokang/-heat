@@ -16,6 +16,9 @@ local function updateCharacter()
     char = player.Character or player.CharacterAdded:Wait()
     root = char:WaitForChild("HumanoidRootPart")
     humanoid = char:WaitForChild("Humanoid")
+    if antiStunConnection then
+        antiStun(true)
+    end
 end
 
 updateCharacter()
@@ -25,6 +28,7 @@ player.CharacterAdded:Connect(function()
 end)
 
 -- SCRIPT-WIDE STATES & VARIABLES
+local antiStunConnection = nil
 local gui, minimized = nil, false
 local godConnection, aimConnection
 local espEnabled = false
@@ -125,10 +129,67 @@ function setGodMode(on)
 end
 
 function antiStun(on)
+    if not humanoid then updateCharacter() end
+    if not humanoid then return end
+
     if on then
-        print("Anti-Stun Enabled (Placeholder)")
+        -- Store original values
+        local originalWalkSpeed = humanoid.WalkSpeed
+        local originalJumpPower = humanoid.JumpPower
+        
+        -- Disconnect existing connection if any
+        if antiStunConnection then
+            antiStunConnection:Disconnect()
+        end
+        
+        -- Create new connection
+        antiStunConnection = RunService.Heartbeat:Connect(function()
+            if not humanoid or not humanoid.Parent then
+                if antiStunConnection then
+                    antiStunConnection:Disconnect()
+                end
+                return
+            end
+            
+            -- Reset movement properties
+            humanoid.WalkSpeed = originalWalkSpeed
+            humanoid.JumpPower = originalJumpPower
+            
+            -- Reset platform stand and sitting
+            humanoid.PlatformStand = false
+            humanoid.Sit = false
+            
+            -- Remove any velocity constraints
+            for _, v in ipairs(humanoid.Parent:GetDescendants()) do
+                if v:IsA("BodyVelocity") or v:IsA("BodyForce") or v:IsA("BodyAngularVelocity") then
+                    v:Destroy()
+                end
+            end
+            
+            -- Force running state if needed
+            if humanoid:GetState() == Enum.HumanoidStateType.Stunned then
+                humanoid:ChangeState(Enum.HumanoidStateType.Running)
+            end
+            
+            -- Additional protection against root part velocity manipulation
+            if root then
+                root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, math.clamp(root.AssemblyLinearVelocity.Y, -50, 100), root.AssemblyLinearVelocity.Z)
+            end
+        end)
+        
+        -- Handle character respawns
+        player.CharacterAdded:Connect(function()
+            task.wait(1) -- Wait for character to fully load
+            if on then -- Only reconnect if anti-stun is still enabled
+                antiStun(true)
+            end
+        end)
     else
-        print("Anti-Stun Disabled (Placeholder)")
+        -- Disable anti-stun
+        if antiStunConnection then
+            antiStunConnection:Disconnect()
+            antiStunConnection = nil
+        end
     end
 end
 
@@ -213,7 +274,7 @@ local function toggleESP(state)
             h.Name = "ServerV1ESP"
             h.FillColor = Color3.fromRGB(255, 50, 50)
             h.OutlineColor = Color3.new(1, 1, 1)
-            h.FillTransparency = 0.7
+            h.FillTransparency = 1
             h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
             h.Parent = character
         end
