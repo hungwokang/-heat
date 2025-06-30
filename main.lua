@@ -1,13 +1,4 @@
---[[
-    Server v1 - Final Integrated Script
-    - Merged functions from the user's provided scripts.
-    - Re-organized UI into the requested PLAYER, VISUALS, and CHEAT tabs.
-    - Adopted the core style and layout of the second €heat v1 menu.
-    - Maintained scrollable tab frames.
-    - Removed No-Clip and Unlimited Jump functionalities.
-]]
 
--- SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
@@ -36,8 +27,9 @@ end)
 -- SCRIPT-WIDE STATES & VARIABLES
 local gui, minimized = nil, false
 local godConnection, aimConnection
-local espEnabled = false -- State for the new ESP system
-local espConnections = {} -- Connections for the new ESP system
+local espEnabled = false
+local espConnections = {}
+local boostJumpEnabled = false -- State for Boost Jump
 
 -- RAINBOW COLOR ANIMATION
 local rainbowColors = {
@@ -101,7 +93,7 @@ local function teleportToSky()
     end
 end
 
-local function teleportToGround() -- Renamed from "dropDown"
+local function teleportToGround()
     if not root then updateCharacter() end
     if root then
         root.CFrame = root.CFrame - Vector3.new(0, 50, 0)
@@ -133,8 +125,6 @@ function setGodMode(on)
 end
 
 function antiStun(on)
-    -- The logic for Anti-Stun was not provided in the original scripts.
-    -- This is a placeholder. You can add the specific mechanism here.
     if on then
         print("Anti-Stun Enabled (Placeholder)")
     else
@@ -169,7 +159,7 @@ local function toggleAimbot(state)
             if target and target.Character and char and root and humanoid then
                 local targetHrp = target.Character:FindFirstChild("HumanoidRootPart")
                 if targetHrp then
-                    player.Character.HumanoidRootPart.CFrame = CFrame.lookAt(root.Position, Vector3.new(targetHrp.Position.X, root.Position.Y, targetHrp.Position.Z))
+                    root.CFrame = CFrame.lookAt(root.Position, Vector3.new(targetHrp.Position.X, root.Position.Y, targetHrp.Position.Z))
                 end
             end
         end)
@@ -180,6 +170,26 @@ local function toggleAimbot(state)
         end
     end
 end
+
+-- BOOST JUMP LOGIC
+UserInputService.JumpRequest:Connect(function()
+    if boostJumpEnabled and humanoid and root then
+        root.AssemblyLinearVelocity = Vector3.new(0, 100, 0)
+        local gravityConn
+        gravityConn = RunService.Stepped:Connect(function()
+            if not char or not root or not humanoid or not boostJumpEnabled then
+                gravityConn:Disconnect()
+                return
+            end
+
+            if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
+                root.Velocity = Vector3.new(root.Velocity.X, math.clamp(root.Velocity.Y, -20, 150), root.Velocity.Z)
+            elseif humanoid.FloorMaterial ~= Enum.Material.Air then
+                gravityConn:Disconnect()
+            end
+        end)
+    end
+end)
 
 -- VISUALS FUNCTIONS
 function setInvisible(on)
@@ -194,7 +204,6 @@ function setInvisible(on)
     end
 end
 
--- ESP function from the second script
 local function toggleESP(state)
     espEnabled = state
     if state then
@@ -273,16 +282,14 @@ local function createMenu()
     gui.ResetOnSpawn = false
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Main Frame
     local main = Instance.new("Frame", gui)
-    main.Size = UDim2.new(0, 220, 0, 250)
-    main.Position = UDim2.new(0.5, -110, 0.5, -125)
+    main.Size = UDim2.new(0, 180, 0, 220) -- MODIFIED: Smaller size
+    main.Position = UDim2.new(0.5, -90, 0.5, -110) -- MODIFIED: Centered with new size
     main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     main.Active = true
     main.Draggable = true
     Instance.new("UICorner", main).CornerRadius = UDim.new(0, 8)
 
-    -- Title Bar
     local titleBar = Instance.new("Frame", main)
     titleBar.Size = UDim2.new(1, 0, 0, 30)
     titleBar.BackgroundTransparency = 1
@@ -290,7 +297,7 @@ local function createMenu()
     local title = Instance.new("TextLabel", titleBar)
     title.Size = UDim2.new(1, -30, 1, 0)
     title.Position = UDim2.new(0, 15, 0, 0)
-    title.Text = "Server v1" -- CHANGED
+    title.Text = "Server v1"
     title.Font = Enum.Font.GothamBold
     title.TextSize = 16
     title.BackgroundTransparency = 1
@@ -306,24 +313,22 @@ local function createMenu()
     minimize.TextSize = 20
     rainbowElements[minimize] = "TextColor"
     
-    -- Tab Setup
-    local tabs = {"PLAYER", "VISUALS", "CHEAT"} -- CHANGED
+    local tabs = {"PLAYER", "VISUALS", "CHEAT"}
     local tabButtons = {}
     local tabFrames = {}
 
     local tabContainer = Instance.new("Frame", main)
-    tabContainer.Size = UDim2.new(1, -10, 0, 30)
-    tabContainer.Position = UDim2.new(0, 5, 0, 35)
+    tabContainer.Size = UDim2.new(1, 0, 0, 30) -- MODIFIED: Full width
+    tabContainer.Position = UDim2.new(0, 0, 0, 30) -- MODIFIED: Positioned at top
     tabContainer.BackgroundTransparency = 1
-    local tabLayout = Instance.new("UIListLayout", tabContainer)
-    tabLayout.FillDirection = Enum.FillDirection.Horizontal
-    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    tabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    tabLayout.Padding = UDim.new(0, 5)
+    local tabLayout = Instance.new("UITableLayout", tabContainer) -- MODIFIED: Using UITableLayout for perfect spacing
+    tabLayout.NumberOfColumns = 3
+    tabLayout.CellPadding = UDim2.new(0,0,0,0)
+    tabLayout.CellSpacing = UDim2.new(0,0,0,0)
 
     local tabContentContainer = Instance.new("Frame", main)
-    tabContentContainer.Size = UDim2.new(1, -10, 1, -75)
-    tabContentContainer.Position = UDim2.new(0, 5, 0, 70)
+    tabContentContainer.Size = UDim2.new(1, 0, 1, -60) -- MODIFIED: Fills remaining space
+    tabContentContainer.Position = UDim2.new(0, 0, 0, 60) -- MODIFIED: Positioned below tabs
     tabContentContainer.BackgroundTransparency = 1
 
     local function switchTab(tabName)
@@ -337,10 +342,9 @@ local function createMenu()
     end
 
     for i, tabName in ipairs(tabs) do
-        -- Create Tab Button
         local tabBtn = Instance.new("TextButton", tabContainer)
         tabBtn.Name = tabName
-        tabBtn.Size = UDim2.new(0.33, -5, 1, 0)
+        -- tabBtn.Size is now controlled by UITableLayout
         tabBtn.Text = tabName
         tabBtn.BackgroundColor3 = i == 1 and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(50, 50, 50)
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
@@ -350,7 +354,6 @@ local function createMenu()
         tabBtn.MouseButton1Click:Connect(function() switchTab(tabName) end)
         table.insert(tabButtons, tabBtn)
 
-        -- Create Tab Content Frame
         local tabFrame = Instance.new("ScrollingFrame", tabContentContainer)
         tabFrame.Name = tabName
         tabFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -365,11 +368,10 @@ local function createMenu()
         tabFrames[tabName] = tabFrame
     end
 
-    -- Button Creation Helpers
     local function createToggleButton(parent, name, callback)
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
-        btn.Size = UDim2.new(0.95, 0, 0, 35)
+        btn.Size = UDim2.new(1, 0, 0, 35) -- MODIFIED: Full width
         btn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
@@ -388,7 +390,7 @@ local function createMenu()
     local function createOneShotButton(parent, name, callback)
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
-        btn.Size = UDim2.new(0.95, 0, 0, 35)
+        btn.Size = UDim2.new(1, 0, 0, 35) -- MODIFIED: Full width
         btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
@@ -403,20 +405,23 @@ local function createMenu()
     createToggleButton(tabFrames["PLAYER"], "GODMODE", setGodMode)
     createToggleButton(tabFrames["PLAYER"], "AIMBOT", toggleAimbot)
     createToggleButton(tabFrames["PLAYER"], "ANTI-STUN", antiStun)
+    createToggleButton(tabFrames["PLAYER"], "BOOST JUMP", function(state)
+        boostJumpEnabled = state
+    end)
     
     -- Visuals Tab
     createToggleButton(tabFrames["VISUALS"], "ESP", toggleESP)
     createToggleButton(tabFrames["VISUALS"], "INVISIBILITY", setInvisible)
+    createOneShotButton(tabFrames["VISUALS"], "ZCHANGE SERVER", serverHop)
 
-    -- Cheat Tab (Originally 'TELEPORT')
+    -- Cheat Tab
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT SKY", teleportToSky)
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT GROUND", teleportToGround)
-    createOneShotButton(tabFrames["CHEAT"], "CHANGE SERVER", serverHop)
 
     -- UI INTERACTIONS
     minimize.MouseButton1Click:Connect(function()
         minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 220, 0, 30) or UDim2.new(0, 220, 0, 250)
+        local targetSize = minimized and UDim2.new(0, 180, 0, 30) or UDim2.new(0, 180, 0, 220) -- MODIFIED
         TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Quad), { Size = targetSize }):Play()
         tabContainer.Visible = not minimized
         tabContentContainer.Visible = not minimized
