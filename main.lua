@@ -16,9 +16,6 @@ local function updateCharacter()
     char = player.Character or player.CharacterAdded:Wait()
     root = char:WaitForChild("HumanoidRootPart")
     humanoid = char:WaitForChild("Humanoid")
-    if antiStunConnection then
-        antiStun(true)
-    end
 end
 
 updateCharacter()
