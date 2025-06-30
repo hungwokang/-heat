@@ -1,12 +1,4 @@
---[[
-    Server v1 - Compact GUI Version
-    - Smaller GUI size
-    - Tightly packed buttons
-    - Toggleable rainbow text with state display
-    - All original functionality preserved
-]]
 
--- SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
@@ -19,6 +11,7 @@ local Workspace = game:GetService("Workspace")
 -- LOCAL PLAYER & CHARACTER
 local player = Players.LocalPlayer
 local char, root, humanoid
+local antiStunConnection = nil
 
 local function updateCharacter()
     char = player.Character or player.CharacterAdded:Wait()
@@ -136,12 +129,70 @@ function setGodMode(on)
 end
 
 function antiStun(on)
+    if not humanoid then updateCharacter() end
+    if not humanoid then return end
+
     if on then
-        print("Anti-Stun Enabled (Placeholder)")
+        -- Store original values
+        local originalWalkSpeed = humanoid.WalkSpeed
+        local originalJumpPower = humanoid.JumpPower
+        
+        -- Disconnect existing connection if any
+        if antiStunConnection then
+            antiStunConnection:Disconnect()
+        end
+        
+        -- Create new connection
+        antiStunConnection = RunService.Heartbeat:Connect(function()
+            if not humanoid or not humanoid.Parent then
+                if antiStunConnection then
+                    antiStunConnection:Disconnect()
+                end
+                return
+            end
+            
+            -- Reset movement properties
+            humanoid.WalkSpeed = originalWalkSpeed
+            humanoid.JumpPower = originalJumpPower
+            
+            -- Reset platform stand and sitting
+            humanoid.PlatformStand = false
+            humanoid.Sit = false
+            
+            -- Remove any velocity constraints
+            for _, v in ipairs(humanoid.Parent:GetDescendants()) do
+                if v:IsA("BodyVelocity") or v:IsA("BodyForce") or v:IsA("BodyAngularVelocity") then
+                    v:Destroy()
+                end
+            end
+            
+            -- Force running state if needed
+            if humanoid:GetState() == Enum.HumanoidStateType.Stunned then
+                humanoid:ChangeState(Enum.HumanoidStateType.Running)
+            end
+            
+            -- Additional protection against root part velocity manipulation
+            if root then
+                root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, math.clamp(root.AssemblyLinearVelocity.Y, -50, 100), root.AssemblyLinearVelocity.Z)
+            end
+        end)
+        
+        -- Handle character respawns
+        player.CharacterAdded:Connect(function()
+            task.wait(1) -- Wait for character to fully load
+            if on then -- Only reconnect if anti-stun is still enabled
+                antiStun(true)
+            end
+        end)
     else
-        print("Anti-Stun Disabled (Placeholder)")
+        -- Disable anti-stun
+        if antiStunConnection then
+            antiStunConnection:Disconnect()
+            antiStunConnection = nil
+        end
     end
 end
+
 
 local function getClosestAimbotTarget()
     local closestPlayer, shortestDist = nil, math.huge
@@ -359,7 +410,7 @@ local function createMenu()
         tabBtn.Name = tabName
         tabBtn.Size = UDim2.new(0.33, -2, 1, 0) -- Tightly packed
         tabBtn.Text = tabName
-        tabBtn.BackgroundColor3 = i == 1 and Color3.fromRGB(80, 80, 80) or Color3.fromRGB(50, 50, 50)
+        
         tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.Font = Enum.Font.GothamBold
         tabBtn.TextSize = 10 -- Smaller text
@@ -384,18 +435,18 @@ local function createMenu()
     local function createToggleButton(parent, name, callback)
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
-        btn.Size = UDim2.new(1, 0, 0, 28) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+        btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
+        
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 12 -- Smaller text
+        btn.TextSize = 8 -- Smaller text
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
 
         local state = false
         btn.MouseButton1Click:Connect(function()
             state = not state
-            btn.BackgroundColor3 = state and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(170, 0, 0)
+            
             btn.Text = name..(state and ": ON" or ": OFF")
             callback(state)
         end)
@@ -406,12 +457,12 @@ local function createMenu()
     local function createOneShotButton(parent, name, callback)
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
-        btn.Size = UDim2.new(1, 0, 0, 28) -- Smaller, full width
+        btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
         btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 12 -- Smaller text
+        btn.TextSize = 8 -- Smaller text
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
         btn.MouseButton1Click:Connect(callback)
         rainbowElements[btn] = "TextColor"
@@ -429,14 +480,11 @@ local function createMenu()
     -- Visual Tab (renamed from VISUALS)
     createToggleButton(tabFrames["VISUAL"], "ESP", toggleESP)
     createToggleButton(tabFrames["VISUAL"], "INVISIBLE", setInvisible)
-    createToggleButton(tabFrames["VISUAL"], "RAINBOW TEXT", function(state)
-        rainbowTextEnabled = state
-    end)
 
     -- Cheat Tab
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT UP", teleportToSky)
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT DOWN", teleportToGround)
-    createOneShotButton(tabFrames["CHEAT"], "SERVER HOP", serverHop)
+    createOneShotButton(tabFrames["VISUAL"], "ZSERVER HOP", serverHop)
 
     -- UI INTERACTIONS
     minimize.MouseButton1Click:Connect(function()
