@@ -490,7 +490,7 @@ local function createMenu()
     -- Cheat Tab
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT UP", teleportToSky)
     createOneShotButton(tabFrames["CHEAT"], "TELEPORT DOWN", teleportToGround)
-    createOneShotButton(tabFrames["CHEAT"], "ZSERVER HOP", serverHop)
+    createOneShotButton(tabFrames["VISUAL"], "ZCHANGE SERVER", serverHop)
 
     -- UI INTERACTIONS
     minimize.MouseButton1Click:Connect(function()
