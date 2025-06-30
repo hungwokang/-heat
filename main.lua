@@ -435,7 +435,6 @@ local function createMenu()
         local btn = Instance.new("TextButton", parent)
         btn.Name = name
         btn.Size = UDim2.new(1, 0, 0, 20) -- Smaller, full width
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = name..": OFF" -- Initial state
         btn.Font = Enum.Font.GothamBold
