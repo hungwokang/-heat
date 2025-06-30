@@ -1,3 +1,7 @@
+-- CREDITS SERVER V1 YOUTUBE - SERVER
+
+
+-- SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
@@ -25,42 +29,11 @@ player.CharacterAdded:Connect(function()
 end)
 
 -- SCRIPT-WIDE STATES & VARIABLES
-local gui = nil
+local gui
 local godConnection, aimConnection
 local espEnabled = false
 local espConnections = {}
 local boostJumpEnabled = false
-local rainbowTextEnabled = true -- Control for rainbow text effects
-
--- RAINBOW COLOR ANIMATION
-local rainbowColors = {
-    Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 127, 0), Color3.fromRGB(255, 255, 0),
-    Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255), Color3.fromRGB(75, 0, 130),
-    Color3.fromRGB(148, 0, 211)
-}
-local colorIndex = 1
-local rainbowSpeed = 0.1
-local rainbowElements = {} -- Stores elements {element, type} for coloring
-
-local function updateRainbowColors()
-    if not rainbowTextEnabled then return end
-    
-    colorIndex = (colorIndex + rainbowSpeed) % #rainbowColors
-    local color1 = rainbowColors[math.floor(colorIndex % #rainbowColors) + 1]
-    local color2 = rainbowColors[math.floor((colorIndex + 1) % #rainbowColors) + 1]
-    local lerpValue = colorIndex % 1
-    local lerpedColor = color1:Lerp(color2, lerpValue)
-
-    for element, elementType in pairs(rainbowElements) do
-        if element and element.Parent then
-            if elementType == "TextColor" then
-                element.TextColor3 = lerpedColor
-            elseif elementType == "BackgroundColor" then
-                element.BackgroundColor3 = lerpedColor
-            end
-        end
-    end
-end
 
 ---------------------------------------------------
 --[[           FUNCTION DEFINITIONS            ]]--
@@ -127,83 +100,17 @@ function setGodMode(on)
     end
 end
 
-function antiStun(on)
-    if not humanoid then updateCharacter() end
-    if not humanoid then return end
-
-    if on then
-        -- Store original values
-        local originalWalkSpeed = humanoid.WalkSpeed
-        local originalJumpPower = humanoid.JumpPower
-        
-        -- Disconnect existing connection if any
-        if antiStunConnection then
-            antiStunConnection:Disconnect()
-        end
-        
-        -- Create new connection
-        antiStunConnection = RunService.Heartbeat:Connect(function()
-            if not humanoid or not humanoid.Parent then
-                if antiStunConnection then
-                    antiStunConnection:Disconnect()
-                end
-                return
-            end
-            
-            -- Reset movement properties
-            humanoid.WalkSpeed = originalWalkSpeed
-            humanoid.JumpPower = originalJumpPower
-            
-            -- Reset platform stand and sitting
-            humanoid.PlatformStand = false
-            humanoid.Sit = false
-            
-            -- Remove any velocity constraints
-            for _, v in ipairs(humanoid.Parent:GetDescendants()) do
-                if v:IsA("BodyVelocity") or v:IsA("BodyForce") or v:IsA("BodyAngularVelocity") then
-                    v:Destroy()
-                end
-            end
-            
-            -- Force running state if needed
-            if humanoid:GetState() == Enum.HumanoidStateType.Stunned then
-                humanoid:ChangeState(Enum.HumanoidStateType.Running)
-            end
-            
-            -- Additional protection against root part velocity manipulation
-            if root then
-                root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, math.clamp(root.AssemblyLinearVelocity.Y, -50, 100), root.AssemblyLinearVelocity.Z)
-            end
-        end)
-        
-        -- Handle character respawns
-        player.CharacterAdded:Connect(function()
-            task.wait(1) -- Wait for character to fully load
-            if on then -- Only reconnect if anti-stun is still enabled
-                antiStun(true)
-            end
-        end)
-    else
-        -- Disable anti-stun
-        if antiStunConnection then
-            antiStunConnection:Disconnect()
-            antiStunConnection = nil
-        end
-    end
-end
-
--- AIMBOT LOGIC: MODIFIED TO PRIORITIZE NEARBY PLAYERS
-local aimbotRange = 100 -- Set a range for aimbot targeting (e.g., 100 studs)
+local aimbotRange = 100
 
 local function getClosestAimbotTarget()
-    if not root then return nil end -- Ensure player's root part exists
+    if not root then return nil end
 
-    local closestPlayer, shortestDist = nil, aimbotRange -- Initialize shortestDist with the aimbot range
+    local closestPlayer, shortestDist = nil, aimbotRange
     
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChildOfClass("Humanoid") and p.Character.Humanoid.Health > 0 then
             local targetHRP = p.Character.HumanoidRootPart
-            local dist = (root.Position - targetHRP.Position).Magnitude -- Calculate distance from player's root to target's root
+            local dist = (root.Position - targetHRP.Position).Magnitude
             
             if dist < shortestDist then
                 closestPlayer = p
@@ -221,7 +128,6 @@ local function toggleAimbot(state)
             if target and target.Character and char and root and humanoid then
                 local targetHrp = target.Character:FindFirstChild("HumanoidRootPart")
                 if targetHrp then
-                    -- Face the target's HumanoidRootPart, maintaining current Y position
                     root.CFrame = CFrame.lookAt(root.Position, Vector3.new(targetHrp.Position.X, root.Position.Y, targetHrp.Position.Z))
                 end
             end
@@ -234,7 +140,6 @@ local function toggleAimbot(state)
     end
 end
 
--- BOOST JUMP LOGIC
 UserInputService.JumpRequest:Connect(function()
     if boostJumpEnabled and humanoid and root then
         root.AssemblyLinearVelocity = Vector3.new(0, 100, 0)
@@ -276,7 +181,8 @@ local function toggleESP(state)
             h.Name = "ServerV1ESP"
             h.FillColor = Color3.fromRGB(255, 50, 50)
             h.OutlineColor = Color3.new(1, 1, 1)
-            h.FillTransparency = 1
+            h.FillTransparency = 0.5
+            h.OutlineTransparency = 0
             h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
             h.Parent = character
         end
@@ -334,10 +240,10 @@ local function serverHop()
 end
 
 ---------------------------------------------------
---[[                 COMPACT UI                ]]--
+--[[          AMONG US STYLE UI V2             ]]--
 ---------------------------------------------------
 
-local function createMenu()
+local function createV1Menu()
     if gui then gui:Destroy() end
 
     gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
@@ -345,149 +251,182 @@ local function createMenu()
     gui.ResetOnSpawn = false
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local main = Instance.new("Frame", gui)
-    main.Size = UDim2.new(0, 250, 0, 350) -- Adjusted size to fit more options vertically
-    main.Position = UDim2.new(0.5, -125, 0.5, -175) -- Center the frame
-    main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    main.Active = true
-    main.Draggable = true
-    Instance.new("UICorner", main).CornerRadius = UDim.new(0, 6)
+    local mainFrame = Instance.new("Frame", gui)
+    local originalSize = UDim2.new(0, 180, 0, 320)
+    mainFrame.Size = originalSize
+    mainFrame.Position = UDim2.new(0.05, 0, 0.5, -160)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(23, 24, 28)
+    mainFrame.BackgroundTransparency = 0.3
+    mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
+    mainFrame.BorderSizePixel = 1
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    
+    local mainCorner = Instance.new("UICorner", mainFrame)
+    mainCorner.CornerRadius = UDim.new(0, 4)
 
-    local titleBar = Instance.new("Frame", main)
-    titleBar.Size = UDim2.new(1, 0, 0, 30)
-    titleBar.BackgroundTransparency = 1
+    local titleBar = Instance.new("TextLabel", mainFrame)
+    titleBar.Size = UDim2.new(1, 0, 0, 40) -- Increased height for bigger title
+    titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
+    titleBar.BackgroundTransparency = 0
+    titleBar.Text = "Server v1"
+    titleBar.Font = Enum.Font.SourceSansBold
+    titleBar.TextSize = 24 -- Made title bigger
+    titleBar.TextColor3 = Color3.new(1, 1, 1)
+    titleBar.TextXAlignment = Enum.TextXAlignment.Center
+    
+    local titleCorner = Instance.new("UICorner", titleBar)
+    titleCorner.CornerRadius = UDim.new(0, 4)
 
-    local title = Instance.new("TextLabel", titleBar)
-    title.Size = UDim2.new(1, 0, 1, 0)
-    title.Text = "Server v1"
-    title.Font = Enum.Font.GothamBold
-    title.TextSize = 20
-    title.BackgroundTransparency = 1
-    title.TextColor3 = Color3.new(1, 1, 1) -- Initial color before rainbow takes over
-    rainbowElements[title] = "TextColor"
-    title.TextScaled = true -- Allow text to scale to fit
-    title.MinimumFontSize = 12
+    local contentFrame = Instance.new("ScrollingFrame", mainFrame)
+    contentFrame.Size = UDim2.new(1, -10, 1, -45) -- Adjusted size due to bigger title bar
+    contentFrame.Position = UDim2.new(0, 5, 0, 40) -- Adjusted position due to bigger title bar
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.BorderSizePixel = 0
+    contentFrame.ScrollBarThickness = 3
+    contentFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    
+    local listLayout = Instance.new("UIListLayout", contentFrame)
+    listLayout.Padding = UDim.new(0, 8)
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    local scrollFrame = Instance.new("ScrollingFrame", main)
-    scrollFrame.Size = UDim2.new(1, -10, 1, -40) -- Adjusted size for content area
-    scrollFrame.Position = UDim2.new(0, 5, 0, 35)
-    scrollFrame.BackgroundTransparency = 1
-    scrollFrame.BorderSizePixel = 0
-    scrollFrame.ScrollBarThickness = 6
-    scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    scrollFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-    scrollFrame.CanvasSize = UDim2.new(0,0,0,0) -- Set by AutomaticCanvasSize.Y
+    -- MINIMIZE BUTTON
+    local minimized = false
+    local minimizeButton = Instance.new("TextButton", titleBar)
+    minimizeButton.Size = UDim2.new(0, 20, 0, 20)
+    minimizeButton.Position = UDim2.new(1, -25, 0.5, -10)
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    minimizeButton.Text = "–"
+    minimizeButton.Font = Enum.Font.SourceSansBold
+    minimizeButton.TextSize = 16
+    minimizeButton.TextColor3 = Color3.new(1,1,1)
+    local minimizeCorner = Instance.new("UICorner", minimizeButton)
+    minimizeCorner.CornerRadius = UDim.new(0, 3)
+    
+    minimizeButton.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        contentFrame.Visible = not minimized
+        minimizeButton.Text = minimized and "+" or "–"
+        
+        local targetSize = minimized and UDim2.new(0, 180, 0, 40) or originalSize -- Adjusted for new title bar height
+        TweenService:Create(mainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize}):Play()
+    end)
 
-    local layout = Instance.new("UIListLayout", scrollFrame)
-    layout.Padding = UDim.new(0, 6)
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    layout.FillDirection = Enum.FillDirection.Vertical
-    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    -- RAINBOW TEXT EFFECT
+    local function applyRainbowEffect(textLabel)
+        local hue = 0
+        RunService.Heartbeat:Connect(function()
+            hue = (hue + 0.01) % 1
+            textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
+        end)
+    end
+    
+    local currentLayoutOrder = 1
+    local function createCategory(title)
+        local categoryLabel = Instance.new("TextLabel", contentFrame)
+        categoryLabel.Size = UDim2.new(1, 0, 0, 25)
+        categoryLabel.Text = title
+        categoryLabel.Font = Enum.Font.SourceSansBold
+        categoryLabel.TextSize = 18
+        categoryLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+        categoryLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Semi-transparent background
+        categoryLabel.BackgroundTransparency = 0.5 -- Semi-transparent background
+        categoryLabel.TextXAlignment = Enum.TextXAlignment.Center
+        categoryLabel.LayoutOrder = currentLayoutOrder
+        currentLayoutOrder = currentLayoutOrder + 1
+        
+        local categoryCorner = Instance.new("UICorner", categoryLabel) -- Added corner for categories
+        categoryCorner.CornerRadius = UDim.new(0, 4)
 
-    local uiPadding = Instance.new("UIPadding", scrollFrame)
-    uiPadding.PaddingTop = UDim.new(0, 5)
-    uiPadding.PaddingBottom = UDim.new(0, 5)
-
-    local function createHeader(parent, text)
-        local header = Instance.new("TextLabel", parent)
-        header.Size = UDim2.new(1, 0, 0, 25)
-        header.Text = text
-        header.Font = Enum.Font.GothamBold
-        header.TextSize = 16
-        header.BackgroundTransparency = 1
-        header.TextColor3 = Color3.new(1, 1, 1)
-        header.TextXAlignment = Enum.TextXAlignment.Left
-        header.TextScaled = true
-        header.MinimumFontSize = 10
-        header.LayoutOrder = -1 -- Ensures headers appear at the top of their section
-        rainbowElements[header] = "TextColor"
-        return header
+        applyRainbowEffect(categoryLabel)
+        return categoryLabel
     end
 
-    local function createToggleButton(parent, name, callback)
-        local frame = Instance.new("Frame", parent)
-        frame.Size = UDim2.new(1, -10, 0, 30) -- Wider button frame
-        frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        frame.BackgroundTransparency = 0
-        Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+    local function createToggleButton(name, parent, callback)
+        local container = Instance.new("Frame", parent)
+        container.Size = UDim2.new(1, 0, 0, 30)
+        container.BackgroundTransparency = 1
+        container.LayoutOrder = currentLayoutOrder
+        currentLayoutOrder = currentLayoutOrder + 1
 
-        local textLabel = Instance.new("TextLabel", frame)
-        textLabel.Size = UDim2.new(1, -40, 1, 0) -- Make space for indicator
-        textLabel.Position = UDim2.new(0, 10, 0, 0) -- Padding from left
-        textLabel.Text = name
-        textLabel.Font = Enum.Font.GothamBold
-        textLabel.TextSize = 14
-        textLabel.TextXAlignment = Enum.TextXAlignment.Left
-        textLabel.BackgroundTransparency = 1
-        textLabel.TextColor3 = Color3.new(1, 1, 1)
+        local label = Instance.new("TextLabel", container)
+        label.Size = UDim2.new(0.7, 0, 1, 0)
+        label.Text = name
+        label.Font = Enum.Font.SourceSansSemibold
+        label.TextSize = 16
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.BackgroundTransparency = 1
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        applyRainbowEffect(label)
 
-        local indicator = Instance.new("Frame", frame)
-        indicator.Size = UDim2.new(0, 18, 0, 18)
-        indicator.Position = UDim2.new(1, -25, 0.5, -9) -- Aligned right, centered vertically
-        indicator.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Red for OFF
-        Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0) -- Circle
+        local switch = Instance.new("TextButton", container)
+        switch.Size = UDim2.new(0, 40, 0, 20)
+        switch.Position = UDim2.new(1, -45, 0.5, -10)
+        switch.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        switch.Text = ""
+        local switchCorner = Instance.new("UICorner", switch)
+        switchCorner.CornerRadius = UDim.new(0.5, 0)
+
+        local nub = Instance.new("Frame", switch)
+        nub.Size = UDim2.new(0, 16, 0, 16)
+        nub.Position = UDim2.new(0, 2, 0.5, -8)
+        nub.BackgroundColor3 = Color3.new(1, 1, 1)
+        local nubCorner = Instance.new("UICorner", nub)
+        nubCorner.CornerRadius = UDim.new(0.5, 0)
 
         local state = false
-        local function updateIndicator()
-            indicator.BackgroundColor3 = state and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 50, 50)
-        end
-        updateIndicator()
-
-        local btn = Instance.new("TextButton", frame)
-        btn.Size = UDim2.new(1, 0, 1, 0)
-        btn.BackgroundTransparency = 1
-        btn.Text = "" -- No text, frame contains it
-        btn.MouseButton1Click:Connect(function()
+        switch.MouseButton1Click:Connect(function()
             state = not state
-            updateIndicator()
             callback(state)
+            local nubPos = state and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+            local switchColor = state and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(70, 70, 70)
+            TweenService:Create(nub, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { Position = nubPos }):Play()
+            TweenService:Create(switch, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { BackgroundColor3 = switchColor }):Play()
         end)
-        
-        return btn -- Return the clickable part for potential further reference
     end
     
-    local function createOneShotButton(parent, name, callback)
+    local function createOneShotButton(name, parent, callback)
         local btn = Instance.new("TextButton", parent)
-        btn.Size = UDim2.new(1, -10, 0, 30) -- Wider button
-        btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        btn.BackgroundTransparency = 0
+        btn.Size = UDim2.new(1, 0, 0, 30)
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
+        btn.BackgroundTransparency = 1
         btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.Font = Enum.Font.SourceSansSemibold
+        btn.TextSize = 16
         btn.Text = name
-        btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 14
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        btn.LayoutOrder = currentLayoutOrder
+        currentLayoutOrder = currentLayoutOrder + 1
+        local btnCorner = Instance.new("UICorner", btn)
+        btnCorner.CornerRadius = UDim.new(0, 4)
+        applyRainbowEffect(btn)
+
         btn.MouseButton1Click:Connect(callback)
-        return btn
     end
-
-    -- POPULATE UI WITH HEADERS AND BUTTONS
     
-    -- PLAYER SETTINGS
-    createHeader(scrollFrame, "PLAYER SETTINGS")
-    createToggleButton(scrollFrame, "GODMODE", setGodMode)
-    createToggleButton(scrollFrame, "AIMBOT", toggleAimbot)
-    createToggleButton(scrollFrame, "ANTI-STUN", antiStun)
-    createToggleButton(scrollFrame, "BOOST JUMP", function(state)
-        boostJumpEnabled = state
-    end)
+    -- CREATE UI ELEMENTS
+    -- Player Settings
+    createCategory("PLAYER ABILITIES")
+    createToggleButton("Godmode", contentFrame, setGodMode)
+    createToggleButton("Aimbot", contentFrame, toggleAimbot)
+    createToggleButton("Jump Boost", contentFrame, function(state) boostJumpEnabled = state end)
+
+    -- Visual Settings
+    createCategory("VISUALS")
+    createToggleButton("ESP", contentFrame, toggleESP)
+    createToggleButton("Invisible", contentFrame, setInvisible)
+
+    -- Teleport Settings
+    createCategory("TELEPORT")
+    createOneShotButton("Teleport To Sky", contentFrame, teleportToSky)
+    createOneShotButton("Teleport To Ground", contentFrame, teleportToGround)
     
-    -- VISUAL SETTINGS
-    createHeader(scrollFrame, "VISUAL SETTINGS")
-    createToggleButton(scrollFrame, "ESP", toggleESP)
-    createToggleButton(scrollFrame, "INVISIBLE", setInvisible) -- Renamed from VISIBILITY for clarity with function name
+    -- World Settings
+    createCategory("WORLD")
+    createOneShotButton("Change Server", contentFrame, serverHop)
 
-    -- STEAL SETTINGS
-    createHeader(scrollFrame, "STEAL SETTINGS")
-    createOneShotButton(scrollFrame, "TELEPORT SKY", teleportToSky)
-    createOneShotButton(scrollFrame, "TELEPORT GROUND", teleportToGround)
-
-    -- WORLD
-    createHeader(scrollFrame, "WORLD")
-    createOneShotButton(scrollFrame, "CHANGE SERVER", serverHop)
-
-    -- Initialize Rainbow Effect
-    RunService.Heartbeat:Connect(updateRainbowColors)
+    applyRainbowEffect(titleBar)
 end
 
 -- Initialize Menu
-createMenu()
+createV1Menu()
+
