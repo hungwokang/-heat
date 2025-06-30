@@ -25,7 +25,7 @@ player.CharacterAdded:Connect(function()
 end)
 
 -- SCRIPT-WIDE STATES & VARIABLES
-local gui, minimized = nil, false
+local gui = nil
 local godConnection, aimConnection
 local espEnabled = false
 local espConnections = {}
@@ -476,8 +476,7 @@ local function createMenu()
     createToggleButton(scrollFrame, "ESP", toggleESP)
     createToggleButton(scrollFrame, "INVISIBLE", setInvisible) -- Renamed from VISIBILITY for clarity with function name
 
-    -- STEAL SETTINGS (Based on the example's "Copy Identity Player" and "Complete All Tasks" - not directly implemented)
-    -- As per your request, these will be "TELEPORT SKY" and "TELEPORT GROUND"
+    -- STEAL SETTINGS
     createHeader(scrollFrame, "STEAL SETTINGS")
     createOneShotButton(scrollFrame, "TELEPORT SKY", teleportToSky)
     createOneShotButton(scrollFrame, "TELEPORT GROUND", teleportToGround)
