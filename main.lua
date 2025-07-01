@@ -277,7 +277,7 @@ local function createTeleportGUI()
     titleBar.Size = UDim2.new(1, 0, 0, 30)
     titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
     titleBar.BackgroundTransparency = 0
-    titleBar.Text = "TELEPORTATION"
+    titleBar.Text = "Server V1"
     titleBar.Font = Enum.Font.SourceSansBold
     titleBar.TextSize = 18
     titleBar.TextColor3 = Color3.new(1, 1, 1)
@@ -294,7 +294,7 @@ local function createTeleportGUI()
     teleportButton.TextColor3 = Color3.new(1, 1, 1)
     teleportButton.Font = Enum.Font.SourceSansSemibold
     teleportButton.TextSize = 16
-    teleportButton.Text = "START"
+    teleportButton.Text = "HAHAHA"
     local btnCorner = Instance.new("UICorner", teleportButton)
     btnCorner.CornerRadius = UDim.new(0, 4)
     applyRainbowEffect(teleportButton)
@@ -303,11 +303,11 @@ local function createTeleportGUI()
         isTeleporting = not isTeleporting
         if isTeleporting then
             teleportToSky()
-            teleportButton.Text = "STOP"
+            teleportButton.Text = "START"
             
         else
             teleportToGround()
-            teleportButton.Text = "START"
+            teleportButton.Text = "STOP"
             
             end
     end)
@@ -480,7 +480,7 @@ local function createV1Menu()
 
     -- Steal Settings
     createCategory("STEAL SETTING")
-    createOneShotButton("START STEAL", contentFrame, function()
+    createOneShotButton("Start Steal", contentFrame, function()
         if teleportGui then
             teleportGui.Enabled = not teleportGui.Enabled
         end
