@@ -261,8 +261,8 @@ local function createTeleportGUI()
     teleportGui.Enabled = false -- Start hidden
 
     local mainFrame = Instance.new("Frame", teleportGui)
-    mainFrame.Size = UDim2.new(0, 150, 0, 100)
-    mainFrame.Position = UDim2.new(0.5, -75, 0.5, -50) -- Centered initially
+    mainFrame.Size = UDim2.new(0, 120, 0, 80) -- Smaller frame
+    mainFrame.Position = UDim2.new(0.5, -60, 0.5, -40) -- Centered
     mainFrame.BackgroundColor3 = Color3.fromRGB(23, 24, 28)
     mainFrame.BackgroundTransparency = 0.3
     mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
@@ -274,12 +274,12 @@ local function createTeleportGUI()
     mainCorner.CornerRadius = UDim.new(0, 4)
 
     local titleBar = Instance.new("TextLabel", mainFrame)
-    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.Size = UDim2.new(1, 0, 0, 25) -- Smaller title bar
     titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
     titleBar.BackgroundTransparency = 0
     titleBar.Text = "Server V1"
     titleBar.Font = Enum.Font.SourceSansBold
-    titleBar.TextSize = 18
+    titleBar.TextSize = 16 -- Smaller text
     titleBar.TextColor3 = Color3.new(1, 1, 1)
     titleBar.TextXAlignment = Enum.TextXAlignment.Center
     applyRainbowEffect(titleBar)
@@ -288,13 +288,16 @@ local function createTeleportGUI()
     titleCorner.CornerRadius = UDim.new(0, 4)
 
     local teleportButton = Instance.new("TextButton", mainFrame)
-    teleportButton.Size = UDim2.new(1, -20, 0, 40)
-    teleportButton.Position = UDim2.new(0.5, -65, 0.5, -5)
+    teleportButton.Size = UDim2.new(0.8, 0, 0, 30) -- Adjusted size to be 80% width
+    
+    -- This line is corrected to properly center the button horizontally.
+    teleportButton.Position = UDim2.new(0.1, 0, 0, titleBar.Size.Y.Offset + (mainFrame.Size.Y.Offset - titleBar.Size.Y.Offset - teleportButton.Size.Y.Offset) / 2)
+    
     teleportButton.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
     teleportButton.TextColor3 = Color3.new(1, 1, 1)
     teleportButton.Font = Enum.Font.SourceSansSemibold
-    teleportButton.TextSize = 16
-    teleportButton.Text = "HAHAHA"
+    teleportButton.TextSize = 14 -- Smaller text
+    teleportButton.Text = "START" -- Default text
     local btnCorner = Instance.new("UICorner", teleportButton)
     btnCorner.CornerRadius = UDim.new(0, 4)
     applyRainbowEffect(teleportButton)
@@ -303,13 +306,13 @@ local function createTeleportGUI()
         isTeleporting = not isTeleporting
         if isTeleporting then
             teleportToSky()
-            teleportButton.Text = "START"
+            teleportButton.Text = "STOP" -- Change text to STOP when active
             
         else
             teleportToGround()
-            teleportButton.Text = "STOP"
+            teleportButton.Text = "START" -- Change text back to START when inactive
             
-            end
+        end
     end)
 end
 
@@ -322,9 +325,9 @@ local function createV1Menu()
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     local mainFrame = Instance.new("Frame", gui)
-    local originalSize = UDim2.new(0, 180, 0, 320)
+    local originalSize = UDim2.new(0, 160, 0, 280) -- Smaller original size
     mainFrame.Size = originalSize
-    mainFrame.Position = UDim2.new(0.05, 0, 0.5, -160)
+    mainFrame.Position = UDim2.new(0.05, 0, 0.5, -140) -- Adjusted position
     mainFrame.BackgroundColor3 = Color3.fromRGB(23, 24, 28)
     mainFrame.BackgroundTransparency = 0.3
     mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
@@ -336,12 +339,12 @@ local function createV1Menu()
     mainCorner.CornerRadius = UDim.new(0, 4)
 
     local titleBar = Instance.new("TextLabel", mainFrame)
-    titleBar.Size = UDim2.new(1, 0, 0, 40) -- Increased height for bigger title
+    titleBar.Size = UDim2.new(1, 0, 0, 30) -- Smaller height for title
     titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
     titleBar.BackgroundTransparency = 0
     titleBar.Text = "Server v1"
     titleBar.Font = Enum.Font.SourceSansBold
-    titleBar.TextSize = 24 -- Made title bigger
+    titleBar.TextSize = 20 -- Slightly smaller title
     titleBar.TextColor3 = Color3.new(1, 1, 1)
     titleBar.TextXAlignment = Enum.TextXAlignment.Center
     
@@ -349,26 +352,26 @@ local function createV1Menu()
     titleCorner.CornerRadius = UDim.new(0, 4)
 
     local contentFrame = Instance.new("ScrollingFrame", mainFrame)
-    contentFrame.Size = UDim2.new(1, -10, 1, -45) -- Adjusted size due to bigger title bar
-    contentFrame.Position = UDim2.new(0, 5, 0, 40) -- Adjusted position due to bigger title bar
+    contentFrame.Size = UDim2.new(1, -10, 1, -35) -- Adjusted size
+    contentFrame.Position = UDim2.new(0, 5, 0, 30) -- Adjusted position
     contentFrame.BackgroundTransparency = 1
     contentFrame.BorderSizePixel = 0
     contentFrame.ScrollBarThickness = 3
     contentFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
     
     local listLayout = Instance.new("UIListLayout", contentFrame)
-    listLayout.Padding = UDim.new(0, 8)
+    listLayout.Padding = UDim.new(0, 5) -- Reduced padding
     listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
     -- MINIMIZE BUTTON
     local minimized = false
     local minimizeButton = Instance.new("TextButton", titleBar)
-    minimizeButton.Size = UDim2.new(0, 20, 0, 20)
-    minimizeButton.Position = UDim2.new(1, -25, 0.5, -10)
+    minimizeButton.Size = UDim2.new(0, 18, 0, 18) -- Smaller minimize button
+    minimizeButton.Position = UDim2.new(1, -22, 0.5, -9) -- Adjusted position
     minimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     minimizeButton.Text = "–"
     minimizeButton.Font = Enum.Font.SourceSansBold
-    minimizeButton.TextSize = 16
+    minimizeButton.TextSize = 14 -- Smaller text
     minimizeButton.TextColor3 = Color3.new(1,1,1)
     local minimizeCorner = Instance.new("UICorner", minimizeButton)
     minimizeCorner.CornerRadius = UDim.new(0, 3)
@@ -378,7 +381,7 @@ local function createV1Menu()
         contentFrame.Visible = not minimized
         minimizeButton.Text = minimized and "+" or "–"
         
-        local targetSize = minimized and UDim2.new(0, 180, 0, 40) or originalSize -- Adjusted for new title bar height
+        local targetSize = minimized and UDim2.new(0, 160, 0, 30) or originalSize -- Adjusted for new title bar height
         TweenService:Create(mainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize}):Play()
     end)
 
@@ -387,18 +390,18 @@ local function createV1Menu()
     local currentLayoutOrder = 1
     local function createCategory(title)
         local categoryLabel = Instance.new("TextLabel", contentFrame)
-        categoryLabel.Size = UDim2.new(1, 0, 0, 25)
+        categoryLabel.Size = UDim2.new(1, 0, 0, 20) -- Smaller category label
         categoryLabel.Text = title
         categoryLabel.Font = Enum.Font.SourceSansBold
-        categoryLabel.TextSize = 18
+        categoryLabel.TextSize = 15 -- Smaller text
         categoryLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-        categoryLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Semi-transparent background
-        categoryLabel.BackgroundTransparency = 0.5 -- Semi-transparent background
+        categoryLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        categoryLabel.BackgroundTransparency = 0.5
         categoryLabel.TextXAlignment = Enum.TextXAlignment.Center
         categoryLabel.LayoutOrder = currentLayoutOrder
         currentLayoutOrder = currentLayoutOrder + 1
         
-        local categoryCorner = Instance.new("UICorner", categoryLabel) -- Added corner for categories
+        local categoryCorner = Instance.new("UICorner", categoryLabel)
         categoryCorner.CornerRadius = UDim.new(0, 4)
 
         applyRainbowEffect(categoryLabel)
@@ -407,7 +410,7 @@ local function createV1Menu()
 
     local function createToggleButton(name, parent, callback)
         local container = Instance.new("Frame", parent)
-        container.Size = UDim2.new(1, 0, 0, 30)
+        container.Size = UDim2.new(1, 0, 0, 25) -- Smaller container for toggle
         container.BackgroundTransparency = 1
         container.LayoutOrder = currentLayoutOrder
         currentLayoutOrder = currentLayoutOrder + 1
@@ -416,23 +419,23 @@ local function createV1Menu()
         label.Size = UDim2.new(0.7, 0, 1, 0)
         label.Text = name
         label.Font = Enum.Font.SourceSansSemibold
-        label.TextSize = 16
+        label.TextSize = 14 -- Smaller text
         label.TextColor3 = Color3.new(1, 1, 1)
         label.BackgroundTransparency = 1
         label.TextXAlignment = Enum.TextXAlignment.Left
         applyRainbowEffect(label)
 
         local switch = Instance.new("TextButton", container)
-        switch.Size = UDim2.new(0, 40, 0, 20)
-        switch.Position = UDim2.new(1, -45, 0.5, -10)
+        switch.Size = UDim2.new(0, 35, 0, 18) -- Smaller switch
+        switch.Position = UDim2.new(1, -40, 0.5, -9) -- Adjusted position
         switch.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
         switch.Text = ""
         local switchCorner = Instance.new("UICorner", switch)
         switchCorner.CornerRadius = UDim.new(0.5, 0)
 
         local nub = Instance.new("Frame", switch)
-        nub.Size = UDim2.new(0, 16, 0, 16)
-        nub.Position = UDim2.new(0, 2, 0.5, -8)
+        nub.Size = UDim2.new(0, 14, 0, 14) -- Smaller nub
+        nub.Position = UDim2.new(0, 2, 0.5, -7) -- Adjusted position
         nub.BackgroundColor3 = Color3.new(1, 1, 1)
         local nubCorner = Instance.new("UICorner", nub)
         nubCorner.CornerRadius = UDim.new(0.5, 0)
@@ -441,7 +444,7 @@ local function createV1Menu()
         switch.MouseButton1Click:Connect(function()
             state = not state
             callback(state)
-            local nubPos = state and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+            local nubPos = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7) -- Adjusted nub position
             local switchColor = state and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(70, 70, 70)
             TweenService:Create(nub, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { Position = nubPos }):Play()
             TweenService:Create(switch, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { BackgroundColor3 = switchColor }):Play()
@@ -450,12 +453,12 @@ local function createV1Menu()
     
     local function createOneShotButton(name, parent, callback)
         local btn = Instance.new("TextButton", parent)
-        btn.Size = UDim2.new(1, 0, 0, 30)
+        btn.Size = UDim2.new(1, 0, 0, 25) -- Smaller button
         btn.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
         btn.BackgroundTransparency = 1
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Font = Enum.Font.SourceSansSemibold
-        btn.TextSize = 16
+        btn.TextSize = 14 -- Smaller text
         btn.Text = name
         btn.LayoutOrder = currentLayoutOrder
         currentLayoutOrder = currentLayoutOrder + 1
