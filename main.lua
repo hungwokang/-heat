@@ -277,7 +277,7 @@ local function createTeleportGUI()
     titleBar.Size = UDim2.new(1, 0, 0, 25) -- Smaller title bar
     titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
     titleBar.BackgroundTransparency = 0
-    titleBar.Text = "TELEPORT"
+    titleBar.Text = "TELEPORTATION"
     titleBar.Font = Enum.Font.SourceSansBold
     titleBar.TextSize = 16 -- Smaller text
     titleBar.TextColor3 = Color3.new(1, 1, 1)
@@ -297,7 +297,7 @@ local function createTeleportGUI()
     teleportButton.TextColor3 = Color3.new(1, 1, 1)
     teleportButton.Font = Enum.Font.SourceSansSemibold
     teleportButton.TextSize = 14 -- Smaller text
-    
+    teleportButton.Text = "SKY"
     local btnCorner = Instance.new("UICorner", teleportButton)
     btnCorner.CornerRadius = UDim.new(0, 4)
     applyRainbowEffect(teleportButton)
