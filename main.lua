@@ -1,6 +1,5 @@
 -- CREDITS SERVER V1 YOUTUBE - SERVER
 
-
 -- SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -34,6 +33,8 @@ local godConnection, aimConnection
 local espEnabled = false
 local espConnections = {}
 local boostJumpEnabled = false
+local teleportGui
+local isTeleporting = false
 
 ---------------------------------------------------
 --[[           FUNCTION DEFINITIONS            ]]--
@@ -240,8 +241,77 @@ local function serverHop()
 end
 
 ---------------------------------------------------
---[[          AMONG US STYLE UI V2             ]]--
+--[[                       ]]--
 ---------------------------------------------------
+
+local function applyRainbowEffect(textLabel)
+    local hue = 0
+    RunService.Heartbeat:Connect(function()
+        hue = (hue + 0.01) % 1
+        textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
+    end)
+end
+
+-- NEW: Teleport Pop-Up GUI
+local function createTeleportGUI()
+    teleportGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+    teleportGui.Name = "TeleportControl"
+    teleportGui.ResetOnSpawn = false
+    teleportGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    teleportGui.Enabled = false -- Start hidden
+
+    local mainFrame = Instance.new("Frame", teleportGui)
+    mainFrame.Size = UDim2.new(0, 150, 0, 100)
+    mainFrame.Position = UDim2.new(0.5, -75, 0.5, -50) -- Centered initially
+    mainFrame.BackgroundColor3 = Color3.fromRGB(23, 24, 28)
+    mainFrame.BackgroundTransparency = 0.3
+    mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
+    mainFrame.BorderSizePixel = 1
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    
+    local mainCorner = Instance.new("UICorner", mainFrame)
+    mainCorner.CornerRadius = UDim.new(0, 4)
+
+    local titleBar = Instance.new("TextLabel", mainFrame)
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.BackgroundColor3 = Color3.fromRGB(15, 16, 20)
+    titleBar.BackgroundTransparency = 0
+    titleBar.Text = "TELEPORTATION"
+    titleBar.Font = Enum.Font.SourceSansBold
+    titleBar.TextSize = 18
+    titleBar.TextColor3 = Color3.new(1, 1, 1)
+    titleBar.TextXAlignment = Enum.TextXAlignment.Center
+    applyRainbowEffect(titleBar)
+    
+    local titleCorner = Instance.new("UICorner", titleBar)
+    titleCorner.CornerRadius = UDim.new(0, 4)
+
+    local teleportButton = Instance.new("TextButton", mainFrame)
+    teleportButton.Size = UDim2.new(1, -20, 0, 40)
+    teleportButton.Position = UDim2.new(0.5, -65, 0.5, -5)
+    teleportButton.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
+    teleportButton.TextColor3 = Color3.new(1, 1, 1)
+    teleportButton.Font = Enum.Font.SourceSansSemibold
+    teleportButton.TextSize = 16
+    teleportButton.Text = "START"
+    local btnCorner = Instance.new("UICorner", teleportButton)
+    btnCorner.CornerRadius = UDim.new(0, 4)
+    applyRainbowEffect(teleportButton)
+
+    teleportButton.MouseButton1Click:Connect(function()
+        isTeleporting = not isTeleporting
+        if isTeleporting then
+            teleportToSky()
+            teleportButton.Text = "STOP"
+            
+        else
+            teleportToGround()
+            teleportButton.Text = "START"
+            
+            end
+    end)
+end
 
 local function createV1Menu()
     if gui then gui:Destroy() end
@@ -312,14 +382,7 @@ local function createV1Menu()
         TweenService:Create(mainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize}):Play()
     end)
 
-    -- RAINBOW TEXT EFFECT
-    local function applyRainbowEffect(textLabel)
-        local hue = 0
-        RunService.Heartbeat:Connect(function()
-            hue = (hue + 0.01) % 1
-            textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
-        end)
-    end
+    applyRainbowEffect(titleBar)
     
     local currentLayoutOrder = 1
     local function createCategory(title)
@@ -405,28 +468,29 @@ local function createV1Menu()
     
     -- CREATE UI ELEMENTS
     -- Player Settings
-    createCategory("PLAYER ABILITIES")
+    createCategory("PLAYER SETTINGS")
     createToggleButton("Godmode", contentFrame, setGodMode)
     createToggleButton("Aimbot", contentFrame, toggleAimbot)
     createToggleButton("Jump Boost", contentFrame, function(state) boostJumpEnabled = state end)
 
     -- Visual Settings
-    createCategory("VISUALS")
+    createCategory("VISUALS SETTINGS")
     createToggleButton("ESP", contentFrame, toggleESP)
     createToggleButton("Invisible", contentFrame, setInvisible)
 
-    -- Teleport Settings
-    createCategory("TELEPORT")
-    createOneShotButton("Teleport To Sky", contentFrame, teleportToSky)
-    createOneShotButton("Teleport To Ground", contentFrame, teleportToGround)
+    -- Steal Settings
+    createCategory("STEAL SETTING")
+    createOneShotButton("START STEAL", contentFrame, function()
+        if teleportGui then
+            teleportGui.Enabled = not teleportGui.Enabled
+        end
+    end)
     
     -- World Settings
-    createCategory("WORLD")
+    createCategory("WORLD SETTINGS")
     createOneShotButton("Change Server", contentFrame, serverHop)
-
-    applyRainbowEffect(titleBar)
 end
 
--- Initialize Menu
+-- Initialize Menus
+createTeleportGUI()
 createV1Menu()
-
