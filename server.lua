@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !a4jj
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -305,7 +305,8 @@ Black.BorderSizePixel = 0
 Black.BackgroundColor3 = Color3.new(0,0,0)
 Black.Parent = Frame_3
 
-
+-- Disable all notify calls
+function notify(...) return end
 
 TextBox.FocusLost:connect(function()
 	if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
@@ -480,9 +481,9 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
+		notify('',true)
 	else
-		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
+		notify('',true)
 	end
 else
 	notify('LOL this game has filtering disabled so it literally wont work here')
@@ -4934,6 +4935,3 @@ while true do
 	end
 	wait()
 end
-
--- Disable all notify calls
-function notify(...) return end
