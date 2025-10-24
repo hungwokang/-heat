@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !
+-- Edit more !hgvgcucu
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -149,7 +149,7 @@ R.TextSize = 14
 R.TextWrapped = true
 R.TextXAlignment = Enum.TextXAlignment.Left
 
-G.Name = "G"
+G.Name = "GG"
 G.Parent = Frame_3
 G.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
 G.BorderSizePixel = 0
