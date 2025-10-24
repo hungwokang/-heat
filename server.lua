@@ -12,6 +12,128 @@ Class_Name=string.reverse"ihS-ihS yB tidE "
 -- Edit more !
 
 
+-- // Server GUI (Draggable + Minimizable)
+local CoreGui = game:GetService("CoreGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ServerGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+-- Main Frame
+local Frame = Instance.new("Frame")
+Frame.Name = "MainFrame"
+Frame.Size = UDim2.new(0, 220, 0, 180)
+Frame.Position = UDim2.new(0.5, -110, 0.4, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 2
+Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 24)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = Frame
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Text = "Server"
+TitleText.Size = UDim2.new(1, -30, 1, 0)
+TitleText.Position = UDim2.new(0, 8, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Font = Enum.Font.SourceSansBold
+TitleText.TextSize = 18
+TitleText.Parent = TitleBar
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Text = "–"
+MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
+MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.TextSize = 18
+MinimizeButton.Parent = TitleBar
+
+-- Button container
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Size = UDim2.new(1, -10, 1, -34)
+ButtonContainer.Position = UDim2.new(0, 5, 0, 28)
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Parent = Frame
+
+-- Button generator
+local function CreateButton(name, text, y, callback)
+	local btn = Instance.new("TextButton")
+	btn.Name = name
+	btn.Text = text
+	btn.Size = UDim2.new(1, 0, 0, 28)
+	btn.Position = UDim2.new(0, 0, 0, y)
+	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 16
+	btn.BorderSizePixel = 1
+	btn.BorderColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Parent = ButtonContainer
+	btn.MouseButton1Click:Connect(callback)
+	return btn
+end
+
+-- Toggle collapse
+local minimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	ButtonContainer.Visible = not minimized
+	if minimized then
+		Frame.Size = UDim2.new(0, 220, 0, 24)
+	else
+		Frame.Size = UDim2.new(0, 220, 0, 180)
+	end
+end)
+
+-- === Buttons ===
+local equipped = false
+
+CreateButton("Equip", "Equip / Unequip", 0, function()
+	if equipped == false then
+		equip()
+		equipped = true
+		notify("Equipped")
+	else
+		unequip()
+		equipped = false
+		notify("Unequipped")
+	end
+end)
+
+CreateButton("Katana", "Katana Mode", 35, function()
+	getrid(handle)
+	katanamode()
+	notify("Katana Mode Enabled")
+end)
+
+CreateButton("Gun", "Gun Mode", 70, function()
+	getrid(handle)
+	gunmode()
+	notify("Gun Mode Enabled")
+end)
+
+CreateButton("Knife", "Knife Mode", 105, function()
+	getrid(handle)
+	knifemode()
+	notify("Knife Mode Enabled")
+end)
+
+
+
+
 local player = game:GetService('Players').LocalPlayer
 local rightclone = Instance.new('Motor6D')
 rightclone.Name = "Right Shoulder"
@@ -490,16 +612,7 @@ function notify(msg,remove)
 	end)
 	coru()
 end
-wowgoodphysOCS = true --if false then says that the game has shitty physics
-if "workspace.FilteringEnabled == false" then
-	if wowgoodphysOCS then
-		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
-	else
-		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
-	end
-else
-	notify('LOL this game has filtering disabled so it literally wont work here')
-end
+wowgoodphysOCS = true --if false then says that the game has shitty physic
 
 local handProperties = {
 	{"LimitsEnabled", true};
