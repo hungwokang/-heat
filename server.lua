@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !1111
+-- Edit more !1111h
 
 
 local player = game:GetService('Players').LocalPlayer
