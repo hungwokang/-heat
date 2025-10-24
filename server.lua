@@ -315,7 +315,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"A","B","C","D","Eeeeeeeeeeee","F"}
+local labels = {"KNIFE","GUN","D1K","KATANA","E","F"}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -4579,6 +4579,46 @@ function spawned()
 		end)
 		working = false
 	end
+
+
+	-- // Button Actions
+	-- Ensure only one weapon active at a time
+	local function deactivateAll()
+		if blademode ~= nil then
+			getrid(handle)
+			blademode = nil
+		end
+	end
+	
+	buttons["KNIFE"].MouseButton1Click:Connect(function()
+		deactivateAll()
+		if equipped == false then equip() end
+		blademode = "knife"
+		knifemode()
+	end)
+	
+	buttons["GUN"].MouseButton1Click:Connect(function()
+		deactivateAll()
+		if equipped == false then equip() end
+		blademode = "gun"
+		gunmode()
+	end)
+	
+	buttons["KATANA"].MouseButton1Click:Connect(function()
+		deactivateAll()
+		if equipped == false then equip() end
+		blademode = "katana"
+		katanamode()
+	end)
+	
+	buttons["D1K"].MouseButton1Click:Connect(function()
+		deactivateAll()
+		if equipped == false then equip() end
+		blademode = "reboot"
+		reboot()
+	end)
+
+
 
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
