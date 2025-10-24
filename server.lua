@@ -4594,14 +4594,6 @@ function spawned()
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
 		if usable and working == false then
-		
-			buttons["A"].MouseButton1Click:Connect(function()
-				if equipped == false then
-					if firsttime then
-						firsttime = false
-						end
-						equip()
-			end)
 
 		
 			if key == "z" then
