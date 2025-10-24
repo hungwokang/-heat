@@ -317,13 +317,14 @@ end)
 
 
 
---// Compact Server Control GUI (Scroll + Fit)
---// by hungwokang (optimized layout)
+--// Server Control GUI (Final Polished Version)
+--// by hungwokang — centered, semi-transparent, smooth auto-resize
 
 local player = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
+local tween = game:GetService("TweenService")
 
---// Screen GUI
+--// GUI Setup
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ServerGui"
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -334,12 +335,12 @@ MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 MainFrame.BackgroundTransparency = 0.5
-MainFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
-MainFrame.Size = UDim2.new(0, 160, 0, 120)
-MainFrame.Active = true
-MainFrame.Draggable = true
 MainFrame.BorderSizePixel = 2
 MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MainFrame.Size = UDim2.new(0, 160, 0, 120)
+MainFrame.Position = UDim2.new(0.5, -80, 0.5, -60) -- centered
+MainFrame.Active = true
+MainFrame.Draggable = true
 MainFrame.ClipsDescendants = true
 
 --// Title Bar
@@ -369,28 +370,37 @@ MinimizeButton.Text = "-"
 MinimizeButton.Font = Enum.Font.Code
 MinimizeButton.TextSize = 12
 MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
-MinimizeButton.BackgroundTransparency = 0.2
+MinimizeButton.BackgroundTransparency = 0.4
 MinimizeButton.BackgroundColor3 = Color3.new(0, 0, 0)
 MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
 MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
 
---// Scrolling frame for buttons
+--// Scrolling Frame (for buttons)
 local Scroll = Instance.new("ScrollingFrame")
 Scroll.Parent = MainFrame
 Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
 Scroll.Size = UDim2.new(1, 0, 1, -18)
 Scroll.Position = UDim2.new(0, 0, 0, 18)
-Scroll.BorderSizePixel = 0
 Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 Scroll.ScrollBarThickness = 6
 Scroll.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
 
+-- Center buttons
+local Holder = Instance.new("Frame")
+Holder.Parent = Scroll
+Holder.BackgroundTransparency = 1
+Holder.Size = UDim2.new(1, 0, 1, 0)
+Holder.AnchorPoint = Vector2.new(0.5, 0)
+Holder.Position = UDim2.new(0.5, 0, 0, 0)
+
 local Layout = Instance.new("UIGridLayout")
-Layout.Parent = Scroll
+Layout.Parent = Holder
 Layout.CellSize = UDim2.new(0, 46, 0, 25)
 Layout.CellPadding = UDim2.new(0, 4, 0, 4)
 Layout.FillDirectionMaxCells = 3
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 --// Buttons
@@ -399,23 +409,24 @@ local buttonData = {
 	{label = "Sausage", key = "b"},
 	{label = "Katana", key = "x"},
 	{label = "Q", key = "q"},
-	{label = "Z", key = "z"},
+	{label = "E", key = "z"},
 	{label = "F", key = "f"},
 	{label = "R", key = "r"},
 	{label = "G", key = "g"},
 	{label = "M", key = "m"},
 }
 
-for i, info in ipairs(buttonData) do
+for _, info in ipairs(buttonData) do
 	local btn = Instance.new("TextButton")
-	btn.Parent = Scroll
+	btn.Parent = Holder
 	btn.Text = info.label
 	btn.Font = Enum.Font.Code
 	btn.TextSize = 12
 	btn.TextColor3 = Color3.new(1, 1, 1)
 	btn.BackgroundColor3 = Color3.new(0, 0, 0)
-	btn.BackgroundTransparency = 0.2
+	btn.BackgroundTransparency = 0.5 -- semi-transparent
 	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+	btn.AutoButtonColor = true
 
 	btn.MouseButton1Click:Connect(function()
 		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(info.key)], false, game)
@@ -424,24 +435,26 @@ for i, info in ipairs(buttonData) do
 	end)
 end
 
--- auto resize scroll
+--// Auto update scroll height
 Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 4)
 end)
 
---// Minimize logic
+--// Minimize + smooth resize animation
 local minimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	if minimized then
-		Scroll.Visible = false
-		MainFrame.Size = UDim2.new(0, 160, 0, 18)
-		MinimizeButton.Text = "+"
-	else
-		Scroll.Visible = true
-		MainFrame.Size = UDim2.new(0, 160, 0, 120)
-		MinimizeButton.Text = "-"
-	end
+
+	local targetSize = minimized and UDim2.new(0, 160, 0, 18) or UDim2.new(0, 160, 0, 120)
+	local targetText = minimized and "+" or "-"
+
+	-- smooth animation
+	tween:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = targetSize
+	}):Play()
+
+	Scroll.Visible = not minimized
+	MinimizeButton.Text = targetText
 end)
 
 
