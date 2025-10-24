@@ -316,7 +316,7 @@ TextBox.FocusLost:connect(function()
 end)
 
 --// Server Control GUI (Black/Red Minimal Style)
---// by hungwokang (fixed and functional)
+--// by hungwokang (scrollable version)
 
 local player = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
@@ -371,11 +371,28 @@ MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
 MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
 
+--// Scrollable Button Container
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Parent = MainFrame
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.Size = UDim2.new(1, 0, 1, -18)
+ScrollFrame.Position = UDim2.new(0, 0, 0, 18)
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollFrame.ScrollBarThickness = 4
+ScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ScrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+
 local ButtonFrame = Instance.new("Frame")
-ButtonFrame.Parent = MainFrame
+ButtonFrame.Parent = ScrollFrame
 ButtonFrame.BackgroundTransparency = 1
-ButtonFrame.Size = UDim2.new(1, 0, 1, -18)
-ButtonFrame.Position = UDim2.new(0, 0, 0, 18)
+ButtonFrame.Size = UDim2.new(1, 0, 0, 0)
+
+--// Layout
+local layout = Instance.new("UIGridLayout")
+layout.CellSize = UDim2.new(0, 45, 0, 25)
+layout.CellPadding = UDim2.new(0, 6, 0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Parent = ButtonFrame
 
 --// Button labels and key bindings
 local buttons = {}
@@ -384,15 +401,17 @@ local buttonData = {
 	{label = "sausage", key = "b"},
 	{label = "katana", key = "x"},
 	{label = "Q", key = "q"},
-	{label = "E", key = "e"},
+	{label = "Z", key = "z"},
 	{label = "F", key = "f"},
 	{label = "R", key = "r"},
 	{label = "G", key = "g"},
 	{label = "M", key = "m"},
+	{label = "Z", key = "z"},
+	{label = "T", key = "t"},
 }
 
 --// Create buttons grid
-for i, info in ipairs(buttonData) do
+for _, info in ipairs(buttonData) do
 	local btn = Instance.new("TextButton")
 	btn.Parent = ButtonFrame
 	btn.Text = info.label
@@ -402,11 +421,15 @@ for i, info in ipairs(buttonData) do
 	btn.BackgroundColor3 = Color3.new(0, 0, 0)
 	btn.BackgroundTransparency = 0.2
 	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	btn.Size = UDim2.new(0, 45, 0, 25)
-	btn.Position = UDim2.new(0, ((i-1)%3)*52 + 6, 0, math.floor((i-1)/3)*30 + 6)
+	btn.AutoButtonColor = false
 
-	-- Store button
-	buttons[info.label] = btn
+	-- Hover effect
+	btn.MouseEnter:Connect(function()
+		btn.BackgroundTransparency = 0.1
+	end)
+	btn.MouseLeave:Connect(function()
+		btn.BackgroundTransparency = 0.2
+	end)
 
 	-- Click action
 	btn.MouseButton1Click:Connect(function()
@@ -414,6 +437,8 @@ for i, info in ipairs(buttonData) do
 		task.wait(0.1)
 		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(info.key)], false, game)
 	end)
+
+	buttons[info.label] = btn
 end
 
 --// Minimize logic
@@ -421,15 +446,17 @@ local minimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
-		ButtonFrame.Visible = false
+		ScrollFrame.Visible = false
 		MainFrame.Size = UDim2.new(0, 160, 0, 18)
 		MinimizeButton.Text = "+"
 	else
-		ButtonFrame.Visible = true
+		ScrollFrame.Visible = true
 		MainFrame.Size = UDim2.new(0, 160, 0, 100)
 		MinimizeButton.Text = "-"
 	end
 end)
+
+
 
 local mousedown = false
 mouse.Button1Down:connect(function()
