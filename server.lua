@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !hgvgcucu
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -149,7 +149,7 @@ R.TextSize = 14
 R.TextWrapped = true
 R.TextXAlignment = Enum.TextXAlignment.Left
 
-G.Name = "GG"
+G.Name = "G"
 G.Parent = Frame_3
 G.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
 G.BorderSizePixel = 0
@@ -307,14 +307,6 @@ Black.BackgroundTransparency = 1
 Black.BorderSizePixel = 0
 Black.BackgroundColor3 = Color3.new(0,0,0)
 Black.Parent = Frame_3
-
-
-
-
-
-
-
-
 
 TextBox.FocusLost:connect(function()
 	if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
