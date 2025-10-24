@@ -97,25 +97,6 @@ pcall(function()
 end)
 
 
-Customize.Name = "Customize"
-Customize.Parent = Nuee
-Customize.BackgroundColor3 = Color3.new(0, 0.776471, 0.282353)
-Customize.BorderSizePixel = 0
-Customize.Position = UDim2.new(0.15, 0, 0.9, 0)
-Customize.Size = UDim2.new(0.699999988, 0, 0.100000001, 0)
-Customize.Font = Enum.Font.SourceSans
-Customize.FontSize = Enum.FontSize.Size14
-Customize.Text = "Customize"
-Customize.TextColor3 = Color3.new(1, 1, 1)
-Customize.TextScaled = true
-Customize.TextSize = 14
-Customize.TextWrapped = true
-
-Frame.Parent = Customize
-Frame.BackgroundColor3 = Color3.new(0.164706, 0.164706, 0.164706)
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0, 0, 1, 0)
-Frame.Size = UDim2.new(1, 0, 6.5, 0)
 
 TextLabel.Parent = Frame
 TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
