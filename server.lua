@@ -315,88 +315,119 @@ TextBox.FocusLost:connect(function()
 	end
 end)
 
---// Simple Key Control GUI (fixed version)
---// by hungwokang
+--// Server Control GUI (Black/Red Minimal Style)
+--// by hungwokang (fixed and functional)
 
 local player = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
 
 --// UI setup
-local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-ScreenGui.Name = "KeyControlGUI"
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ServerGui"
+ScreenGui.Parent = game:GetService("CoreGui")
 
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.BackgroundColor3 = Color3.new(0, 0, 0)
-Frame.BackgroundTransparency = 0.5
-Frame.BorderColor3 = Color3.new(1, 0, 0)
-Frame.Position = UDim2.new(0.05, 0, 0.2, 0)
-Frame.Size = UDim2.new(0, 180, 0, 150)
-Frame.Active = true
-Frame.Draggable = true
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+MainFrame.BackgroundTransparency = 0.5
+MainFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
+MainFrame.Size = UDim2.new(0, 160, 0, 100)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MainFrame.ClipsDescendants = true
 
-local Title = Instance.new("TextLabel", Frame)
-Title.Text = "SERVER"
-Title.Size = UDim2.new(1, 0, 0, 20)
-Title.BackgroundTransparency = 0.2
-Title.BackgroundColor3 = Color3.new(0, 0, 0)
-Title.TextColor3 = Color3.new(1, 1, 1)
-Title.TextTransparency = 0.2
-Title.Font = Enum.Font.Code
-Title.TextSize = 12
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.BackgroundColor3 = Color3.new(0, 0, 0)
+TitleBar.BackgroundTransparency = 0.2
+TitleBar.BorderSizePixel = 1
+TitleBar.BorderColor3 = Color3.fromRGB(255, 0, 0)
+TitleBar.Size = UDim2.new(1, 0, 0, 18)
 
-local Minimize = Instance.new("TextButton", Frame)
-Minimize.Size = UDim2.new(0, 20, 0, 20)
-Minimize.Position = UDim2.new(1, -22, 0, 0)
-Minimize.Text = "-"
-Minimize.BackgroundTransparency = 0.3
-Minimize.TextColor3 = Color3.new(1, 0, 0)
-Minimize.Font = Enum.Font.Code
-Minimize.TextSize = 12
+local TitleText = Instance.new("TextLabel")
+TitleText.Parent = TitleBar
+TitleText.BackgroundTransparency = 1
+TitleText.Size = UDim2.new(1, -20, 1, 0)
+TitleText.Position = UDim2.new(0, 4, 0, 0)
+TitleText.Font = Enum.Font.Code
+TitleText.Text = "Server"
+TitleText.TextSize = 12
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
 
---// Function to make button
-local function makeButton(txt, key, x, y)
-	local b = Instance.new("TextButton", Frame)
-	b.Text = txt
-	b.Size = UDim2.new(0, 50, 0, 20)
-	b.Position = UDim2.new(0, x, 0, y)
-	b.BackgroundTransparency = 0.2
-	b.BackgroundColor3 = Color3.new(0, 0, 0)
-	b.TextColor3 = Color3.new(1, 1, 1)
-	b.BorderColor3 = Color3.new(1, 0, 0)
-	b.Font = Enum.Font.Code
-	b.TextSize = 10
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Parent = TitleBar
+MinimizeButton.Text = "-"
+MinimizeButton.Font = Enum.Font.Code
+MinimizeButton.TextSize = 12
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.BackgroundTransparency = 0.2
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
+MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
 
-	b.MouseButton1Click:Connect(function()
-		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(key)], false, game)
+local ButtonFrame = Instance.new("Frame")
+ButtonFrame.Parent = MainFrame
+ButtonFrame.BackgroundTransparency = 1
+ButtonFrame.Size = UDim2.new(1, 0, 1, -18)
+ButtonFrame.Position = UDim2.new(0, 0, 0, 18)
+
+--// Button labels and key bindings
+local buttons = {}
+local buttonData = {
+	{label = "knife", key = "c"},
+	{label = "sausage", key = "b"},
+	{label = "katana", key = "x"},
+	{label = "Q", key = "q"},
+	{label = "E", key = "e"},
+	{label = "F", key = "f"},
+	{label = "R", key = "r"},
+	{label = "G", key = "g"},
+	{label = "M", key = "m"},
+}
+
+--// Create buttons grid
+for i, info in ipairs(buttonData) do
+	local btn = Instance.new("TextButton")
+	btn.Parent = ButtonFrame
+	btn.Text = info.label
+	btn.Font = Enum.Font.Code
+	btn.TextSize = 12
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.BackgroundColor3 = Color3.new(0, 0, 0)
+	btn.BackgroundTransparency = 0.2
+	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+	btn.Size = UDim2.new(0, 45, 0, 25)
+	btn.Position = UDim2.new(0, ((i-1)%3)*52 + 6, 0, math.floor((i-1)/3)*30 + 6)
+
+	-- Store button
+	buttons[info.label] = btn
+
+	-- Click action
+	btn.MouseButton1Click:Connect(function()
+		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(info.key)], false, game)
 		task.wait(0.1)
-		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(key)], false, game)
+		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(info.key)], false, game)
 	end)
 end
 
---// Create grid of buttons
-makeButton("A", "a", 10, 30)
-makeButton("B", "b", 65, 30)
-makeButton("C", "c", 120, 30)
-makeButton("D", "d", 10, 55)
-makeButton("E", "e", 65, 55)
-makeButton("F", "f", 120, 55)
-makeButton("Z", "z", 10, 80)
-makeButton("X", "x", 65, 80)
-makeButton("V", "v", 120, 80)
-makeButton("Q", "q", 10, 105)
-makeButton("R", "r", 65, 105)
-makeButton("G", "g", 120, 105)
-makeButton("T", "t", 10, 130)
-makeButton("M", "m", 65, 130)
-
 --// Minimize logic
 local minimized = false
-Minimize.MouseButton1Click:Connect(function()
+MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	for _,v in pairs(Frame:GetChildren()) do
-		if v:IsA("TextButton") and v ~= Minimize then
-			v.Visible = not minimized
-		end
+	if minimized then
+		ButtonFrame.Visible = false
+		MainFrame.Size = UDim2.new(0, 160, 0, 18)
+		MinimizeButton.Text = "+"
+	else
+		ButtonFrame.Visible = true
+		MainFrame.Size = UDim2.new(0, 160, 0, 100)
+		MinimizeButton.Text = "-"
 	end
 end)
 
