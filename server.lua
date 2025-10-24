@@ -585,7 +585,7 @@ function notify(msg,remove)
 			-- Properties
 
 			TextLabel.Parent = Nuee
-			TextLabel.BackgroundColor3 = Color3.new(0.227451, 0.227451, 0.227451)
+			TextLabel.BackgroundTransparency = 1 -- ✅ fully invisible background
 			TextLabel.BorderSizePixel = 0
 			TextLabel.Position = UDim2.new(0.25, 0, 0.05, -10)
 			TextLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
@@ -593,18 +593,12 @@ function notify(msg,remove)
 			TextLabel.FontSize = Enum.FontSize.Size60
 			TextLabel.TextColor3 = Color3.new(1, 1, 1)
 			TextLabel.TextSize = 14
-			TextLabel.Transparency = 1
 			TextLabel.TextScaled = true
 			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
-			TextLabel.Text = ""
 			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-			Frame.Parent = TextLabel
-			Frame.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
-			Frame.BorderSizePixel = 0
-			Frame.Transparency = 1
-			Frame.Position = UDim2.new(0, 0, 1,0)
-			Frame.Size = UDim2.new(1, 0, 0, 5)
+			TextLabel.Text = ""
+			TextLabel.TextTransparency = 1 -- used for fade animation later
+				
 			for i=1,10 do
 				TextLabel.Transparency = TextLabel.Transparency-0.1
 				TextLabel.Position = TextLabel.Position+UDim2.new(0,0,0,1)
@@ -635,7 +629,7 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
+		notify('Created by Server.',true)
 	else
 		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	end
