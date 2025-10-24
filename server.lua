@@ -408,9 +408,8 @@ Layout.SortOrder = Enum.SortOrder.LayoutOrder
 local buttonData = {
 	{label = "Equip", key = "z"},
 	{label = "Knife", key = "c"},
-	{label = "Sausage", key = "b"},
+	{label = "Dik", key = "b"},
 	{label = "Katana", key = "x"},
-	{label = "Gun", key = "v"},
 	{label = "Blows", key = "f"},
 }
 
@@ -566,49 +565,54 @@ function removewelds(part)
 	end
 end
 
-function notify(msg,remove)
-	local coru= coroutine.wrap(function()
+function notify(msg, remove)
+	local coru = coroutine.wrap(function()
 		for i,v in pairs(Nuee:GetChildren()) do
 			if v:IsA('TextLabel') then v:Destroy() end
 		end
+
 		if msg then
 			local TextLabel = Instance.new("TextLabel")
 			local Frame = Instance.new("Frame")
 
-			-- Properties
-
 			TextLabel.Parent = Nuee
-			TextLabel.BackgroundTransparency = 1 -- ✅ fully invisible background
+			TextLabel.BackgroundTransparency = 1
 			TextLabel.BorderSizePixel = 0
 			TextLabel.Position = UDim2.new(0.25, 0, 0.05, -10)
 			TextLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
 			TextLabel.Font = Enum.Font.SourceSans
-			TextLabel.FontSize = Enum.FontSize.Size60
 			TextLabel.TextColor3 = Color3.new(1, 1, 1)
-			TextLabel.TextSize = 14
 			TextLabel.TextScaled = true
 			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
 			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+			TextLabel.TextTransparency = 1 -- start invisible
 			TextLabel.Text = ""
-			TextLabel.BackgroundTransparency = 1 -- used for fade animation later
-			Frame.BackgroundTransparency = 1
-				
-			for i=1,10 do
-				TextLabel.Transparency = TextLabel.Transparency-0.1
-				TextLabel.Position = TextLabel.Position+UDim2.new(0,0,0,1)
-				Frame.Transparency = Frame.Transparency-0.1
+
+			Frame.Parent = TextLabel
+			Frame.BackgroundTransparency = 1 -- fully transparent
+			Frame.BorderSizePixel = 0
+			Frame.Position = UDim2.new(0, 0, 1, 0)
+			Frame.Size = UDim2.new(1, 0, 0, 5)
+
+			-- Fade in
+			for i = 1, 10 do
+				TextLabel.TextTransparency = 1 - (i * 0.1)
+				TextLabel.Position = TextLabel.Position + UDim2.new(0, 0, 0, 1)
 				wait()
 			end
-			for i=1,#msg do
-				TextLabel.Text = string.sub(msg,1,i)
+
+			for i = 1, #msg do
+				TextLabel.Text = string.sub(msg, 1, i)
 				wait()
 			end
+
 			wait(1)
+
+			-- Fade out
 			if remove ~= true then
-				for i=1,10 do
-					TextLabel.Transparency = TextLabel.Transparency+0.1
-					TextLabel.Position = TextLabel.Position-UDim2.new(0,0,0,1)
-					Frame.Transparency = Frame.Transparency+0.1
+				for i = 1, 10 do
+					TextLabel.TextTransparency = i * 0.1
+					TextLabel.Position = TextLabel.Position - UDim2.new(0, 0, 0, 1)
 					wait()
 				end
 				TextLabel:Destroy()
@@ -623,7 +627,7 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('Press EQUIP first. Created by Server.',true)
+		notify('Created by Server.',true)
 	else
 		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	end
