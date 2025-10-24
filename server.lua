@@ -315,30 +315,34 @@ TextBox.FocusLost:connect(function()
 	end
 end)
 
---// Server Control GUI (Black/Red Minimal Style)
---// by hungwokang (scrollable version)
+
+
+--// Compact Server Control GUI (Scroll + Fit)
+--// by hungwokang (optimized layout)
 
 local player = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
 
---// UI setup
+--// Screen GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ServerGui"
 ScreenGui.Parent = game:GetService("CoreGui")
 
+--// Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 MainFrame.BackgroundTransparency = 0.5
 MainFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
-MainFrame.Size = UDim2.new(0, 160, 0, 100)
+MainFrame.Size = UDim2.new(0, 160, 0, 120)
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.BorderSizePixel = 2
 MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MainFrame.ClipsDescendants = true
 
+--// Title Bar
 local TitleBar = Instance.new("Frame")
 TitleBar.Name = "TitleBar"
 TitleBar.Parent = MainFrame
@@ -356,7 +360,7 @@ TitleText.Position = UDim2.new(0, 4, 0, 0)
 TitleText.Font = Enum.Font.Code
 TitleText.Text = "Server"
 TitleText.TextSize = 12
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextColor3 = Color3.new(1, 1, 1)
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 
 local MinimizeButton = Instance.new("TextButton")
@@ -364,56 +368,47 @@ MinimizeButton.Parent = TitleBar
 MinimizeButton.Text = "-"
 MinimizeButton.Font = Enum.Font.Code
 MinimizeButton.TextSize = 12
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
 MinimizeButton.BackgroundTransparency = 0.2
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MinimizeButton.BackgroundColor3 = Color3.new(0, 0, 0)
 MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
 MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
 
---// Scrollable Button Container
-local ScrollFrame = Instance.new("ScrollingFrame")
-ScrollFrame.Parent = MainFrame
-ScrollFrame.BackgroundTransparency = 1
-ScrollFrame.Size = UDim2.new(1, 0, 1, -18)
-ScrollFrame.Position = UDim2.new(0, 0, 0, 18)
-ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-ScrollFrame.ScrollBarThickness = 4
-ScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-ScrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+--// Scrolling frame for buttons
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Parent = MainFrame
+Scroll.BackgroundTransparency = 1
+Scroll.Size = UDim2.new(1, 0, 1, -18)
+Scroll.Position = UDim2.new(0, 0, 0, 18)
+Scroll.BorderSizePixel = 0
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 6
+Scroll.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
 
-local ButtonFrame = Instance.new("Frame")
-ButtonFrame.Parent = ScrollFrame
-ButtonFrame.BackgroundTransparency = 1
-ButtonFrame.Size = UDim2.new(1, 0, 0, 0)
+local Layout = Instance.new("UIGridLayout")
+Layout.Parent = Scroll
+Layout.CellSize = UDim2.new(0, 46, 0, 25)
+Layout.CellPadding = UDim2.new(0, 4, 0, 4)
+Layout.FillDirectionMaxCells = 3
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
---// Layout
-local layout = Instance.new("UIGridLayout")
-layout.CellSize = UDim2.new(0, 45, 0, 25)
-layout.CellPadding = UDim2.new(0, 6, 0, 6)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Parent = ButtonFrame
-
---// Button labels and key bindings
-local buttons = {}
+--// Buttons
 local buttonData = {
-	{label = "knife", key = "c"},
-	{label = "sausage", key = "b"},
-	{label = "katana", key = "x"},
+	{label = "Knife", key = "c"},
+	{label = "Sausage", key = "b"},
+	{label = "Katana", key = "x"},
 	{label = "Q", key = "q"},
 	{label = "Z", key = "z"},
 	{label = "F", key = "f"},
 	{label = "R", key = "r"},
 	{label = "G", key = "g"},
 	{label = "M", key = "m"},
-	{label = "Z", key = "z"},
-	{label = "T", key = "t"},
 }
 
---// Create buttons grid
-for _, info in ipairs(buttonData) do
+for i, info in ipairs(buttonData) do
 	local btn = Instance.new("TextButton")
-	btn.Parent = ButtonFrame
+	btn.Parent = Scroll
 	btn.Text = info.label
 	btn.Font = Enum.Font.Code
 	btn.TextSize = 12
@@ -421,40 +416,36 @@ for _, info in ipairs(buttonData) do
 	btn.BackgroundColor3 = Color3.new(0, 0, 0)
 	btn.BackgroundTransparency = 0.2
 	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	btn.AutoButtonColor = false
 
-	-- Hover effect
-	btn.MouseEnter:Connect(function()
-		btn.BackgroundTransparency = 0.1
-	end)
-	btn.MouseLeave:Connect(function()
-		btn.BackgroundTransparency = 0.2
-	end)
-
-	-- Click action
 	btn.MouseButton1Click:Connect(function()
 		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(info.key)], false, game)
 		task.wait(0.1)
 		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(info.key)], false, game)
 	end)
-
-	buttons[info.label] = btn
 end
+
+-- auto resize scroll
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 4)
+end)
 
 --// Minimize logic
 local minimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
-		ScrollFrame.Visible = false
+		Scroll.Visible = false
 		MainFrame.Size = UDim2.new(0, 160, 0, 18)
 		MinimizeButton.Text = "+"
 	else
-		ScrollFrame.Visible = true
-		MainFrame.Size = UDim2.new(0, 160, 0, 100)
+		Scroll.Visible = true
+		MainFrame.Size = UDim2.new(0, 160, 0, 120)
 		MinimizeButton.Text = "-"
 	end
 end)
+
+
+
 
 
 
