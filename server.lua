@@ -4595,7 +4595,7 @@ function spawned()
 		local key = kkk:lower()
 		if usable and working == false then
 		
-			if buttons["A"].MouseButton1Click:Connect(function()
+			buttons["A"].MouseButton1Click:Connect(function()
 				if equipped == false then
 					if firsttime then
 						firsttime = false
