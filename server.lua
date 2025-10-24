@@ -4507,7 +4507,7 @@ function spawned()
 					getrid(handle)
 					if firsttime2 then
 						firsttime2 = false
-						notify("Katana mode enabled || Press Q, E, or click to perform an action",true)
+						notify("Katana mode enabled || Press Qw, E, or click to perform an action",true)
 					else
 						notify("Katana mode enabled")
 					end
