@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !
+-- Edit more !yesss
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -568,6 +568,19 @@ function removewelds(part)
 	end
 end
 
+
+function notify(msg,remove)
+	local coru= coroutine.wrap(function()
+		for i,v in pairs(Nuee:GetChildren()) do
+			if v:IsA('TextLabel') then v:Destroy() end
+		end
+		if msg then
+			local TextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+		end
+	end)
+	coru()
+end
 
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
