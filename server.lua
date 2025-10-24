@@ -1,1 +1,4805 @@
-return(function(...)local T={"\065\088\116\047\067\071\061\061";"\106\071\084\118\072\071\061\061","\103\106\079\104\086\079\051\061";"\050\116\119\047\083\088\061\061","\057\114\043\112\066\121\052\104\048\072\097\115","\104\115\087\075\108\088\061\061","\097\055\053\109\100\110\102\076\067\081\099\061";"\115\102\118\100\089\054\086\074\083\056\061\061","\115\090\053\108\086\069\052\061","\122\068\079\055\065\119\065\082\117\106\089\052\056\085\047\082\077\115\056\061";"\078\070\079\085\056\074\107\083\119\067\054\048\103\120\081\112";"\051\101\097\089\065\070\047\088\056\069\061\061";"\071\109\073\055\101\107\056\061","\054\097\051\089\120\099\069\061","\098\108\110\086\109\049\057\118\114\082\119\057\074\054\057\103\103\100\057\061";"\050\066\104\117","\105\086\075\048\071\112\087\121\086\071\061\061";"\048\107\047\052\100\066\105\106\111\086\099\061","\117\068\087\055\065\115\067\120";"\081\119\079\070\051\043\089\121\112\087\087\109\057\109\082\079\089\071\061\061";"\055\089\071\081\117\069\061\061","\114\082\056\117\079\069\061\061","\115\070\051\078\050\071\061\061";"\077\122\071\103\047\088\061\061";"\117\053\081\043\073\086\070\101\106\070\100\061";"\112\100\100\089\079\088\107\055\108\069\061\061";"\104\088\082\057\122\103\112\104\073\056\061\061";"\089\079\114\099\108\118\114\118\057\105\065\081\081\068\109\116\112\057\050\061","\047\106\043\078\051\088\088\061","\066\053\087\081\088\107\086\110\118\069\073\089\108\122\083\115\085\043\069\061";"\113\066\069\070\110\111\068\112\090\113\072\053\075\065\086\088";"\065\078\053\101\112\098\067\068\056\066\110\083\057\088\061\061";"\106\122\109\067\069\113\051\122","\090\047\074\102\084\069\061\061","\051\085\079\113\081\119\120\105\078\085\099\109\078\109\065\090\043\088\061\061","\077\115\043\055";"\043\089\070\117\075\065\081\065\104\050\103\119\113\050\098\102\076\116\118\121\083\065\115\057\053\075\098\066";"\050\066\071\112\086\051\057\119\077\071\061\061";"\115\116\087\043";"\043\071\077\120\075\088\061\061";"\114\104\101\108\089\056\097\119\050\122\097\080","\122\112\101\043\110\056\061\061";"\057\070\082\098\104\115\087\101\056\080\100\061";"\070\102\107\057\071\071\061\061";"\079\102\085\055\109\090\111\084\089\050\052\086\106\097\048\043";"\117\085\043\052\077\081\043\052\078\111\122\047\078\068\084\079","\121\049\074\088\120\069\061\061";"\087\113\108\053\066\069\061\061";"\078\108\066\121\104\085\113\061";"\108\086\085\056\071\088\061\061";"\122\085\104\073\073\106\104\099\073\079\113\070\043\052\079\119\057\109\119\061","\081\050\112\117";"\118\109\105\050\117\081\067\071\110\119\119\061";"\120\100\071\102\084\099\066\121\090\117\100\061","\120\110\101\052\114\069\061\061","\106\109\079\073\086\068\108\067\067\073\111\072\122\047\089\065\099\071\069\061","\104\081\048\088\078\081\089\074","\067\068\043\121\088\051\121\122\108\054\086\072","\077\110\113\061";"\077\088\117\067\078\121\072\097\086\113\120\072\085\117\074\075\065\081\082\066","\097\081\118\055\085\071\080\082\082\114\098\050\113\088\061\061","\102\118\072\085","\056\070\114\113\078\118\089\080\117\052\114\111\118\068\120\050\122\069\061\061";"\115\068\116\048\077\100\078\055\105\069\061\061";"\116\098\098\074\048\120\088\105";"\098\054\097\105\069\116\048\080\112\065\119\068\116\069\061\061";"\098\088\118\049\109\112\117\061","\085\118\049\106\066\109\071\114\107\051\110\043\115\085\084\097\072\055\098\085\101\108\067\100\110\068\109\112\052\088\061\061";"\113\115\122\069\066\071\061\061","\050\054\106\113\078\083\051\061";"\077\053\050\082\057\069\061\061";"\082\101\052\057\085\049\054\074\084\111\076\082";"\108\087\047\073\065\081\056\109\057\105\104\076\056\052\082\087\056\085\057\061","\065\085\109\047\104\115\089\086","\112\119\071\088\089\069\061\061","\068\078\056\087\088\102\078\077\066\069\061\061","\111\109\067\082\077\068\122\079\112\071\061\061","\089\104\116\079\099\105\085\106\119\122\121\110\071\079\073\087","\090\053\112\090\085\069\061\061";"\104\111\057\070\070\069\061\061";"\051\075\111\083\050\071\061\061";"\102\049\074\109\083\069\061\061","\073\098\066\089\069\048\043\056\069\069\061\061";"\086\048\075\087\100\071\061\061","\101\122\075\084\087\068\050\061","\072\089\105\111\102\084\047\101\108\120\067\054\099\104\100\061","\056\085\067\055\077\068\043\101\104\071\061\061";"\116\104\097\097\119\083\074\120\109\105\106\047\054\056\068\105\048\103\081\055\122\119\113\103\108\088\061\061","\043\085\087\082\104\071\061\061";"\101\074\050\118\120\048\085\050\066\082\088\102\055\056\061\061","\110\104\053\079\117\053\111\072\085\071\061\061";"\086\073\105\108\107\101\077\054\102\077\071\061";"\077\071\102\100\078\106\117\061";"\117\069\052\089\115\071\061\061","\079\072\105\052\104\077\084\075\075\097\066\100\049\088\061\061","\108\087\079\101\065\057\089\102\073\081\067\056\065\118\097\115";"\073\111\117\109\065\052\122\057\051\057\048\105\056\075\043\086\073\079\119\061","\121\105\077\106\074\051\074\049\050\052\116\088\048\087\051\061";"\068\097\113\118\090\101\100\061";"\082\069\078\083\101\056\119\061";"\078\085\067\055\078\085\087\052","\122\104\053\056\075\056\061\061","\107\072\052\056\114\069\061\061";"\050\087\099\099\066\105\072\103";"\119\085\111\121\103\055\078\061","\075\105\115\122\122\055\076\119\118\077\043\055\065\082\117\067\057\080\119\055\048\069\061\061","\108\111\097\047\108\111\114\075","\118\116\053\081","\049\056\080\084\107\100\080\114\048\071\061\061","\118\070\086\102\056\068\050\070\122\075\114\111\112\115\047\088\108\069\061\061";"\068\122\081\083\067\088\061\061","\098\052\065\099\052\078\047\081\055\100\103\067","\049\115\116\071\079\099\054\106","\048\100\057\102\089\098\107\118\053\103\068\090","\086\088\048\103\111\071\061\061";"\078\068\121\068\114\113\083\085\053\097\113\051\047\118\073\069\102\074\051\061","\113\109\084\100\097\086\088\079","\050\078\103\112\067\101\088\112\103\057\080\068\051\071\061\061","\112\076\119\088\086\050\052\061";"\068\098\077\056\097\067\070\105\106\082\078\047\075\114\072\088\114\070\048\081\088\115\052\112\067\111\082\070\119\056\061\061";"\082\086\086\074";"\120\121\050\116\102\074\074\116\102\056\061\061","\112\057\084\055\117\043\079\097\104\080\065\121\057\070\089\055\108\069\061\061";"\043\120\088\073\114\069\061\061";"\074\054\113\043\121\070\070\111\088\119\051\061";"\050\106\110\049\089\069\061\061";"\112\080\078\079\055\112\050\090\106\085\074\107";"\054\082\048\053\089\054\068\103\073\069\061\061","\122\052\117\088\104\068\043\085\057\111\089\087\089\105\104\105","\069\067\083\086\074\047\097\043\048\076\107\114\102\121\090\120\087\057\078\043\120\100\090\111\104\100\104\069\071\056\061\061","\080\076\098\071\110\110\098\120\078\108\104\086","\116\086\056\050\103\106\107\065\109\089\098\082\075\108\116\120";"\111\089\115\052\083\056\089\090","\057\115\080\112\101\098\043\070\086\088\061\061";"\118\081\050\106\077\054\047\048\065\084\085\066\104\120\108\082\110\107\053\070\056\116\066\056\067\117\102\088\071\118\108\108\122\088\061\061";"\117\068\043\120\077\070\065\079","\104\090\066\088\107\066\089\120\082\106\055\085";"\104\115\067\075\104\105\114\082\077\068\117\061";"\073\087\079\122\117\068\114\076\077\075\043\065\122\115\089\056\051\109\051\061","\048\056\107\043\109\071\049\047\067\071\061\061","\121\048\072\099";"\050\050\097\076\089\112\065\081\049\072\086\061";"\116\070\102\089\086\122\115\115\088\118\078\118\087\050\090\084\111\056\061\061","\088\088\072\118\055\097\087\084";"\101\090\088\077\099\083\078\061";"\067\073\074\067\118\108\048\048\070\121\106\075\105\105\117\104\070\088\061\061","\082\047\078\103\057\088\061\061","\067\107\108\115","\120\085\050\098\090\105\117\101","\066\053\052\109\097\071\089\107\088\107\079\049\074\051\085\109\069\071\061\061","\119\089\103\099\111\054\109\071\117\049\103\073","\053\112\114\084\103\088\061\061","\052\087\077\121\100\103\073\107\071\069\061\061";"\066\057\053\071\080\069\061\061";"\118\073\083\109\067\082\122\067","\065\111\114\102\077\070\113\061","\122\115\043\075\104\105\114\072\112\056\061\061";"\065\070\089\109\078\069\061\061";"\084\065\106\097\055\074\070\077\080\078\084\114\074\081\070\086";"\112\055\082\103\101\088\061\061","\111\057\054\057\067\086\081\103\107\056\061\061";"\120\069\113\119\121\078\112\111\099\082\057\054\089\086\069\061";"\122\119\114\119\078\080\089\065\043\079\114\088\104\075\069\084\117\069\061\061";"\067\100\067\076\050\097\101\089\109\087\077\113\066\048\080\102\120\112\103\057";"\052\085\113\088";"\088\043\080\104\078\089\117\076";"\083\114\119\114\100\069\061\061";"\100\053\107\100\105\066\070\122\079\056\061\061","\107\072\106\054\116\066\118\087\072\097\098\067\065\115\075\098\079\081\071\074\078\103\113\061";"\052\111\053\116","\112\057\084\121\081\068\120\088\077\115\048\110\108\081\086\084\090\111\069\061";"\115\048\117\089\065\098\085\054\079\074\089\078\067\088\061\061";"\088\110\083\088\080\109\090\089";"\050\111\043\049\082\097\100\061","\112\057\120\118\057\087\089\075\078\118\065\048\056\118\065\065\043\088\061\061";"\081\098\099\120\067\101\084\071\103\070\105\099\100\056\061\061";"\098\056\073\114\109\088\089\053\072\074\053\110\115\056\061\061","\098\078\076\074\065\047\108\082\105\088\052\057\097\107\069\061";"\043\085\087\082\104\119\065\072\117\080\089\086\108\081\084\080","\084\072\122\088\047\118\074\067\104\099\088\111\080\078\073\077\118\066\057\061";"\066\076\109\112\056\043\068\104\118\069\081\085\117\069\119\061","\122\122\047\080\088\069\061\061","\072\051\068\071\065\084\056\057\087\076\057\061";"\120\100\057\073\047\055\056\115\107\104\122\101\070\118\053\079\112\047\065\069\113\056\061\061";"\068\109\114\122\088\071\061\061";"\076\116\120\113\056\101\078\098\086\117\072\065\120\065\050\061";"\122\083\097\103","\086\050\109\084\102\100\049\103\075\110\090\099\052\065\074\099","\043\049\072\120","\074\090\099\111\090\090\071\077\089\077\047\086\077\088\061\061";"\067\107\049\100\073\099\075\050\043\056\061\061","\051\097\115\050\081\110\116\048\103\050\114\097\120\112\068\090\048\086\080\061","\112\043\113\084\117\085\119\075\081\081\067\102\108\052\120\049";"\104\115\067\055\104\081\109\054\065\111\113\061","\050\051\086\100\067\056\061\061";"\073\097\097\079\081\116\050\121","\101\056\050\070\066\056\061\061","\120\104\111\108\120\088\061\061","\112\073\070\075";"\108\097\048\107\117\047\111\100\111\056\061\061";"\067\055\051\114\100\069\061\061","\072\084\054\087\066\108\100\061","\097\117\105\107\104\056\061\061","\086\076\119\068\047\108\122\114","\087\102\085\083\107\055\110\101\118\108\055\087\098\098\056\061";"\052\056\068\067\118\106\043\122";"\097\078\116\083\107\097\073\049\082\102\084\049\076\107\047\120\101\115\088\061";"\117\102\086\121\097\106\072\121\112\084\078\100";"\050\102\049\116\081\101\109\073";"\056\097\043\106\053\056\061\061";"\073\115\048\051\089\106\087\068\043\115\082\105\104\111\114\074\057\069\061\061","\053\080\087\086\083\115\110\047\080\076\080\061";"\102\121\071\087\084\055\051\111\109\069\061\061";"\054\043\043\107\106\100\071\072\083\088\061\061","\113\050\116\101\086\111\098\048\112\067\121\075\089\077\073\106\090\057\051\061";"\122\071\086\086\066\071\061\061";"\069\049\109\072\049\069\048\111\071\053\099\061","\071\056\087\049\107\069\061\061";"\121\122\112\051\120\090\086\103\082\056\061\061";"\106\049\078\107";"\048\077\098\068\090\078\100\112\105\115\099\121";"\103\102\107\087\076\088\085\085\104\121\068\075","\117\070\122\102\108\081\048\106";"\122\085\043\052\057\085\043\102\104\068\079\101\065\056\061\061","\080\077\100\074\057\048\057\061","\049\056\056\048\083\110\051\061","\056\118\097\118\073\068\069\088\078\101\122\109\112\101\079\090\122\080\088\061";"\057\074\075\070\087\081\057\061","\051\102\086\055";"\110\106\084\069\104\073\056\114\117\071\061\061","\081\104\079\085\056\090\072\108\119\120\048\067\081\080\114\103","\119\071\075\107\121\116\118\102\102\112\080\061";"\090\053\086\114\051\103\117\052\107\090\080\061";"\074\076\057\069\097\071\061\061","\057\111\079\081\065\119\089\106\090\057\114\108\104\081\082\055\073\080\078\061";"\073\073\122\066\104\049\087\068\116\119\057\105\070\112\081\114\111\110\109\073","\051\065\055\087\081\055\076\081\078\071\061\061","\111\109\067\106\078\088\061\061";"\054\099\116\083\074\049\068\084\107\070\101\066\050\107\053\080\055\069\081\065\090\065\056\061","\122\101\087\050\078\118\080\102\065\101\079\057\089\119\087\097";"\067\051\080\084\078\120\076\119\047\090\109\118\100\112\073\052";"\052\069\069\105\088\121\050\082\049\056\061\061","\048\119\090\101\121\088\071\054\078\071\047\070";"\122\085\043\052\122\115\043\075\078\085\043\055\065\115\087\055\104\105\051\061","\073\111\089\097";"\076\049\073\120\073\109\122\097\088\116\087\053\114\083\114\057\100\088\098\098\089\120\087\067\051\103\098\117\117\051\051\061","\054\071\114\071\071\078\117\051\110\078\077\115","\119\102\108\077\053\098\049\073\097\071\061\061","\107\055\101\121\100\066\073\079\051\056\061\061","\122\051\068\073\087\047\050\086\066\047\065\117\113\104\106\118\075\099\074\101\100\078\070\071\080\113\056\056\074\056\061\061";"\082\122\118\089\078\076\106\050\112\086\077\101","\083\070\116\077\065\081\088\097\121\068\069\061","\122\081\048\109\077\056\061\061";"\072\105\083\110\066\056\053\085\047\069\061\061";"\078\085\047\047\117\069\061\061","\109\111\118\071\080\057\050\043\106\103\072\052","\120\111\081\070\076\056\073\083","\070\099\084\088","\077\078\085\110\051\098\109\068\052\055\114\068\083\105\050\075\086\070\100\083\120\080\117\061","\099\047\115\100\083\106\052\082\085\115\111\078\088\101\116\051\071\071\113\061";"\053\057\054\074\120\110\074\083\121\070\052\112\066\107\098\119\068\089\055\099\107\088\061\061","\043\083\077\117\081\115\116\083","\053\122\078\116\056\101\084\110\117\080\107\067";"\100\109\049\110\051\071\061\061";"\065\085\087\120\065\056\061\061";"\111\080\068\065\084\080\073\073\069\111\082\052","\065\068\084\072\077\070\113\061","\113\065\112\100\043\109\113\079\048\088\061\061";"\047\083\073\048";"\088\121\080\119\047\097\083\100\073\107\067\106\115\109\100\061","\108\047\097\087\118\108\065\100";"\056\080\104\075\118\105\097\090\117\080\084\116\073\119\113\085","\090\054\069\079\065\076\086\082\090\069\061\061";"\068\117\109\089\087\066\067\119\082\121\077\077\086\113\108\070\097\115\050\061";"\102\097\083\050\056\120\097\098";"\112\073\056\048\067\077\072\109\111\066\117\061";"\113\107\102\097\066\071\061\061","\073\083\101\109\066\105\074\114\087\115\081\112\100\069\061\061";"\082\054\113\080\070\069\061\061";"\051\079\071\089\067\102\050\072\047\085\048\099";"\043\068\043\101\104\115\067\102\051\088\061\061";"\085\074\097\090\117\065\113\114\078\088\061\061";"\117\048\115\118\080\043\053\076\102\119\056\061";"\119\098\057\081\086\089\070\082\049\079\089\066","\108\104\119\085\085\103\115\121\110\103\071\097\105\048\090\103\120\103\107\101";"\069\047\107\088\052\111\068\047\083\105\080\061","\114\117\099\047\108\076\043\076\076\085\055\087\122\106\116\053\051\050\079\098\076\047\089\097\055\101\072\073\108\056\061\061";"\065\076\104\055\111\088\061\061","\077\110\119\061","\111\109\067\050\065\081\099\061";"\121\108\055\122\110\054\112\106\114\084\107\121\100\057\109\112\057\051\057\061";"\103\047\076\068\068\113\105\114\110\065\118\086\108\076\081\078\070\049\100\061";"\109\109\065\120\047\073\081\055\101\088\061\061","\122\100\066\086\098\069\061\061","\118\084\100\105\110\071\061\061";"\120\047\089\069\051\071\061\061","\079\067\047\105\081\113\052\104\057\103\088\061";"\089\053\113\089\111\055\048\107\084\105\098\077\080\083\111\065\053\090\102\087\056\115\051\061";"\048\111\106\077\099\088\061\061","\076\083\117\120";"\053\067\111\069","\090\056\109\049\118\113\057\068\056\088\078\047\056\088\061\061","\122\072\119\082\078\056\043\083\078\069\061\061";"\049\051\047\116\106\071\061\061";"\083\112\078\109";"\068\120\105\108\078\122\102\105\067\082\101\057\119\056\117\061";"\117\085\087\079\089\111\065\074\112\115\104\098","\100\079\078\097\054\088\055\086\068\068\051\075","\111\084\071\101\079\051\066\078\107\088\061\061";"\083\051\056\117\073\071\047\054\105\113\077\097","\121\121\120\052\048\088\061\061";"\043\105\054\097\089\047\119\082\086\078\079\112\052\101\068\080\120\087\076\083\104\090\101\049","\070\077\047\057";"\108\102\104\085\101\088\061\061","\078\122\052\101\049\086\043\051\106\071\061\061";"\067\049\104\086";"\108\080\072\073\067\115\072\085","\086\119\074\105\110\079\066\114","\090\112\111\106\083\113\115\118\119\056\061\061";"\116\078\052\118\078\111\083\050\055\115\056\061";"\082\105\109\082\055\088\061\061","\076\114\088\106\067\113\110\074\082\108\053\113","\108\080\078\097\114\051\073\107","\117\115\089\047\077\115\088\061";"\055\109\057\048\051\090\116\043\108\088\061\061";"\082\101\069\073\076\100\101\054\085\120\078\056\101\082\082\048\080\074\078\061";"\117\109\065\056\043\115\043\115\122\085\114\111\065\079\082\108\104\079\117\061";"\078\071\119\101\057\111\053\065\088\075\069\043\075\118\052\061";"\120\056\080\107\070\118\072\101","\047\086\072\054\102\056\061\061";"\086\076\078\099\069\097\056\061","\110\053\083\050\073\120\102\099\081\049\117\061";"\114\079\086\052\108\054\097\086\049\122\119\065\115\077\070\121\054\067\043\076\089\074\076\117\075\113\087\067\076\088\061\061","\078\106\057\087\081\069\061\061","\057\079\112\111","\073\110\068\087\102\112\102\118\116\111\082\057";"\122\084\085\105";"\090\084\107\078\087\049\118\055\073\049\077\088\109\079\097\097\106\067\083\079\076\056\061\061";"\085\114\053\055\051\110\086\103";"\098\072\102\066\043\088\061\061";"\057\067\081\051";"\047\057\100\098","\047\121\118\074\075\073\102\067\122\056\061\061";"\053\107\099\074\077\090\122\119\078\056\061\061","\056\085\067\050\077\070\113\075";"\106\100\048\100\104\055\098\074\112\056\061\061";"\074\043\105\086\089\116\109\048";"\122\056\067\086\085\081\065\114\069\077\121\109","\074\089\075\074\087\072\101\090\047\069\049\116\084\057\102\100\068\089\120\071\120\069\120\083\116\107\083\071\065\101\090\075\119\077\097\115\117\103\051\106\065\053\120\112\099\080\083\102\072\074\089\118\070\049\076\102\118\056\117\066\053\099\101\065\079\100\120\073\121\043\109\080\120\078\110\083\107\073\099\061","\108\104\074\103\087\069\061\061","\107\065\068\098\053\071\101\054\101\078\050\053";"\111\109\067\120\065\111\122\047\104\115\087\054\077\115\057\061","\100\108\103\107\121\101\121\072";"\056\075\116\106\083\088\061\061","\113\086\083\067\107\101\072\087\097\075\086\061";"\117\080\065\119\057\079\082\116\118\115\047\080\057\085\113\102\104\106\080\061";"\120\105\098\067\087\088\061\061";"\119\066\112\066";"\043\069\102\087\067\086\110\052\080\069\061\061","\117\085\072\057\086\097\066\087","\057\122\043\066\109\069\074\066\108\071\061\061";"\073\081\048\075\104\115\087\055\078\085\057\061","\051\079\110\122\083\089\050\061";"\056\048\047\108\078\103\115\071\043\056\061\061";"\108\108\052\097\121\070\048\102\105\069\061\061";"\050\048\056\078\102\071\061\061";"\057\047\086\072\078\047\081\053\098\087\100\061";"\079\118\053\117\098\098\115\048\085\101\117\107";"\050\089\081\078\052\052\055\109\080\049\112\114\056\077\109\118","\102\089\070\104\113\053\107\097\054\056\061\061","\077\081\087\052\108\071\061\061","\109\114\119\105\097\087\120\085\070\107\048\047\077\071\061\061","\105\097\110\108\121\086\078\076\066\056\061\061";"\099\087\077\088\052\119\104\087\105\085\082\111\113\085\088\061","\065\088\109\055\057\088\061\061","\085\051\106\056\085\066\105\084";"\072\089\106\103\083\055\088\118\112\071\061\061";"\097\111\084\051\079\099\099\076\104\066\084\079\078\069\072\085\106\118\069\061","\072\083\057\090\073\065\121\047\110\077\107\069\090\088\061\061";"\068\090\071\061";"\118\120\105\067\071\080\055\043\081\088\061\061";"\112\113\074\083\114\109\110\120\053\088\061\061";"\121\069\111\067\077\052\084\043\086\071\061\061","\050\066\081\120";"\112\090\074\048\099\083\065\111";"\114\097\052\075\072\113\088\110\118\100\052\061","\055\067\100\089\056\097\081
+local p = game.Players.LocalPlayer
+spawn(function() 
+fe=workspace.FilteringEnabled
+fe=false
+fe=not(true) 
+end) 
+local char = p.Character
+local hed = char.Head
+local hes = game.Players.LocalPlayer.Character.Humanoid
+
+Class_Name=string.reverse"ihS-ihS yB tidE "
+-- Edit more !
+
+
+local player = game:GetService('Players').LocalPlayer
+local rightclone = Instance.new('Motor6D')
+rightclone.Name = "Right Shoulder"
+rightclone.C0 = CFrame.new(1, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0)
+rightclone.C1 = CFrame.new(-0.5, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0)
+local leftclone = Instance.new('Motor6D')
+leftclone.Name = "Left Shoulder"
+leftclone.C0 = CFrame.new(-1, 0.5, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0)
+leftclone.C1 = CFrame.new(0.5, 0.5, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0)
+local leftlegclone = Instance.new('Motor6D')
+leftlegclone.Name = "Left Hip"
+leftlegclone.C0 = CFrame.new(-1, -1, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0)
+leftlegclone.C1 = CFrame.new(-0.5, 1, 0, -0, -0, -1, 0, 1, 0, 1, 0, 0)
+local rightlegclone = Instance.new('Motor6D')
+rightlegclone.Name = "Right Hip"
+rightlegclone.C0 = CFrame.new(1, -1, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0)
+rightlegclone.C1 = CFrame.new(0.5, 1, 0, 0, 0, 1, 0, 1, 0, -1, -0, -0)
+local torsoclone = Instance.new('Motor6D')
+torsoclone.Name = "RootJoint"
+torsoclone.C0 = CFrame.new(0, 0, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0)
+torsoclone.C1 = CFrame.new(0, 0, 0, -1, -0, -0, 0, 0, 1, 0, 1, 0)
+local mouse = player:GetMouse()
+local rag1 = false
+local rag2 = false
+local firsttime = true
+local firsttime2 = true
+local firsttime3 = true
+local firsttime4 = true
+local firsttime5 = true
+local childlock = false
+plr = game.Players.LocalPlayer
+local bonnie = Instance.new("Sound",workspace)
+bonnie.Volume = 0.2
+bonnie.Looped = true
+bonnie.Pitch = 0.9
+bonnie.SoundId = "rbxassetid://6913550990"
+bonnie:Play()
+local math1 = math.random(1,5)
+math1 = math1+(math.random(0,9)/10)
+local math2 = math.random(1,15)
+math2 = math2+(math.random(0,9)/10)
+local math3 = math.random(1,10)
+math3 = math3+(math.random(0,9)/10)
+local math4 = math.random(5,100)
+math4 = math4+(math.random(0,9)/10)
+local answer = (math4+(math1*math3))/(math1*math2)
+answer = math.floor((answer*10)+0.5)
+answer = answer/10
+print("put this in childlock to bypass: "..answer)
+warn(Class_Name.." #4817")
+local rekt = {}
+
+-- Objects
+-- // Server GUI (Draggable + Minimizable)
+local CoreGui = game:GetService("CoreGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ServerGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+-- Main Frame
+local Frame = Instance.new("Frame")
+Frame.Name = "MainFrame"
+Frame.Size = UDim2.new(0, 220, 0, 180)
+Frame.Position = UDim2.new(0.5, -110, 0.4, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 2
+Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 24)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = Frame
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Text = "Server"
+TitleText.Size = UDim2.new(1, -30, 1, 0)
+TitleText.Position = UDim2.new(0, 8, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Font = Enum.Font.SourceSansBold
+TitleText.TextSize = 18
+TitleText.Parent = TitleBar
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Text = "–"
+MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
+MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.TextSize = 18
+MinimizeButton.Parent = TitleBar
+
+-- Button container
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Size = UDim2.new(1, -10, 1, -34)
+ButtonContainer.Position = UDim2.new(0, 5, 0, 28)
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Parent = Frame
+
+-- Button generator
+local function CreateButton(name, text, y, callback)
+	local btn = Instance.new("TextButton")
+	btn.Name = name
+	btn.Text = text
+	btn.Size = UDim2.new(1, 0, 0, 28)
+	btn.Position = UDim2.new(0, 0, 0, y)
+	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 16
+	btn.BorderSizePixel = 1
+	btn.BorderColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Parent = ButtonContainer
+	btn.MouseButton1Click:Connect(callback)
+	return btn
+end
+
+-- Toggle collapse
+local minimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	ButtonContainer.Visible = not minimized
+	if minimized then
+		Frame.Size = UDim2.new(0, 220, 0, 24)
+	else
+		Frame.Size = UDim2.new(0, 220, 0, 180)
+	end
+end)
+
+-- === Buttons ===
+local equipped = false
+
+CreateButton("Equip", "Equip / Unequip", 0, function()
+	if equipped == false then
+		equip()
+		equipped = true
+		notify("Equipped")
+	else
+		unequip()
+		equipped = false
+		notify("Unequipped")
+	end
+end)
+
+CreateButton("Katana", "Katana Mode", 35, function()
+	getrid(handle)
+	katanamode()
+	notify("Katana Mode Enabled")
+end)
+
+CreateButton("Gun", "Gun Mode", 70, function()
+	getrid(handle)
+	gunmode()
+	notify("Gun Mode Enabled")
+end)
+
+CreateButton("Knife", "Knife Mode", 105, function()
+	getrid(handle)
+	knifemode()
+	notify("Knife Mode Enabled")
+end)
+
+local mousedown = false
+mouse.Button1Down:connect(function()
+	mousedown = true
+end)
+mouse.Button1Up:connect(function()
+	mousedown = false
+	slidee = false
+end)
+
+Slidee.MouseButton1Down:connect(function()
+	slidee = true
+end)
+Slidee.MouseButton1Up:connect(function()
+	slidee = false
+end)
+
+mouse.Move:connect(function()
+	if mousedown then
+		if mouse.X >= ImageLabel.AbsolutePosition.X and mouse.X <= ImageLabel.AbsolutePosition.X+ ImageLabel.AbsoluteSize.X and mouse.Y >= ImageLabel.AbsolutePosition.Y and mouse.Y <= ImageLabel.AbsolutePosition.Y+ ImageLabel.AbsoluteSize.Y then
+			local newX = ImageLabel.AbsoluteSize.X-(mouse.X-ImageLabel.AbsolutePosition.X)
+			local newY = ImageLabel.AbsoluteSize.Y-(mouse.Y-ImageLabel.AbsolutePosition.Y)
+			local newcolor = Color3.fromHSV(newX/ImageLabel.AbsoluteSize.X,newY/ImageLabel.AbsoluteSize.Y,Black.Transparency)
+			Frame_2.BackgroundColor3 = newcolor
+			TextLabel.Text = "Blood Color: ["..math.floor(255*newcolor.r)..", "..math.floor(255*newcolor.g)..", "..math.floor(255*newcolor.b).."]"
+		end
+	end
+	if slidee then
+		local ree = mouse.X
+		if ree < Slider.AbsolutePosition.X then
+			ree = Slider.AbsolutePosition.X
+		elseif ree > Slider.AbsolutePosition.X+Slider.AbsoluteSize.X then
+			ree = Slider.AbsolutePosition.X+Slider.AbsoluteSize.X
+		end
+		Slidee.Position = UDim2.new(0,ree-Slider.AbsolutePosition.X,0,0)
+		Black.Transparency = 1-(Slidee.Position.X.Offset/Slider.AbsoluteSize.X)
+	end
+end)
+
+R.FocusLost:connect(function()
+	if R.Text ~= "Input" then
+		if tonumber(R.Text) then
+			if tonumber(R.Text) > 255 then
+				R.Text = "255"
+			end
+			local newcolor = Color3.new(tonumber(R.Text/255),Frame_2.BackgroundColor3.g,Frame_2.BackgroundColor3.b)
+			Frame_2.BackgroundColor3 = newcolor
+			TextLabel.Text = "Blood Color: ["..math.floor(255*newcolor.r)..", "..math.floor(255*newcolor.g)..", "..math.floor(255*newcolor.b).."]"
+			R.Text = "Input"
+		end
+	end
+end)
+G.FocusLost:connect(function()
+	if G.Text ~= "Input" then
+		if tonumber(G.Text) then
+			if tonumber(G.Text) > 255 then
+				G.Text = "255"
+			end
+			local newcolor = Color3.new(Frame_2.BackgroundColor3.r,tonumber(G.Text/255),Frame_2.BackgroundColor3.b)
+			Frame_2.BackgroundColor3 = newcolor
+			TextLabel.Text = "Blood Color: ["..math.floor(255*newcolor.r)..", "..math.floor(255*newcolor.g)..", "..math.floor(255*newcolor.b).."]"
+			G.Text = "Input"
+		end
+	end
+end)
+B.FocusLost:connect(function()
+	if B.Text ~= "Input" then
+		if tonumber(B.Text) then
+			if tonumber(B.Text) > 255 then
+				B.Text = "255"
+			end
+			local newcolor = Color3.new(Frame_2.BackgroundColor3.r,Frame_2.BackgroundColor3.g,tonumber(B.Text/255))
+			Frame_2.BackgroundColor3 = newcolor
+			TextLabel.Text = "Blood Color: ["..math.floor(255*newcolor.r)..", "..math.floor(255*newcolor.g)..", "..math.floor(255*newcolor.b).."]"
+			B.Text = "Input"
+		end
+	end
+end)
+
+local open = false
+local opening = false
+Customize.MouseButton1Click:connect(function()
+	if opening == false then
+		if open == false then
+			open = true
+			opening = true
+			Customize:TweenPosition(UDim2.new(0.15, 0, 0.1, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quint,1)
+			wait(1)
+			opening = false
+		else
+			open = false
+			opening = true
+			Customize:TweenPosition(UDim2.new(0.15, 0, 0.9, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quint,1)
+			wait(1)
+			opening = false
+		end
+	end
+end)
+
+Frame_2.BackgroundColor3 = Color3.fromRGB(117,0,0)
+
+function removewelds(part)
+	for i,v in pairs(part:GetChildren()) do
+		if v:IsA('Weld') then v:Destroy() end
+	end
+end
+
+function notify(msg,remove)
+	local coru= coroutine.wrap(function()
+		for i,v in pairs(Nuee:GetChildren()) do
+			if v:IsA('TextLabel') then v:Destroy() end
+		end
+		if msg then
+			local TextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+
+			-- Properties
+
+			TextLabel.Parent = Nuee
+			TextLabel.BackgroundColor3 = Color3.new(0.227451, 0.227451, 0.227451)
+			TextLabel.BorderSizePixel = 0
+			TextLabel.Position = UDim2.new(0.25, 0, 0.05, -10)
+			TextLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
+			TextLabel.Font = Enum.Font.SourceSans
+			TextLabel.FontSize = Enum.FontSize.Size60
+			TextLabel.TextColor3 = Color3.new(1, 1, 1)
+			TextLabel.TextSize = 50
+			TextLabel.Transparency = 1
+			TextLabel.TextScaled = true
+			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+			TextLabel.Text = ""
+			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+			Frame.Parent = TextLabel
+			Frame.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
+			Frame.BorderSizePixel = 0
+			Frame.Transparency = 1
+			Frame.Position = UDim2.new(0, 0, 1,0)
+			Frame.Size = UDim2.new(1, 0, 0, 5)
+			for i=1,10 do
+				TextLabel.Transparency = TextLabel.Transparency-0.1
+				TextLabel.Position = TextLabel.Position+UDim2.new(0,0,0,1)
+				Frame.Transparency = Frame.Transparency-0.1
+				wait()
+			end
+			for i=1,#msg do
+				TextLabel.Text = string.sub(msg,1,i)
+				wait()
+			end
+			wait(1)
+			if remove ~= true then
+				for i=1,10 do
+					TextLabel.Transparency = TextLabel.Transparency+0.1
+					TextLabel.Position = TextLabel.Position-UDim2.new(0,0,0,1)
+					Frame.Transparency = Frame.Transparency+0.1
+					wait()
+				end
+				TextLabel:Destroy()
+			end
+		end
+	end)
+	coru()
+end
+wowgoodphysOCS = true --if false then says that the game has shitty physics
+if "workspace.FilteringEnabled == false" then
+	if wowgoodphysOCS then
+		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
+	else
+		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
+	end
+else
+	notify('LOL this game has filtering disabled so it literally wont work here')
+end
+
+local handProperties = {
+	{"LimitsEnabled", true};
+	{"UpperAngle",0};
+	{"LowerAngle",0};
+}
+local shinProperties = {
+	{"LimitsEnabled", true};
+	{"UpperAngle", 0};
+	{"LowerAngle", -75};
+}
+local footProperties = {
+	{"LimitsEnabled", true};
+	{"UpperAngle", 15};
+	{"LowerAngle", -45};
+}
+
+function bleed(frick,OwO)
+	while frick.Parent ~= nil and frick.Parent.Parent ~= nil do
+		local reeee = coroutine.wrap(function()
+			local thing = Instance.new('Part',workspace)
+			thing.Size = Vector3.new(0.2,0.2,0.2)
+			thing.CFrame = frick.CFrame
+			thing.Transparency = 1
+			thing.BrickColor = BrickColor.new(Frame_2.BackgroundColor3)
+			thing.Material = Enum.Material.SmoothPlastic
+			thing.Name = "Blood"
+			thing.CanCollide =false
+			thing:BreakJoints()
+			local rawrxd = Instance.new('BodyForce',thing)
+			rawrxd.Force = frick.CFrame.upVector*(math.random()*2)+Vector3.new(math.random(-5, 5)/10,1.5,0)
+			local coru = coroutine.wrap(function()
+				wait(0.01)
+				rawrxd:Destroy()
+			end)
+			coru()
+			local ree = Instance.new('ParticleEmitter',thing)
+			if OwO ~= true then
+				ree.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Frame_2.BackgroundColor3),ColorSequenceKeypoint.new(1,Frame_2.BackgroundColor3)})
+			else
+				ree.Color = ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),ColorSequenceKeypoint.new(1,Color3.new(1,1,1))})
+			end
+			ree.Size = NumberSequence.new({NumberSequenceKeypoint.new(0,0.1),NumberSequenceKeypoint.new(1,0.1)})
+			ree.Texture = 'rbxassetid://867743272'
+			ree.Lifetime = NumberRange.new(0.4)
+			ree.Rate = 50
+			ree.LockedToPart = true
+			ree.Speed = NumberRange.new(0, 2)  
+
+			thing.Touched:connect(function(tou)
+				if tou.Parent and tou.Parent:IsA('Tool') == false and tou.Parent.Parent:FindFirstChildOfClass('Humanoid') == nil and tou.Parent:FindFirstChildOfClass('Humanoid') == nil and tou.Name ~= "Blood" and tou.Parent.Name ~= "Projectile" and tou.Parent.Name ~= "big ass knife" and tou.Parent ~= player.Character and tou.Parent.ClassName ~= "Accessory" and tou.Parent.Name ~= "bitch ass knife" and tou.Parent.Name ~= 'handle' and tou.Name ~= "blade" and tou.Name ~= 'handle' and tou.Name ~= "Projectile" and tou.Parent.Name ~= "Projectile" then
+					local pos = Vector3.new(thing.Position.X,(tou.Position.Y+(tou.Size.Y/2))+0.02,thing.Position.Z)
+					local Point1 = pos-Vector3.new(0.01,0.01,0.01)
+					local Point2 = pos+Vector3.new(0.01,0.01,0.01)
+					local Region = Region3.new(Point1,Point2)
+					for _,Part in pairs(game.Workspace:FindPartsInRegion3(Region,nil,math.huge)) do
+						if Part.Name == "BloodPuddle" then
+							tou = Part
+						end
+					end
+					thing:Destroy()
+					if tou.Name == "BloodPuddle" then
+						if tou.Size.X < 1 then
+							pcall(function()
+								tou.Sound:Play()
+							end)
+						end
+						local reee = tou.CFrame
+						if tou.Transparency > -0.2 then
+							tou.Transparency = tou.Transparency -0.1
+						end
+						if tou.Size.X < 5 then
+							tou.Size = tou.Size+Vector3.new(0.1,0,0.1)
+							tou.CFrame = reee
+						end
+					elseif tou.CanCollide == true then
+						local bloodlol = Instance.new('Part',workspace)
+						local sound = Instance.new('Sound',bloodlol)
+						sound.SoundId = 'rbxassetid://685857471'
+						sound.Volume = 0.025
+						sound:Play()
+						bloodlol.Size=Vector3.new(1,0.2,1)
+						bloodlol.Name = "BloodPuddle"
+						bloodlol.Anchored = true
+						bloodlol.CanCollide = false
+						bloodlol.Material = Enum.Material.SmoothPlastic
+						if OwO ~= true then
+							bloodlol.Color = Frame_2.BackgroundColor3
+						else
+							bloodlol.Color = Color3.new(1,1,1)
+						end
+						local cyl = Instance.new('CylinderMesh',bloodlol)
+						cyl.Scale = Vector3.new(1,0.1,1)
+						bloodlol.CFrame = CFrame.new(pos)
+						local coru=coroutine.wrap(function()
+							while bloodlol.Parent ~= nil do
+								if bloodlol.Transparency < 1 then
+									bloodlol.Transparency = bloodlol.Transparency+0.05
+								else
+									bloodlol:Destroy()
+								end
+								wait(0.1)
+							end
+						end)
+						coru()
+					end
+				end
+			end)
+			local coru = coroutine.wrap(function()
+				wait(1)
+				thing:Destroy()
+			end)
+			coru()
+		end)
+		reeee()
+		wait()
+	end
+end
+
+function stun(char)
+	local found = false
+	pcall(function()
+		char:FindFirstChildOfClass('Humanoid'):ChangeState(Enum.HumanoidStateType.Physics)
+	end)
+	for i,v in pairs(rekt) do
+		if v == char then
+			found = true
+		end
+	end
+	if found == false then
+		table.insert(rekt,char)
+	end
+end
+function unstun(char)
+	for i,v in pairs(rekt) do
+		if v == char then
+			if v:FindFirstChildOfClass('Humanoid') and v:FindFirstChildOfClass('Humanoid').Health>0 then
+				v:FindFirstChildOfClass('Humanoid'):ChangeState(Enum.HumanoidStateType.Running)
+				v:FindFirstChildOfClass('Humanoid').PlatformStand = false
+				v:FindFirstChildOfClass('Humanoid').Sit = false
+				v:FindFirstChildOfClass('Humanoid').Jump = true
+				v:FindFirstChildOfClass('Humanoid').JumpPower = 50
+				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 16
+				v:FindFirstChildOfClass('Humanoid').Name = "Humanoid"
+			end
+			table.remove(rekt,i)
+		end
+	end
+end
+
+function recurse(root,callback,i)
+	i= i or 0
+	for _,v in pairs(root:GetChildren()) do
+		i = i + 1
+		callback(i,v)
+
+		if #v:GetChildren() > 0 then
+			i = recurse(v,callback,i)
+		end
+	end
+
+	return i
+end
+
+function ragdollJoint(character, part0, part1, attachmentName, className, properties)
+	if game:GetService("Players"):FindFirstChild(character.Name) then
+		if game:GetService("ReplicatedStorage"):FindFirstChild("meleeEvent") then
+			local kill = game:GetService("ReplicatedStorage"):FindFirstChild("meleeEvent")
+			--its morbin time
+			for i = 1, 3 do
+			spawn(function() 
+				kill:FireServer(game:GetService("Players"):FindFirstChild(character.Name))
+			end)end
+		end
+	end
+	if character:FindFirstChild("RagdollConstraint"..part1.Name) == nil then
+		if character:FindFirstChild('HumanoidRootPart')then
+			character.HumanoidRootPart.CanCollide = false
+		end
+		for i,v in pairs(character:GetChildren()) do
+			if v:IsA("MeshPart") and (v.MeshId == 'http://www.roblox.com/asset/?id=553602991' or v.MeshId == 'http://www.roblox.com/asset/?id=553602977' or v.MeshId == 'http://www.roblox.com/asset/?id=553602987') then
+				v.Size = Vector3.new(1,1,1)
+			end
+		end
+		recurse(character, function(_,v)
+			if v:IsA("Attachment") and v.Parent.Name ~= "ayybleed" then
+				v.Axis = Vector3.new(0, 1, 0)
+				v.SecondaryAxis = Vector3.new(0, 0, 1)
+				v.Rotation = Vector3.new(0, 0, 0)
+			end
+		end)
+		if part1:FindFirstChildOfClass('Motor6D') then
+			part1:FindFirstChildOfClass('Motor6D'):Destroy()
+		end
+		if attachmentName ~= "NeckAttachment" then
+			attachmentName = attachmentName.."RigAttachment"
+		end
+		local constraint = Instance.new(className.."Constraint")
+		constraint.Attachment0 = part0:FindFirstChild(attachmentName)
+		constraint.Attachment1 = part1:FindFirstChild(attachmentName)
+		constraint.Name = "RagdollConstraint"..part1.Name
+		if character:FindFirstChildOfClass('Humanoid').Health > 0 then
+			local collidepart = Instance.new('Part',part1)
+			collidepart.Size = part1.Size/2
+			if string.find(string.lower(part1.Name),"upper") then
+				if string.find(string.lower(part1.Name),"leg") then
+					collidepart.Size = part1.Size/3
+				else
+					collidepart.Size = part1.Size/2.5
+				end
+			end
+			collidepart.CanCollide = true
+			collidepart.Name = "Collision"
+			collidepart.Anchored = false
+			collidepart.Transparency = 1
+			collidepart.CFrame = part1.CFrame
+			collidepart:BreakJoints()
+			local attachment0 = Instance.new('Attachment',part1)
+			local attachment1 = Instance.new('Attachment',collidepart)
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+			if string.find(string.lower(part1.Name),"upper") then
+				if string.find(string.lower(part1.Name),"leg") then
+					attachment0.Position = Vector3.new(0,0.01,0)
+				else
+					attachment0.Position = Vector3.new(0,0.25,0)
+				end
+			else
+				attachment0.Position = Vector3.new(0,-0.1,0)
+			end
+		end
+		for _,propertyData in next,properties or {} do
+			constraint[propertyData[1]] = propertyData[2]
+		end
+
+		constraint.Parent = character
+	end
+end
+
+function R6ragdollJoint(character,limbname,attached,heded)
+	pcall(function()
+		if game:GetService("Players"):FindFirstChild(character.Name) then
+			if game:GetService("ReplicatedStorage"):FindFirstChild("meleeEvent") then
+				local kill = game:GetService("ReplicatedStorage"):FindFirstChild("meleeEvent")
+				--its morbin time
+				for i = 1, 4 do
+				spawn(function() 
+					kill:FireServer(game:GetService("Players"):FindFirstChild(character.Name))
+					end) 
+				end
+			end
+		end
+		if limbname == "Right Arm" and character:FindFirstChild("Right Arm") and character:FindFirstChild("Torso") and character.Torso:FindFirstChild("Right ArmRagdollConstraint") == nil and character[limbname]:FindFirstChild("Right ArmRagdollConstraint") == nil then
+			local torsoatt = Instance.new('Attachment',character.Torso)
+			torsoatt.Name = limbname.."RagdollConstraint"
+			torsoatt.Position = Vector3.new(1.45,0.768,-0.009)
+			torsoatt.Axis = Vector3.new(1,0,0)
+			torsoatt.SecondaryAxis = Vector3.new(0,1,0)
+			local limbatt = Instance.new("Attachment",character[limbname])
+			limbatt.Position = Vector3.new(-0.086, 0.755, -0.007)
+			limbatt.Name = limbname.."RagdollConstraint"
+			limbatt.Axis = Vector3.new(1,0,0)
+			limbatt.SecondaryAxis = Vector3.new(0,1,0)
+			local ballc = Instance.new('BallSocketConstraint',character)
+			ballc.Name = "RightArmRagdollRig"
+			ballc.Attachment0 = torsoatt
+			ballc.Attachment1 = limbatt
+			local part1 = character[limbname]
+			if character:FindFirstChildOfClass('Humanoid').Health > 0 then
+				local collidepart = Instance.new('Part',part1)
+				collidepart.Size = part1.Size/1.5
+				collidepart.CanCollide = true
+				collidepart.Name = "Collision"
+				collidepart.Anchored = false
+				collidepart.Transparency = 1
+				collidepart.CFrame = part1.CFrame
+				collidepart:BreakJoints()
+				local attachment0 = Instance.new('Attachment',part1)
+				local attachment1 = Instance.new('Attachment',collidepart)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+			end
+			if character.Torso:FindFirstChild('Right Shoulder') then
+				character.Torso:FindFirstChild('Right Shoulder'):Destroy()
+			end
+		elseif limbname == "Left Arm" and character:FindFirstChild("Left Arm") and character:FindFirstChild("Torso") and character.Torso:FindFirstChild("Left ArmRagdollConstraint") == nil and character[limbname]:FindFirstChild("Left ArmRagdollConstraint") == nil then
+			local torsoatt = Instance.new('Attachment',character.Torso)
+			torsoatt.Name = limbname.."RagdollConstraint"
+			torsoatt.Position = Vector3.new(-1.45,0.768,-0.009)
+			torsoatt.Axis = Vector3.new(1,0,0)
+			torsoatt.SecondaryAxis = Vector3.new(0,1,0)
+			local limbatt = Instance.new("Attachment",character[limbname])
+			limbatt.Position = Vector3.new(-0.086, 0.755, -0.007)
+			limbatt.Name = limbname.."RagdollConstraint"
+			limbatt.Axis = Vector3.new(1,0,0)
+			limbatt.SecondaryAxis = Vector3.new(0,1,0)
+			local ballc = Instance.new('BallSocketConstraint',character)
+			ballc.Name = "LeftArmRagdollRig"
+			ballc.Attachment0 = torsoatt
+			ballc.Attachment1 = limbatt
+			local part1 = character[limbname]
+			if character:FindFirstChildOfClass('Humanoid').Health > 0 then
+				local collidepart = Instance.new('Part',part1)
+				collidepart.Size = part1.Size/1.5
+				collidepart.CanCollide = true
+				collidepart.Name = "Collision"
+				collidepart.Anchored = false
+				collidepart.Transparency = 1
+				collidepart.CFrame = part1.CFrame
+				collidepart:BreakJoints()
+				local attachment0 = Instance.new('Attachment',part1)
+				local attachment1 = Instance.new('Attachment',collidepart)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+			end
+			if character.Torso:FindFirstChild('Left Shoulder') then
+				character.Torso:FindFirstChild('Left Shoulder'):Destroy()
+			end
+		elseif limbname == "Right Leg" and character:FindFirstChild("Right Leg") and character:FindFirstChild("Torso") and character.Torso:FindFirstChild("Right LegRagdollConstraint") == nil and character[limbname]:FindFirstChild("Right LegRagdollConstraint") == nil then
+			stun(character)
+			local torsoatt = Instance.new('Attachment',character.Torso)
+			torsoatt.Name = limbname.."RagdollConstraint"
+			torsoatt.Position = Vector3.new(0.45, -1.242, -0.009)
+			torsoatt.Axis = Vector3.new(1,0,0)
+			torsoatt.SecondaryAxis = Vector3.new(0,1,0)
+			local limbatt = Instance.new("Attachment",character[limbname])
+			limbatt.Position = Vector3.new(-0.086, 0.755, -0.007)
+			limbatt.Name = limbname.."RagdollConstraint"
+			limbatt.Axis = Vector3.new(1,0,0)
+			limbatt.SecondaryAxis = Vector3.new(0,1,0)
+			local ballc = Instance.new('BallSocketConstraint',character)
+			ballc.Name = "RightLegRagdollRig"
+			ballc.Attachment0 = torsoatt
+			ballc.Attachment1 = limbatt
+			local part1 = character[limbname]
+			if character:FindFirstChildOfClass('Humanoid').Health > 0 then
+				local collidepart = Instance.new('Part',part1)
+				collidepart.Size = part1.Size/1.5
+				collidepart.CanCollide = true
+				collidepart.Name = "Collision"
+				collidepart.Anchored = false
+				collidepart.Transparency = 1
+				collidepart.CFrame = part1.CFrame
+				collidepart:BreakJoints()
+				local attachment0 = Instance.new('Attachment',part1)
+				local attachment1 = Instance.new('Attachment',collidepart)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+			end
+			if character.Torso:FindFirstChild('Right Hip') then
+				character.Torso:FindFirstChild('Right Hip'):Destroy()
+			end
+		elseif limbname == "Left Leg" and character:FindFirstChild("Left Leg") and character:FindFirstChild("Torso") and character.Torso:FindFirstChild("Left LegRagdollConstraint") == nil and character[limbname]:FindFirstChild("Left LegRagdollConstraint") == nil then
+			stun(character)
+			local torsoatt = Instance.new('Attachment',character.Torso)
+			torsoatt.Name = limbname.."RagdollConstraint"
+			torsoatt.Position = Vector3.new(-0.45, -1.242, -0.009)
+			torsoatt.Axis = Vector3.new(1,0,0)
+			torsoatt.SecondaryAxis = Vector3.new(0,1,0)
+			local limbatt = Instance.new("Attachment",character[limbname])
+			limbatt.Position = Vector3.new(-0.086, 0.755, -0.007)
+			limbatt.Name = limbname.."RagdollConstraint"
+			limbatt.Axis = Vector3.new(1,0,0)
+			limbatt.SecondaryAxis = Vector3.new(0,1,0)
+			local ballc = Instance.new('BallSocketConstraint',character)
+			ballc.Name = "LeftLegRagdollRig"
+			ballc.Attachment0 = torsoatt
+			ballc.Attachment1 = limbatt
+			local part1 = character[limbname]
+			if character:FindFirstChildOfClass('Humanoid').Health > 0 then
+				local collidepart = Instance.new('Part',part1)
+				collidepart.Size = part1.Size/1.5
+				collidepart.CanCollide = true
+				collidepart.Name = "Collision"
+				collidepart.Anchored = false
+				collidepart.Transparency = 1
+				collidepart.CFrame = part1.CFrame
+				collidepart:BreakJoints()
+				local attachment0 = Instance.new('Attachment',part1)
+				local attachment1 = Instance.new('Attachment',collidepart)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+			end
+			if character.Torso:FindFirstChild('Left Hip') then
+				character.Torso:FindFirstChild('Left Hip'):Destroy()
+			end
+		elseif limbname == "Head" or limbname == "Torso" and character:FindFirstChild("Head") and character:FindFirstChild("Torso") and character.Head:FindFirstChild("Neck") == nil then
+			if character:FindFirstChildOfClass('Humanoid') then
+				character:FindFirstChildOfClass('Humanoid').Health = 0
+			end
+			while character:FindFirstChildOfClass('Humanoid').Health > 0 do wait() end
+			if character:FindFirstChild('HumanoidRootPart') then
+				character.HumanoidRootPart:Destroy()
+			end
+			game:GetService('Debris'):AddItem(character,10)
+			for _,child in next,character:GetChildren() do
+				if child:IsA("Accoutrement") then
+					for _,part in next,child:GetChildren() do
+						if part:IsA("BasePart") then
+							for _,c in pairs(part:GetChildren()) do
+								if c:IsA('Weld') then c:Destroy() end
+							end
+							local attachment1 = part:FindFirstChildOfClass("Attachment")
+							local attachment0 = getAttachment0(character,attachment1.Name)
+							if attachment0 and attachment1 then
+								local constraint = Instance.new("HingeConstraint")
+								constraint.Attachment0 = attachment0
+								constraint.Attachment1 = attachment1
+								constraint.LimitsEnabled = true
+								constraint.UpperAngle = 0
+								constraint.LowerAngle = 0
+								constraint.Parent = character
+							end
+						end
+					end
+				end
+			end
+			for i,v in pairs(character:GetChildren()) do
+				if v:IsA('MeshPart') or v:IsA('BasePart') then
+					for _,c in pairs(v:GetChildren()) do
+						if c.Name == "Collision" then c:Destroy() end
+					end
+				end
+			end
+			if character.Torso:FindFirstChild('Neck') then
+				character.Torso.Neck:Destroy()
+			end
+			if character:FindFirstChild('Torso') then
+				local collidepart = Instance.new('Part',character.Torso)
+				collidepart.Size = character.Torso.Size/1.5
+				collidepart.CanCollide = true
+				collidepart.Name = "Collision"
+				collidepart.Anchored = false
+				collidepart.Transparency = 1
+				collidepart.CFrame = character.Torso.CFrame
+				collidepart:BreakJoints()
+				local attachment0 = Instance.new('Attachment',character.Torso)
+				local attachment1 = Instance.new('Attachment',collidepart)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+			end
+			if character:FindFirstChild('Torso') and character:FindFirstChild('Head') then
+				if character.Torso:FindFirstChild('NeckAttachment') == nil then
+					local neck = Instance.new('Attachment',character.Torso)
+					neck.Name = "NeckAttachment"
+					neck.Position = Vector3.new(0, 1, 0)
+				end
+				ragdollJoint(character,character.Torso, character.Head, "NeckAttachment", "Hinge", {
+					{"LimitsEnabled",true};
+					{"UpperAngle",50};
+					{"LowerAngle",-50};
+				})
+			end
+			if attached ~= false then
+				ragdollpart(character, "Right Leg")
+				ragdollpart(character, "Left Leg")
+			else
+				pcall(function()
+					local ayybleed = Instance.new('Part',character)
+					ayybleed.Size = Vector3.new(character.Torso.Size.X,0.1,character.Torso.Size.Z)
+					ayybleed.Transparency = 1
+					ayybleed.CanCollide = false
+					ayybleed.CFrame = character.Torso.CFrame
+					ayybleed:BreakJoints()
+					local attachment1 = Instance.new('Attachment',ayybleed)
+					attachment1.Position = Vector3.new(0,-character.Torso.Size.Y/2,0)
+					attachment1.Orientation = Vector3.new(0, 0, -180)
+					local attachment0 = Instance.new('Attachment',character.Torso)
+					if attachment0 and attachment1 then
+						local constraint = Instance.new("HingeConstraint")
+						constraint.Attachment0 = attachment0
+						constraint.Attachment1 = attachment1
+						constraint.LimitsEnabled = true
+						constraint.UpperAngle = 0
+						constraint.LowerAngle = 0
+						constraint.Parent = character
+					end
+					local bleedBLEED= coroutine.wrap(function()
+						bleed(ayybleed)
+					end)
+					bleedBLEED()
+				end)
+			end
+			ragdollpart(character, "Right Arm")
+			ragdollpart(character, "Left Arm")
+		end
+	end)
+end
+
+function getAttachment0(character,attachmentName)
+	for _,child in next,character:GetChildren() do
+		local attachment = child:FindFirstChild(attachmentName)
+		if attachment then
+			return attachment
+		end
+	end
+end
+
+function ragdollpart(character,partname,attached,heded)
+	if heded ~= false then
+		local neck = Instance.new('Attachment',character.Head)
+		neck.Name = "NeckAttachment"
+		neck.Position = Vector3.new(0,-0.5,0)
+	else
+		local force = Instance.new('BodyForce',character.Head)
+		force.Force = Vector3.new(0,500,0)
+		game:GetService('Debris'):AddItem(force,0.25)
+		pcall(function()
+			local asdf = Instance.new('Attachment',character.Head)
+			asdf.Position = Vector3.new(0,-character.Head.Size.Y/2,0)
+			local last = asdf
+			for i=1,14 do
+				local bONE = Instance.new('Part',character)
+				bONE.BrickColor = BrickColor.new('Institutional white')
+				bONE.Size = Vector3.new(0.1,0.1,0.1)
+				bONE.CFrame = character.Head.CFrame+(character.Head.CFrame.upVector*-(i/10))
+				local lole = Instance.new('Attachment',bONE)
+				local hangurself = Instance.new('RopeConstraint',bONE)
+				hangurself.Attachment0 = lole
+				hangurself.Attachment1 = last
+				hangurself.Visible = true
+				hangurself.Thickness = 0.05
+				hangurself.Color = BrickColor.new('Bright red')
+				hangurself.Length = 0.2
+				last = lole
+			end
+			local bleedee = Instance.new('Part',character.Head)
+			bleedee.Size = Vector3.new(0.75,0.25,0.75)
+			bleedee.CanCollide = false
+			bleedee.Color = Frame_2.BackgroundColor3
+			bleedee.CFrame = character.Head.CFrame
+			local mehs = Instance.new('CylinderMesh',bleedee)
+			bleedee:BreakJoints()
+			local attachment1 = Instance.new('Attachment',bleedee)
+			attachment1.Position = Vector3.new(0,character.Head.Size.Y/2,0)
+			attachment1.Orientation = Vector3.new(0,0,180)
+			local attachment0 = Instance.new('Attachment',character.Head)
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+			spawn(function()
+				bleed(bleedee)
+			end)
+		end)
+		local thing = "Torso"
+		if character:FindFirstChild(thing) == nil then
+			thing = "UpperTorso"
+		end
+		pcall(function()
+			local bleedee = Instance.new('Part',character[thing])
+			bleedee.Size = Vector3.new(0.75,0,0.75)
+			bleedee.CanCollide = false
+			bleedee.Color = Frame_2.BackgroundColor3
+			bleedee.CFrame = character[thing].CFrame
+			local mehs = Instance.new('CylinderMesh',bleedee)
+			bleedee:BreakJoints()
+			local attachment1 = Instance.new('Attachment',bleedee)
+			attachment1.Position = Vector3.new(0,-character[thing].Size.Y/2,0)
+			attachment1.Orientation = Vector3.new(0,0,180)
+			local attachment0 = Instance.new('Attachment',character[thing])
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+			spawn(function()
+				bleed(bleedee)
+			end)
+		end)
+	end
+	pcall(function()
+		if workspace.PGSPhysicsSolverEnabled == false then
+			workspace.PGSPhysicsSolverEnabled = true
+		end
+	end)
+	if partname == "HumanoidRootPart" then
+		if character:FindFirstChild('Torso') then
+			partname = "Torso"
+		else
+			partname = "UpperTorso"
+		end
+	end
+	if attached == false then
+		if character:FindFirstChild('UpperTorso') then
+			pcall(function()
+				character.UpperTorso.WaistRigAttachment:Destroy()
+			end)
+			pcall(function()
+				local ayybleed = Instance.new('Part',character)
+				ayybleed.Size = Vector3.new(character.UpperTorso.Size.X,0,character.UpperTorso.Size.Z)
+				ayybleed.Transparency = 1
+				ayybleed.CanCollide = false
+				ayybleed.CFrame = character.UpperTorso.CFrame
+				ayybleed:BreakJoints()
+				ayybleed.Name = "ayybleed"
+				local attachment1 = Instance.new('Attachment',ayybleed)
+				attachment1.Position = Vector3.new(0,-character.UpperTorso.Size.Y/2,0)
+				attachment1.Orientation = Vector3.new(0,0,180)
+				local attachment0 = Instance.new('Attachment',character.UpperTorso)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+				local bleedBLEED= coroutine.wrap(function()
+					bleed(ayybleed)
+				end)
+				bleedBLEED()
+			end)
+			pcall(function()
+				local ayybleed = Instance.new('Part',character)
+				ayybleed.Size = Vector3.new(character.LowerTorso.Size.X-0.1,0.1,character.LowerTorso.Size.Z-0.1)
+				ayybleed.Transparency = 1
+				ayybleed.CanCollide = false
+				ayybleed.CFrame = character.LowerTorso.CFrame
+				ayybleed:BreakJoints()
+				ayybleed.Name = "ayybleed"
+				local attachment1 = Instance.new('Attachment',ayybleed)
+				attachment1.Position = Vector3.new(0,-character.LowerTorso.Size.Y/2,0)
+				attachment1.Orientation = Vector3.new(0,0,0)
+				local attachment0 = Instance.new('Attachment',character.LowerTorso)
+				if attachment0 and attachment1 then
+					local constraint = Instance.new("HingeConstraint")
+					constraint.Attachment0 = attachment0
+					constraint.Attachment1 = attachment1
+					constraint.LimitsEnabled = true
+					constraint.UpperAngle = 0
+					constraint.LowerAngle = 0
+					constraint.Parent = character
+				end
+				local bleedBLEED= coroutine.wrap(function()
+					bleed(ayybleed)
+				end)
+				bleedBLEED()
+			end)
+		end
+		pcall(function()
+			local thang = "Torso"
+			if character:FindFirstChild('UpperTorso') then
+				thang = "UpperTorso"
+			end
+			local ayybleed = Instance.new('Part',character)
+			ayybleed.Size = Vector3.new(character[thang].Size.X-0.1,0.1,character[thang].Size.Z-0.1)
+			ayybleed.Color = Frame_2.BackgroundColor3
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0
+			ayybleed.CFrame = character[thang].CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(0,(character[thang].Size.Y/2)-0.045,0)
+			attachment1.Orientation = Vector3.new(0,0,0)
+			local attachment0 = Instance.new('Attachment',character[thang])
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+		end)
+		pcall(function()
+			local ree = character.LowerTorso
+			local thang = "LowerTorso"
+			local ayybleed = Instance.new('Part',character)
+			ayybleed.Size = Vector3.new(character[thang].Size.X-0.1,0.1,character[thang].Size.Z-0.1)
+			ayybleed.Color = Frame_2.BackgroundColor3
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0
+			ayybleed.CFrame = character[thang].CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(0,(-character[thang].Size.Y/2)+0.045,0)
+			attachment1.Orientation = Vector3.new(0,0,0)
+			local attachment0 = Instance.new('Attachment',character[thang])
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+		end)
+		pcall(function()
+			local ree = character["Right Leg"]
+			local thang = "Right Leg"
+			local ayybleed = Instance.new('Part',character)
+			ayybleed.Size = Vector3.new(character[thang].Size.X-0.1,0.1,character[thang].Size.Z-0.1)
+			ayybleed.Color = Frame_2.BackgroundColor3
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0
+			ayybleed.CFrame = character[thang].CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(0,(-character[thang].Size.Y/2)+0.045,0)
+			attachment1.Orientation = Vector3.new(0,0,0)
+			local attachment0 = Instance.new('Attachment',character[thang])
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+		end)
+		pcall(function()
+			local ree = character["Left Leg"]
+			local thang = "Left Leg"
+			local ayybleed = Instance.new('Part',character)
+			ayybleed.Size = Vector3.new(character[thang].Size.X-0.1,0.1,character[thang].Size.Z-0.1)
+			ayybleed.Color = Frame_2.BackgroundColor3
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0
+			ayybleed.CFrame = character[thang].CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(0,(-character[thang].Size.Y/2)+0.045,0)
+			attachment1.Orientation = Vector3.new(0,0,0)
+			local attachment0 = Instance.new('Attachment',character[thang])
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				constraint.Parent = character
+			end
+		end)
+		partname="Head"
+	end
+	if partname == "RightHand" or partname == "RightLowerArm" or partname == "RightUpperArm" then
+		if character:FindFirstChild('RightLowerArm') and character:FindFirstChild('RightHand') then
+			ragdollJoint(character,character.RightLowerArm, character.RightHand, "RightWrist", "Hinge", handProperties)
+		end
+		if character:FindFirstChild('UpperTorso') and character:FindFirstChild('RightUpperArm') then
+			ragdollJoint(character, character.UpperTorso, character["RightUpperArm"], "RightShoulder", "BallSocket")
+		end
+		if character:FindFirstChild('RightUpperArm') and character:FindFirstChild('RightLowerArm') then
+			ragdollJoint(character, character.RightUpperArm, character.RightLowerArm, "RightElbow", "BallSocket")
+		end
+	elseif partname == "LeftHand" or partname == "LeftLowerArm" or partname == "LeftUpperArm" then
+		if character:FindFirstChild('LeftLowerArm') and character:FindFirstChild('LeftHand') then
+			ragdollJoint(character,character.LeftLowerArm, character.LeftHand, "LeftWrist", "Hinge", handProperties)
+		end
+		if character:FindFirstChild('UpperTorso') and character:FindFirstChild('LeftUpperArm') then
+			ragdollJoint(character, character.UpperTorso, character["LeftUpperArm"], "LeftShoulder", "BallSocket")
+		end
+		if character:FindFirstChild('LeftUpperArm') and character:FindFirstChild('LeftLowerArm') then
+			ragdollJoint(character, character.LeftUpperArm, character.LeftLowerArm, "LeftElbow", "BallSocket")
+		end
+	elseif partname == "RightFoot" or partname == "RightUpperLeg" or partname == "RightLowerLeg" then
+		stun(character)
+		if character:FindFirstChild('RightUpperLeg') and character:FindFirstChild('RightLowerLeg') then
+			ragdollJoint(character,character.RightUpperLeg, character.RightLowerLeg, "RightKnee", "Hinge", shinProperties)
+		end
+		if character:FindFirstChild('RightLowerLeg') and character:FindFirstChild('RightFoot') then
+			ragdollJoint(character,character.RightLowerLeg, character.RightFoot, "RightAnkle", "Hinge", footProperties)
+		end
+		if character:FindFirstChild('LowerTorso') and character:FindFirstChild('RightUpperLeg') then
+			ragdollJoint(character,character.LowerTorso, character.RightUpperLeg, "RightHip", "BallSocket")
+		end
+	elseif partname == "LeftFoot" or partname == "LeftUpperLeg" or partname == "LeftLowerLeg" then
+		stun(character)
+		if character:FindFirstChild('LeftUpperLeg') and character:FindFirstChild('LeftLowerLeg') then
+			ragdollJoint(character,character.LeftUpperLeg, character.LeftLowerLeg, "LeftKnee", "Hinge", shinProperties)
+		end
+		if character:FindFirstChild('LeftLowerLeg') and character:FindFirstChild('LeftFoot') then
+			ragdollJoint(character,character.LeftLowerLeg, character.LeftFoot, "LeftAnkle", "Hinge", footProperties)
+		end
+		if character:FindFirstChild('LowerTorso') and character:FindFirstChild('LeftUpperLeg') then
+			ragdollJoint(character,character.LowerTorso, character.LeftUpperLeg, "LeftHip", "BallSocket")
+		end
+	elseif partname == "Head" or partname == "UpperTorso" or partname == "LowerTorso" then
+		if character:FindFirstChildOfClass('Humanoid') and character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+			if character:FindFirstChildOfClass('Humanoid') then
+				character:FindFirstChildOfClass('Humanoid').Health = 0
+			end
+			if character:FindFirstChild('HumanoidRootPart') then
+				character.HumanoidRootPart:Destroy()
+			end
+			while character:FindFirstChildOfClass('Humanoid').Health > 0 do wait() end
+			game:GetService('Debris'):AddItem(character,10)
+			for _,child in next,character:GetChildren() do
+				if child:IsA("Accoutrement") then
+					for _,part in next,child:GetChildren() do
+						if part:IsA("BasePart") then
+							for _,c in pairs(part:GetChildren()) do
+								if c:IsA('Weld') then c:Destroy() end
+							end
+							local attachment1 = part:FindFirstChildOfClass("Attachment")
+							local attachment0 = getAttachment0(character,attachment1.Name)
+							if attachment0 and attachment1 then
+								local constraint = Instance.new("HingeConstraint")
+								constraint.Attachment0 = attachment0
+								constraint.Attachment1 = attachment1
+								constraint.LimitsEnabled = true
+								constraint.UpperAngle = 0
+								constraint.LowerAngle = 0
+								constraint.Parent = character
+							end
+						end
+					end
+				end
+			end
+			for i,v in pairs(character:GetChildren()) do
+				if v:IsA('MeshPart') or v:IsA('BasePart') then
+					for _,c in pairs(v:GetChildren()) do
+						if c.Name == "Collision" then c:Destroy() end
+					end
+				end
+			end
+			if heded == false then
+				pcall(function()
+					local asdf = Instance.new('Attachment',character.Head)
+					asdf.Position = Vector3.new(0,-character.Head.Size.Y/2,0)
+					local last = asdf
+					character.Head.Neck:Destroy()
+					character.Head.NeckRigAttachment:Destroy()
+					character.UpperTorso:FindFirstChild('NeckAttachment'):Destroy()
+				end)
+			end
+			if character:FindFirstChild('UpperTorso') and character:FindFirstChild('LowerTorso') then
+				ragdollJoint(character,character.LowerTorso, character.UpperTorso, "Waist", "BallSocket", {
+					{"LimitsEnabled",true};
+					{"UpperAngle",5};
+					{"Radius",5};
+				})
+			end
+			if character:FindFirstChild('UpperTorso') and character:FindFirstChild('Head') then
+				ragdollJoint(character,character.UpperTorso, character.Head, "Neck", "Hinge", {
+					{"LimitsEnabled",true};
+					{"UpperAngle",50};
+					{"LowerAngle",-50};
+				})
+			end
+
+			local handProperties = {
+				{"LimitsEnabled", true};
+				{"UpperAngle",0};
+				{"LowerAngle",0};
+			}
+			if character:FindFirstChild('LeftLowerArm') and character:FindFirstChild('LeftHand') then
+				ragdollJoint(character,character.LeftLowerArm, character.LeftHand, "LeftWrist", "Hinge", handProperties)
+			end
+			if character:FindFirstChild('RightLowerArm') and character:FindFirstChild('RightHand') then
+				ragdollJoint(character,character.RightLowerArm, character.RightHand, "RightWrist", "Hinge", handProperties)
+			end
+
+			local shinProperties = {
+				{"LimitsEnabled", true};
+				{"UpperAngle", 0};
+				{"LowerAngle", -75};
+			}
+			if character:FindFirstChild('LeftUpperLeg') and character:FindFirstChild('LeftLowerLeg') then
+				ragdollJoint(character,character.LeftUpperLeg, character.LeftLowerLeg, "LeftKnee", "Hinge", shinProperties)
+			end
+			if character:FindFirstChild('RightUpperLeg') and character:FindFirstChild('RightLowerLeg') then
+				ragdollJoint(character,character.RightUpperLeg, character.RightLowerLeg, "RightKnee", "Hinge", shinProperties)
+			end
+
+			local footProperties = {
+				{"LimitsEnabled", true};
+				{"UpperAngle", 15};
+				{"LowerAngle", -45};
+			}
+			if character:FindFirstChild('LeftLowerLeg') and character:FindFirstChild('LeftFoot') then
+				ragdollJoint(character,character.LeftLowerLeg, character.LeftFoot, "LeftAnkle", "Hinge", footProperties)
+			end
+			if character:FindFirstChild('RightLowerLeg') and character:FindFirstChild('RightFoot') then
+				ragdollJoint(character,character.RightLowerLeg, character.RightFoot, "RightAnkle", "Hinge", footProperties)
+			end
+			if character:FindFirstChild('UpperTorso') and character:FindFirstChild('LeftUpperArm') then
+				ragdollJoint(character,character.UpperTorso, character.LeftUpperArm, "LeftShoulder", "BallSocket")
+			end
+			if character:FindFirstChild('LeftLowerArm') and character:FindFirstChild('LeftUpperArm') then
+				ragdollJoint(character,character.LeftUpperArm, character.LeftLowerArm, "LeftElbow", "BallSocket")
+			end
+			if character:FindFirstChild('UpperTorso') and character:FindFirstChild('RightUpperArm') then
+				ragdollJoint(character,character.UpperTorso, character.RightUpperArm, "RightShoulder", "BallSocket")
+			end
+			if character:FindFirstChild('RightUpperArm') and character:FindFirstChild('RightLowerArm') then
+				ragdollJoint(character,character.RightUpperArm, character.RightLowerArm, "RightElbow", "BallSocket")
+			end
+			if character:FindFirstChild('LowerTorso') and character:FindFirstChild('LeftUpperLeg') then
+				ragdollJoint(character,character.LowerTorso, character.LeftUpperLeg, "LeftHip", "BallSocket")
+			end
+			if character:FindFirstChild('LowerTorso') and character:FindFirstChild('RightUpperLeg') then
+				ragdollJoint(character,character.LowerTorso, character.RightUpperLeg, "RightHip", "BallSocket")
+			end
+			if character:FindFirstChild('HumanoidRootPart') then
+				character.HumanoidRootPart:Destroy()
+			end
+		else
+			R6ragdollJoint(character,partname,attached,heded)
+		end
+	else
+		R6ragdollJoint(character,partname,attached,heded)
+	end
+end
+
+function grow(weld,part,endsize,endpos,amntime)
+	local start = weld.C1
+	local parent = weld.Parent
+	local startsize = part.Size
+	local particl = Instance.new("ParticleEmitter")
+	particl.LightEmission = 3
+	particl.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(42, 0, 255)), ColorSequenceKeypoint.new(0.1, Color3.fromRGB(248, 153, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 0))})
+	particl.LightInfluence = 0.75
+	particl.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})
+	particl.Lifetime = NumberRange.new(0.1, 1)
+	particl.Rate = 50
+	particl.RotSpeed = NumberRange.new(300, 300)
+	particl.Speed = NumberRange.new(0, 1)
+	particl.SpreadAngle = Vector2.new(90, 90)
+	particl.Parent = part
+	for i=1,amntime*100 do
+		weld.C1 = start:lerp(endpos,i/(amntime*100))
+		part.Size = startsize:lerp(endsize,i/(amntime*100))
+		weld.Parent = parent
+		wait(0.01)
+	end
+	particl.Enabled = false
+end
+function lerp(weld,startpos,endpos,amntime,longatend)
+	local waited = 0
+	for i=1,amntime*100 do
+		if longatend == true then
+			startpos = weld.C0
+		end
+		weld.C0 = startpos:lerp(endpos,i/(amntime*100))
+		wait(0.01)
+		waited=waited+0.01
+	end
+end
+
+function spawned()
+	local usable = true
+	local working = false
+	local mode = "kill"
+	local equipped = false
+	local char = player.Character
+	local blademode = "handle"
+	local swinging = false
+	local gettingeem = false
+	local MOAN = false
+	local sounding = false
+	local SLESH = false
+	local goteem = nil
+	local grabbing = false
+	local grabbed = nil
+	local grabweld = nil
+	local aidsificating = nil
+	player.CharacterAdded:connect(function()
+		if usable then
+			usable = false
+		end
+	end)
+	if char == nil then return end
+	while char:FindFirstChildOfClass('Humanoid') == nil or char:FindFirstChild('Head') == nil do wait() end
+	local badass = Instance.new('Sound',char.Head)
+	badass.Name = 'Badass'
+	badass.EmitterSize = player.CameraMaxZoomDistance+1
+	badass.MaxDistance = player.CameraMaxZoomDistance+1
+	badass.Volume = 10
+	badass.Looped=true
+	badass.SoundId = 'rbxassetid://428902535'
+	local handle = Instance.new("Part", char)
+	handle.BrickColor = BrickColor.new("Really black")
+	handle.Material = "Metal"
+	handle.CanCollide = false
+	handle.Anchored = false
+	handle.Shape = "Cylinder"
+	handle.Size = Vector3.new(1.1, 0.3, 0.3)
+	handle.BackSurface = "SmoothNoOutlines"
+	handle.BottomSurface = "SmoothNoOutlines"
+	handle.FrontSurface = "SmoothNoOutlines"
+	handle.LeftSurface = "SmoothNoOutlines"
+	handle.RightSurface = "SmoothNoOutlines"
+	handle.TopSurface = "SmoothNoOutlines"
+	handle.Name = "handle"
+
+	local hweld = Instance.new("Weld", char.Torso)
+	hweld.Part0 = char.Torso
+	hweld.Part1 = handle
+	hweld.C0 = CFrame.new(1, -0.8, 0) * CFrame.Angles(0, math.rad(90), 0)
+
+	local rdd = false
+	function oogabooga()
+		if rdd == false then
+			rdd = true
+			pcall(function()
+				ragdollpart(char,"Right Arm")
+				ragdollpart(char,"Right Leg")
+				ragdollpart(char,"Left Arm")
+				ragdollpart(char,"Left Leg")
+			end)
+			pcall(function()
+				ragdollpart(char,"RightUpperArm")
+				ragdollpart(char,"RightUpperLeg")
+				ragdollpart(char,"LeftUpperArm")
+				ragdollpart(char,"LeftUpperLeg")
+			end)
+			unstun(char)
+			for i,v in pairs(char:GetChildren()) do
+				v.ChildAdded:connect(function(child)
+					if rdd == true then
+						if child.Name ~= "Neck" and child.Name ~= "RootJoint" and child.Name ~= "Root" and (child:IsA('Motor6D') or child:IsA('Weld')) then 
+							if child ~= grabweld then
+								spawn(function()
+									wait()
+									child:Destroy()
+								end)
+							end
+						end
+					end
+				end)
+				if string.find(string.lower(v.Name),'leg') then
+					if v:FindFirstChild('Collision') then
+						v:FindFirstChild('Collision'):Destroy()
+					end
+				end
+			end
+		else
+			rdd = false
+			for i,v in pairs(char:GetChildren()) do
+				if v:IsA('HingeConstraint') or v:IsA('BallSocketConstraint') then
+					v:Destroy()
+				elseif v:IsA('BasePart') then
+					if v:FindFirstChild('Collision') then
+						v.Collision:Destroy()
+					end
+					for a,c in pairs(v:GetChildren()) do
+						if string.find(string.lower(c.Name),"ragdoll") then
+							c:Destroy()
+						end
+					end
+				end
+			end
+			pcall(function()
+				local ra = rightclone:Clone()
+				ra.Parent = char.Torso
+				ra.Part0 = char.Torso
+				ra.Part1 = char["Right Arm"]
+			end)
+			pcall(function()
+				local la = leftclone:Clone()
+				la.Parent = char.Torso
+				la.Part0 = char.Torso
+				la.Part1 = char["Left Arm"]
+			end)
+			pcall(function()
+				local ll = leftlegclone:Clone()
+				ll.Parent = char.Torso
+				ll.Part0 = char.Torso
+				ll.Part1 = char["Left Leg"]
+			end)
+			pcall(function()
+				local rl = rightlegclone:Clone()
+				rl.Parent = char.Torso
+				rl.Part0 = char.Torso
+				rl.Part1 = char["Right Leg"]
+			end)
+		end
+	end
+	function getrid()
+		if grabbed then
+			release()
+		end
+		blademode = "handle"
+		for _,ree in pairs(handle:GetChildren()) do
+			if ree:IsA('BasePart') then
+				local part = Instance.new('Part',workspace)
+				part.CFrame = ree.CFrame
+				part.Anchored = true
+				part.CanCollide = false
+				part.Size = ree.Size
+				part.Transparency = 1
+				ree:Destroy()
+				local pe2 = Instance.new("ParticleEmitter")
+				pe2.Acceleration = Vector3.new(0, 1, 0)
+				pe2.Lifetime = NumberRange.new(0.1, 0.2)
+				pe2.Speed = NumberRange.new(0.5)
+				pe2.Rate = 20000
+				pe2.RotSpeed = NumberRange.new(-30, 30)
+				pe2.Rotation = NumberRange.new(0, 360)
+				pe2.Size = NumberSequence.new({
+					NumberSequenceKeypoint.new(0, part.Size.X*2, 0),
+					NumberSequenceKeypoint.new(1, part.Size.X*2, 0),
+				})
+				pe2.Texture = "rbxassetid://244221440"
+				pe2.Transparency = NumberSequence.new({
+					NumberSequenceKeypoint.new(0, 0.9, 0),
+					NumberSequenceKeypoint.new(1, 0.9, 0)
+				})
+				pe2.ZOffset = 5
+				pe2.VelocitySpread = 360
+				pe2.Parent = part
+				pe2.Enabled = true
+				local coru=coroutine.wrap(function()
+					wait(0.2)
+					pe2.Enabled = false
+					game:GetService('Debris'):AddItem(part,0.5)
+				end)
+				coru()
+			else
+				ree:Remove()
+			end
+		end
+	end
+
+	function equip()
+		equipped = true
+		working = true
+		if char.Torso:FindFirstChild("Right Shoulder") then
+			char.Torso:FindFirstChild("Right Shoulder"):Destroy()
+		end
+		local weld = Instance.new('Weld', char.Torso)
+		weld.Name = "Lerping"
+		weld.Part0 = char["Right Arm"]
+		weld.Part1 = char.Torso
+		weld.C0 = CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+
+		lerp(weld,weld.C0,CFrame.new(-1.3, -0.5, 0) * CFrame.Angles(0, 0, math.rad(15)),0.12,true)
+
+		wait(0.1)
+
+		hweld.Part0 = char["Right Arm"]
+		hweld.C0 = CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0)
+
+		lerp(weld,weld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)  
+
+		weld:Destroy()
+		if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+			local clone = rightclone:Clone()
+			clone.Part0 = char.Torso
+			clone.Part1 = char["Right Arm"]
+			clone.Parent = char.Torso
+		end
+		working = false
+	end
+
+	function unequip()
+		getrid(handle)
+		equipped = false
+		working = true
+
+		if char.Torso:FindFirstChild("Right Shoulder") then
+			char.Torso:FindFirstChild("Right Shoulder"):Destroy()
+		end
+
+		local weld = Instance.new('Weld', char.Torso)
+		weld.Name = "Lerping"
+		weld.Part0 = char["Right Arm"]
+		weld.Part1 = char.Torso
+		weld.C0 = CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+
+
+		lerp(weld,weld.C0,CFrame.new(-1.3, -0.5, 0) * CFrame.Angles(0, 0, math.rad(15)),0.12,true)
+
+		hweld.Part0 = char["Torso"]
+		hweld.C0 = CFrame.new(1, -0.8, 0) * CFrame.Angles(0, math.rad(90), 0)
+		lerp(weld,weld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08,true)
+		weld:Destroy()
+		if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+			local clone = rightclone:Clone()
+			clone.Part0 = char.Torso
+			clone.Part1 = char["Right Arm"]
+			clone.Parent = char.Torso
+		end
+		working = false
+	end
+
+	function reboot()
+		blademode = "reboot"
+		working = true
+		-- 1 - pink toy
+		local obj1 = Instance.new("Model")
+		obj1.Name = "pink toy"
+		obj1.Parent = handle
+
+		-- 2 - Model
+		local obj2 = Instance.new("Model")
+		obj2.Parent = obj1
+
+		-- 3 - Part
+		local obj3 = Instance.new("Part")
+		obj3.CFrame = CFrame.new(Vector3.new(66.8643951, 3.86435986, 7.14990711)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj3.CanCollide = false
+		obj3.TopSurface = Enum.SurfaceType.Smooth
+		obj3.BottomSurface = Enum.SurfaceType.Smooth
+		obj3.Material = Enum.Material.SmoothPlastic
+		obj3.Size = Vector3.new(1.00000024, 1.00000024, 1.00000024)
+		obj3.BrickColor = BrickColor.new("Hot pink")
+		obj3.Friction = 0.30000001192093
+		obj3.Shape = Enum.PartType.Ball
+		obj3.Parent = obj2
+		obj3.Name = "tip"
+
+		-- 4 - Part
+		local obj4 = Instance.new("Part")
+		obj4.CFrame = CFrame.new(Vector3.new(67.8275909, 2.08898449, 7.50048351)) * CFrame.Angles(9.1487750708552e-09, -0.34906616806984, -1.0471986532211)
+		obj4.CanCollide = false
+		obj4.TopSurface = Enum.SurfaceType.Smooth
+		obj4.BottomSurface = Enum.SurfaceType.Smooth
+		obj4.Material = Enum.Material.SmoothPlastic
+		obj4.Size = Vector3.new(4.09999943, 1, 1)
+		obj4.BrickColor = BrickColor.new("Hot pink")
+		obj4.Friction = 0.30000001192093
+		obj4.Shape = Enum.PartType.Cylinder
+		obj4.Parent = obj2
+
+		-- 5 - Part
+		local obj5 = Instance.new("Part")
+		obj5.CFrame = CFrame.new(Vector3.new(66.7104797, 3.86435843, 7.57276678)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj5.CanCollide = false
+		obj5.TopSurface = Enum.SurfaceType.Smooth
+		obj5.BottomSurface = Enum.SurfaceType.Smooth
+		obj5.Material = Enum.Material.SmoothPlastic
+		obj5.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj5.BrickColor = BrickColor.new("Hot pink")
+		obj5.Friction = 0.30000001192093
+		obj5.Shape = Enum.PartType.Ball
+		obj5.Parent = obj2
+
+		-- 6 - Part
+		local obj6 = Instance.new("Part")
+		obj6.CFrame = CFrame.new(Vector3.new(68.6905365, 0.83212769, 8.29345417)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.7925276756287)
+		obj6.CanCollide = false
+		obj6.TopSurface = Enum.SurfaceType.Smooth
+		obj6.BottomSurface = Enum.SurfaceType.Smooth
+		obj6.Material = Enum.Material.SmoothPlastic
+		obj6.Size = Vector3.new(0.999999762, 0.999999762, 0.999999762)
+		obj6.BrickColor = BrickColor.new("Hot pink")
+		obj6.Friction = 0.30000001192093
+		obj6.Shape = Enum.PartType.Ball
+		obj6.Parent = obj2
+
+		-- 7 - Part
+		local obj7 = Instance.new("Part")
+		obj7.CFrame = CFrame.new(Vector3.new(67.0182953, 3.86435866, 6.72704411)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj7.CanCollide = false
+		obj7.TopSurface = Enum.SurfaceType.Smooth
+		obj7.BottomSurface = Enum.SurfaceType.Smooth
+		obj7.Material = Enum.Material.SmoothPlastic
+		obj7.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj7.BrickColor = BrickColor.new("Hot pink")
+		obj7.Friction = 0.30000001192093
+		obj7.Shape = Enum.PartType.Ball
+		obj7.Parent = obj2
+
+		-- 8 - Part
+		local obj8 = Instance.new("Part")
+		obj8.CFrame = CFrame.new(Vector3.new(68.9983597, 0.832128167, 7.44772816)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.7925276756287)
+		obj8.CanCollide = false
+		obj8.TopSurface = Enum.SurfaceType.Smooth
+		obj8.BottomSurface = Enum.SurfaceType.Smooth
+		obj8.Material = Enum.Material.SmoothPlastic
+		obj8.Size = Vector3.new(0.999999762, 0.999999762, 0.999999762)
+		obj8.BrickColor = BrickColor.new("Hot pink")
+		obj8.Friction = 0.30000001192093
+		obj8.Shape = Enum.PartType.Ball
+		obj8.Parent = obj2
+		local fiREPART = obj8
+
+		-- 9 - Part
+		local obj9 = Instance.new("Part")
+		obj9.CFrame = CFrame.new(Vector3.new(68.8566208, 0.357954353, 7.87501621)) * CFrame.Angles(9.1487750708552e-09, -0.34906616806984, -1.2217314243317)
+		obj9.CanCollide = false
+		obj9.TopSurface = Enum.SurfaceType.Smooth
+		obj9.BottomSurface = Enum.SurfaceType.Smooth
+		obj9.Material = Enum.Material.SmoothPlastic
+		obj9.Size = Vector3.new(0.0999999791, 1.50000036, 2)
+		obj9.BrickColor = BrickColor.new("Hot pink")
+		obj9.Friction = 0.30000001192093
+		obj9.Shape = Enum.PartType.Cylinder
+		obj9.Parent = obj2
+
+		-- 10 - Part
+		local obj10 = Instance.new("Part")
+		obj10.CFrame = CFrame.new(Vector3.new(66.8069, 3.58244801, 7.60786104)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj10.CanCollide = false
+		obj10.TopSurface = Enum.SurfaceType.Smooth
+		obj10.BottomSurface = Enum.SurfaceType.Smooth
+		obj10.Material = Enum.Material.SmoothPlastic
+		obj10.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj10.BrickColor = BrickColor.new("Hot pink")
+		obj10.Friction = 0.30000001192093
+		obj10.Shape = Enum.PartType.Ball
+		obj10.Parent = obj2
+
+		-- 11 - Part
+		local obj11 = Instance.new("Part")
+		obj11.CFrame = CFrame.new(Vector3.new(67.196106, 3.632447, 6.79175806)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj11.CanCollide = false
+		obj11.TopSurface = Enum.SurfaceType.Smooth
+		obj11.BottomSurface = Enum.SurfaceType.Smooth
+		obj11.Material = Enum.Material.SmoothPlastic
+		obj11.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj11.BrickColor = BrickColor.new("Hot pink")
+		obj11.Friction = 0.30000001192093
+		obj11.Shape = Enum.PartType.Ball
+		obj11.Parent = obj2
+
+		-- 12 - Part
+		local obj12 = Instance.new("Part")
+		obj12.CFrame = CFrame.new(Vector3.new(67.0756683, 3.77002549, 7.63403416)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj12.CanCollide = false
+		obj12.TopSurface = Enum.SurfaceType.Smooth
+		obj12.BottomSurface = Enum.SurfaceType.Smooth
+		obj12.Material = Enum.Material.SmoothPlastic
+		obj12.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj12.BrickColor = BrickColor.new("Hot pink")
+		obj12.Friction = 0.30000001192093
+		obj12.Shape = Enum.PartType.Ball
+		obj12.Parent = obj2
+
+		-- 13 - Part
+		local obj13 = Instance.new("Part")
+		obj13.CFrame = CFrame.new(Vector3.new(67.4108353, 3.27276325, 6.88037825)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj13.CanCollide = false
+		obj13.TopSurface = Enum.SurfaceType.Smooth
+		obj13.BottomSurface = Enum.SurfaceType.Smooth
+		obj13.Material = Enum.Material.SmoothPlastic
+		obj13.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj13.BrickColor = BrickColor.new("Hot pink")
+		obj13.Friction = 0.30000001192093
+		obj13.Shape = Enum.PartType.Ball
+		obj13.Parent = obj2
+
+		-- 14 - Part
+		local obj14 = Instance.new("Part")
+		obj14.CFrame = CFrame.new(Vector3.new(66.868927, 3.43238807, 6.82578087)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj14.CanCollide = false
+		obj14.TopSurface = Enum.SurfaceType.Smooth
+		obj14.BottomSurface = Enum.SurfaceType.Smooth
+		obj14.Material = Enum.Material.SmoothPlastic
+		obj14.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj14.BrickColor = BrickColor.new("Hot pink")
+		obj14.Friction = 0.30000001192093
+		obj14.Shape = Enum.PartType.Ball
+		obj14.Parent = obj2
+
+		-- 15 - Part
+		local obj15 = Instance.new("Part")
+		obj15.CFrame = CFrame.new(Vector3.new(67.1951675, 3.383008, 7.69050598)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj15.CanCollide = false
+		obj15.TopSurface = Enum.SurfaceType.Smooth
+		obj15.BottomSurface = Enum.SurfaceType.Smooth
+		obj15.Material = Enum.Material.SmoothPlastic
+		obj15.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj15.BrickColor = BrickColor.new("Hot pink")
+		obj15.Friction = 0.30000001192093
+		obj15.Shape = Enum.PartType.Ball
+		obj15.Parent = obj2
+
+		-- 16 - Part
+		local obj16 = Instance.new("Part")
+		obj16.CFrame = CFrame.new(Vector3.new(67.50383, 3.46245813, 7.48069429)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj16.CanCollide = false
+		obj16.TopSurface = Enum.SurfaceType.Smooth
+		obj16.BottomSurface = Enum.SurfaceType.Smooth
+		obj16.Material = Enum.Material.SmoothPlastic
+		obj16.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj16.BrickColor = BrickColor.new("Hot pink")
+		obj16.Friction = 0.30000001192093
+		obj16.Shape = Enum.PartType.Ball
+		obj16.Parent = obj2
+
+		-- 17 - Part
+		local obj17 = Instance.new("Part")
+		obj17.CFrame = CFrame.new(Vector3.new(66.5551376, 3.4628334, 7.33871651)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj17.CanCollide = false
+		obj17.TopSurface = Enum.SurfaceType.Smooth
+		obj17.BottomSurface = Enum.SurfaceType.Smooth
+		obj17.Material = Enum.Material.SmoothPlastic
+		obj17.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj17.BrickColor = BrickColor.new("Hot pink")
+		obj17.Friction = 0.30000001192093
+		obj17.Shape = Enum.PartType.Ball
+		obj17.Parent = obj2
+
+		-- 18 - Part
+		local obj18 = Instance.new("Part")
+		obj18.CFrame = CFrame.new(Vector3.new(67.3677139, 3.83245182, 7.3331027)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj18.CanCollide = false
+		obj18.TopSurface = Enum.SurfaceType.Smooth
+		obj18.BottomSurface = Enum.SurfaceType.Smooth
+		obj18.Material = Enum.Material.SmoothPlastic
+		obj18.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj18.BrickColor = BrickColor.new("Hot pink")
+		obj18.Friction = 0.30000001192093
+		obj18.Shape = Enum.PartType.Ball
+		obj18.Parent = obj2
+
+		-- 19 - Part
+		local obj19 = Instance.new("Part")
+		obj19.CFrame = CFrame.new(Vector3.new(67.4115601, 3.71535063, 7.01420689)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj19.CanCollide = false
+		obj19.TopSurface = Enum.SurfaceType.Smooth
+		obj19.BottomSurface = Enum.SurfaceType.Smooth
+		obj19.Material = Enum.Material.SmoothPlastic
+		obj19.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj19.BrickColor = BrickColor.new("Hot pink")
+		obj19.Friction = 0.30000001192093
+		obj19.Shape = Enum.PartType.Ball
+		obj19.Parent = obj2
+
+		-- 20 - Part
+		local obj20 = Instance.new("Part")
+		obj20.CFrame = CFrame.new(Vector3.new(67.6487045, 3.39313889, 7.19381428)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj20.CanCollide = false
+		obj20.TopSurface = Enum.SurfaceType.Smooth
+		obj20.BottomSurface = Enum.SurfaceType.Smooth
+		obj20.Material = Enum.Material.SmoothPlastic
+		obj20.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj20.BrickColor = BrickColor.new("Hot pink")
+		obj20.Friction = 0.30000001192093
+		obj20.Shape = Enum.PartType.Ball
+		obj20.Parent = obj2
+
+		-- 21 - Part
+		local obj21 = Instance.new("Part")
+		obj21.CFrame = CFrame.new(Vector3.new(66.8260422, 4.12417316, 6.81669378)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj21.CanCollide = false
+		obj21.TopSurface = Enum.SurfaceType.Smooth
+		obj21.BottomSurface = Enum.SurfaceType.Smooth
+		obj21.Material = Enum.Material.SmoothPlastic
+		obj21.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj21.BrickColor = BrickColor.new("Hot pink")
+		obj21.Friction = 0.30000001192093
+		obj21.Shape = Enum.PartType.Ball
+		obj21.Parent = obj2
+
+		-- 22 - Part
+		local obj22 = Instance.new("Part")
+		obj22.CFrame = CFrame.new(Vector3.new(67.162117, 3.11433029, 6.8847661)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj22.CanCollide = false
+		obj22.TopSurface = Enum.SurfaceType.Smooth
+		obj22.BottomSurface = Enum.SurfaceType.Smooth
+		obj22.Material = Enum.Material.SmoothPlastic
+		obj22.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj22.BrickColor = BrickColor.new("Hot pink")
+		obj22.Friction = 0.30000001192093
+		obj22.Shape = Enum.PartType.Ball
+		obj22.Parent = obj2
+
+		-- 23 - Part
+		local obj23 = Instance.new("Part")
+		obj23.CFrame = CFrame.new(Vector3.new(66.4981842, 3.63936186, 7.01661682)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj23.CanCollide = false
+		obj23.TopSurface = Enum.SurfaceType.Smooth
+		obj23.BottomSurface = Enum.SurfaceType.Smooth
+		obj23.Material = Enum.Material.SmoothPlastic
+		obj23.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj23.BrickColor = BrickColor.new("Hot pink")
+		obj23.Friction = 0.30000001192093
+		obj23.Shape = Enum.PartType.Ball
+		obj23.Parent = obj2
+
+		-- 24 - Part
+		local obj24 = Instance.new("Part")
+		obj24.CFrame = CFrame.new(Vector3.new(66.6352844, 3.38244724, 7.06651926)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj24.CanCollide = false
+		obj24.TopSurface = Enum.SurfaceType.Smooth
+		obj24.BottomSurface = Enum.SurfaceType.Smooth
+		obj24.Material = Enum.Material.SmoothPlastic
+		obj24.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj24.BrickColor = BrickColor.new("Hot pink")
+		obj24.Friction = 0.30000001192093
+		obj24.Shape = Enum.PartType.Ball
+		obj24.Parent = obj2
+
+		-- 25 - Part
+		local obj25 = Instance.new("Part")
+		obj25.CFrame = CFrame.new(Vector3.new(66.753746, 3.10362744, 7.32704163)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj25.CanCollide = false
+		obj25.TopSurface = Enum.SurfaceType.Smooth
+		obj25.BottomSurface = Enum.SurfaceType.Smooth
+		obj25.Material = Enum.Material.SmoothPlastic
+		obj25.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj25.BrickColor = BrickColor.new("Hot pink")
+		obj25.Friction = 0.30000001192093
+		obj25.Shape = Enum.PartType.Ball
+		obj25.Parent = obj2
+
+		-- 26 - Part
+		local obj26 = Instance.new("Part")
+		obj26.CFrame = CFrame.new(Vector3.new(66.851532, 3.01907969, 7.04717398)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj26.CanCollide = false
+		obj26.TopSurface = Enum.SurfaceType.Smooth
+		obj26.BottomSurface = Enum.SurfaceType.Smooth
+		obj26.Material = Enum.Material.SmoothPlastic
+		obj26.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj26.BrickColor = BrickColor.new("Hot pink")
+		obj26.Friction = 0.30000001192093
+		obj26.Shape = Enum.PartType.Ball
+		obj26.Parent = obj2
+
+		-- 27 - Part
+		local obj27 = Instance.new("Part")
+		obj27.CFrame = CFrame.new(Vector3.new(66.944519, 3.20876789, 7.64748764)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj27.CanCollide = false
+		obj27.TopSurface = Enum.SurfaceType.Smooth
+		obj27.BottomSurface = Enum.SurfaceType.Smooth
+		obj27.Material = Enum.Material.SmoothPlastic
+		obj27.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj27.BrickColor = BrickColor.new("Hot pink")
+		obj27.Friction = 0.30000001192093
+		obj27.Shape = Enum.PartType.Ball
+		obj27.Parent = obj2
+
+		-- 28 - Part
+		local obj28 = Instance.new("Part")
+		obj28.CFrame = CFrame.new(Vector3.new(67.2306061, 4.08936405, 7.28319883)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj28.CanCollide = false
+		obj28.TopSurface = Enum.SurfaceType.Smooth
+		obj28.BottomSurface = Enum.SurfaceType.Smooth
+		obj28.Material = Enum.Material.SmoothPlastic
+		obj28.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj28.BrickColor = BrickColor.new("Hot pink")
+		obj28.Friction = 0.30000001192093
+		obj28.Shape = Enum.PartType.Ball
+		obj28.Parent = obj2
+
+		-- 29 - Part
+		local obj29 = Instance.new("Part")
+		obj29.CFrame = CFrame.new(Vector3.new(66.5712891, 3.99917173, 6.8835969)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj29.CanCollide = false
+		obj29.TopSurface = Enum.SurfaceType.Smooth
+		obj29.BottomSurface = Enum.SurfaceType.Smooth
+		obj29.Material = Enum.Material.SmoothPlastic
+		obj29.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj29.BrickColor = BrickColor.new("Hot pink")
+		obj29.Friction = 0.30000001192093
+		obj29.Shape = Enum.PartType.Ball
+		obj29.Parent = obj2
+
+		-- 30 - Part
+		local obj30 = Instance.new("Part")
+		obj30.CFrame = CFrame.new(Vector3.new(66.7236328, 4.26077843, 7.20509243)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj30.CanCollide = false
+		obj30.TopSurface = Enum.SurfaceType.Smooth
+		obj30.BottomSurface = Enum.SurfaceType.Smooth
+		obj30.Material = Enum.Material.SmoothPlastic
+		obj30.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj30.BrickColor = BrickColor.new("Hot pink")
+		obj30.Friction = 0.30000001192093
+		obj30.Shape = Enum.PartType.Ball
+		obj30.Parent = obj2
+
+		-- 31 - Part
+		local obj31 = Instance.new("Part")
+		obj31.CFrame = CFrame.new(Vector3.new(66.5950623, 4.16077423, 7.05188084)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj31.CanCollide = false
+		obj31.TopSurface = Enum.SurfaceType.Smooth
+		obj31.BottomSurface = Enum.SurfaceType.Smooth
+		obj31.Material = Enum.Material.SmoothPlastic
+		obj31.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj31.BrickColor = BrickColor.new("Hot pink")
+		obj31.Friction = 0.30000001192093
+		obj31.Shape = Enum.PartType.Ball
+		obj31.Parent = obj2
+
+		-- 32 - Part
+		local obj32 = Instance.new("Part")
+		obj32.CFrame = CFrame.new(Vector3.new(67.0637207, 4.03936481, 7.48850012)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj32.CanCollide = false
+		obj32.TopSurface = Enum.SurfaceType.Smooth
+		obj32.BottomSurface = Enum.SurfaceType.Smooth
+		obj32.Material = Enum.Material.SmoothPlastic
+		obj32.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj32.BrickColor = BrickColor.new("Hot pink")
+		obj32.Friction = 0.30000001192093
+		obj32.Shape = Enum.PartType.Ball
+		obj32.Parent = obj2
+
+		-- 33 - Part
+		local obj33 = Instance.new("Part")
+		obj33.CFrame = CFrame.new(Vector3.new(66.4686813, 3.99917364, 7.16550922)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj33.CanCollide = false
+		obj33.TopSurface = Enum.SurfaceType.Smooth
+		obj33.BottomSurface = Enum.SurfaceType.Smooth
+		obj33.Material = Enum.Material.SmoothPlastic
+		obj33.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj33.BrickColor = BrickColor.new("Hot pink")
+		obj33.Friction = 0.30000001192093
+		obj33.Shape = Enum.PartType.Ball
+		obj33.Parent = obj2
+
+		-- 34 - Part
+		local obj34 = Instance.new("Part")
+		obj34.CFrame = CFrame.new(Vector3.new(66.6615219, 4.14917231, 7.3953228)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj34.CanCollide = false
+		obj34.TopSurface = Enum.SurfaceType.Smooth
+		obj34.BottomSurface = Enum.SurfaceType.Smooth
+		obj34.Material = Enum.Material.SmoothPlastic
+		obj34.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj34.BrickColor = BrickColor.new("Hot pink")
+		obj34.Friction = 0.30000001192093
+		obj34.Shape = Enum.PartType.Ball
+		obj34.Parent = obj2
+
+		-- 35 - Part
+		local obj35 = Instance.new("Part")
+		obj35.CFrame = CFrame.new(Vector3.new(66.8712616, 4.16257238, 7.47166586)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj35.CanCollide = false
+		obj35.TopSurface = Enum.SurfaceType.Smooth
+		obj35.BottomSurface = Enum.SurfaceType.Smooth
+		obj35.Material = Enum.Material.SmoothPlastic
+		obj35.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj35.BrickColor = BrickColor.new("Hot pink")
+		obj35.Friction = 0.30000001192093
+		obj35.Shape = Enum.PartType.Ball
+		obj35.Parent = obj2
+
+		-- 36 - Part
+		local obj36 = Instance.new("Part")
+		obj36.CFrame = CFrame.new(Vector3.new(66.7165604, 3.82596827, 6.77684546)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj36.CanCollide = false
+		obj36.TopSurface = Enum.SurfaceType.Smooth
+		obj36.BottomSurface = Enum.SurfaceType.Smooth
+		obj36.Material = Enum.Material.SmoothPlastic
+		obj36.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj36.BrickColor = BrickColor.new("Hot pink")
+		obj36.Friction = 0.30000001192093
+		obj36.Shape = Enum.PartType.Ball
+		obj36.Parent = obj2
+
+		-- 37 - Part
+		local obj37 = Instance.new("Part")
+		obj37.CFrame = CFrame.new(Vector3.new(66.9846878, 4.27417517, 7.14047909)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj37.CanCollide = false
+		obj37.TopSurface = Enum.SurfaceType.Smooth
+		obj37.BottomSurface = Enum.SurfaceType.Smooth
+		obj37.Material = Enum.Material.SmoothPlastic
+		obj37.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj37.BrickColor = BrickColor.new("Hot pink")
+		obj37.Friction = 0.30000001192093
+		obj37.Shape = Enum.PartType.Ball
+		obj37.Parent = obj2
+
+		-- 38 - Part
+		local obj38 = Instance.new("Part")
+		obj38.CFrame = CFrame.new(Vector3.new(67.1641541, 4.10096312, 6.93975735)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj38.CanCollide = false
+		obj38.TopSurface = Enum.SurfaceType.Smooth
+		obj38.BottomSurface = Enum.SurfaceType.Smooth
+		obj38.Material = Enum.Material.SmoothPlastic
+		obj38.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj38.BrickColor = BrickColor.new("Hot pink")
+		obj38.Friction = 0.30000001192093
+		obj38.Shape = Enum.PartType.Ball
+		obj38.Parent = obj2
+
+		-- 39 - Part
+		local obj39 = Instance.new("Part")
+		obj39.CFrame = CFrame.new(Vector3.new(66.792038, 4.26077843, 7.01715183)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj39.CanCollide = false
+		obj39.TopSurface = Enum.SurfaceType.Smooth
+		obj39.BottomSurface = Enum.SurfaceType.Smooth
+		obj39.Material = Enum.Material.SmoothPlastic
+		obj39.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj39.BrickColor = BrickColor.new("Hot pink")
+		obj39.Friction = 0.30000001192093
+		obj39.Shape = Enum.PartType.Ball
+		obj39.Parent = obj2
+
+		-- 40 - Part
+		local obj40 = Instance.new("Part")
+		obj40.CFrame = CFrame.new(Vector3.new(66.5005493, 3.71436262, 7.38994217)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj40.CanCollide = false
+		obj40.TopSurface = Enum.SurfaceType.Smooth
+		obj40.BottomSurface = Enum.SurfaceType.Smooth
+		obj40.Material = Enum.Material.SmoothPlastic
+		obj40.Size = Vector3.new(0.25, 0.25, 0.25)
+		obj40.BrickColor = BrickColor.new("Hot pink")
+		obj40.Friction = 0.30000001192093
+		obj40.Shape = Enum.PartType.Ball
+		obj40.Parent = obj2
+
+		-- 41 - stretches
+		local obj41 = Instance.new("Model")
+		obj41.Name = "stretches"
+		obj41.Parent = obj1
+
+		-- 42 - stretchlol
+		local obj42 = Instance.new("Part")
+		obj42.CFrame = CFrame.new(Vector3.new(67.162117, 3.13544774, 6.8847661)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj42.CanCollide = false
+		obj42.Transparency = 1
+		obj42.TopSurface = Enum.SurfaceType.Smooth
+		obj42.BottomSurface = Enum.SurfaceType.Smooth
+		obj42.Material = Enum.Material.SmoothPlastic
+		obj42.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj42.BrickColor = BrickColor.new("Pastel brown")
+		obj42.Friction = 0.30000001192093
+		obj42.Shape = Enum.PartType.Ball
+		obj42.Name = "stretchlol"
+		obj42.Parent = obj41
+
+		-- 43 - stretchlol
+		local obj43 = Instance.new("Part")
+		obj43.CFrame = CFrame.new(Vector3.new(67.1951675, 3.40412855, 7.69050598)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj43.CanCollide = false
+		obj43.Transparency = 1
+		obj43.TopSurface = Enum.SurfaceType.Smooth
+		obj43.BottomSurface = Enum.SurfaceType.Smooth
+		obj43.Material = Enum.Material.SmoothPlastic
+		obj43.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj43.BrickColor = BrickColor.new("Pastel brown")
+		obj43.Friction = 0.30000001192093
+		obj43.Shape = Enum.PartType.Ball
+		obj43.Name = "stretchlol"
+		obj43.Parent = obj41
+
+		-- 44 - stretchlol
+		local obj44 = Instance.new("Part")
+		obj44.CFrame = CFrame.new(Vector3.new(67.5038223, 3.48357916, 7.48069382)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj44.CanCollide = false
+		obj44.Transparency = 1
+		obj44.TopSurface = Enum.SurfaceType.Smooth
+		obj44.BottomSurface = Enum.SurfaceType.Smooth
+		obj44.Material = Enum.Material.SmoothPlastic
+		obj44.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj44.BrickColor = BrickColor.new("Pastel brown")
+		obj44.Friction = 0.30000001192093
+		obj44.Shape = Enum.PartType.Ball
+		obj44.Name = "stretchlol"
+		obj44.Parent = obj41
+
+		-- 45 - stretchlol
+		local obj45 = Instance.new("Part")
+		obj45.CFrame = CFrame.new(Vector3.new(67.1641541, 4.12207699, 6.93975687)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj45.CanCollide = false
+		obj45.Transparency = 1
+		obj45.TopSurface = Enum.SurfaceType.Smooth
+		obj45.BottomSurface = Enum.SurfaceType.Smooth
+		obj45.Material = Enum.Material.SmoothPlastic
+		obj45.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj45.BrickColor = BrickColor.new("Pastel brown")
+		obj45.Friction = 0.30000001192093
+		obj45.Shape = Enum.PartType.Ball
+		obj45.Name = "stretchlol"
+		obj45.Parent = obj41
+
+		-- 46 - stretchlol
+		local obj46 = Instance.new("Part")
+		obj46.CFrame = CFrame.new(Vector3.new(66.8712616, 4.18368626, 7.47166586)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj46.CanCollide = false
+		obj46.Transparency = 1
+		obj46.TopSurface = Enum.SurfaceType.Smooth
+		obj46.BottomSurface = Enum.SurfaceType.Smooth
+		obj46.Material = Enum.Material.SmoothPlastic
+		obj46.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj46.BrickColor = BrickColor.new("Pastel brown")
+		obj46.Friction = 0.30000001192093
+		obj46.Shape = Enum.PartType.Ball
+		obj46.Name = "stretchlol"
+		obj46.Parent = obj41
+
+		-- 47 - stretchlol
+		local obj47 = Instance.new("Part")
+		obj47.CFrame = CFrame.new(Vector3.new(66.8260345, 4.14528561, 6.81669378)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj47.CanCollide = false
+		obj47.Transparency = 1
+		obj47.TopSurface = Enum.SurfaceType.Smooth
+		obj47.BottomSurface = Enum.SurfaceType.Smooth
+		obj47.Material = Enum.Material.SmoothPlastic
+		obj47.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj47.BrickColor = BrickColor.new("Pastel brown")
+		obj47.Friction = 0.30000001192093
+		obj47.Shape = Enum.PartType.Ball
+		obj47.Name = "stretchlol"
+		obj47.Parent = obj41
+
+		-- 48 - stretchlol
+		local obj48 = Instance.new("Part")
+		obj48.CFrame = CFrame.new(Vector3.new(66.7104797, 3.88547921, 7.57276678)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj48.CanCollide = false
+		obj48.Transparency = 1
+		obj48.TopSurface = Enum.SurfaceType.Smooth
+		obj48.BottomSurface = Enum.SurfaceType.Smooth
+		obj48.Material = Enum.Material.SmoothPlastic
+		obj48.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj48.BrickColor = BrickColor.new("Pastel brown")
+		obj48.Friction = 0.30000001192093
+		obj48.Shape = Enum.PartType.Ball
+		obj48.Name = "stretchlol"
+		obj48.Parent = obj41
+
+		-- 49 - stretchlol
+		local obj49 = Instance.new("Part")
+		obj49.CFrame = CFrame.new(Vector3.new(67.0637207, 4.06047773, 7.48850012)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj49.CanCollide = false
+		obj49.Transparency = 1
+		obj49.TopSurface = Enum.SurfaceType.Smooth
+		obj49.BottomSurface = Enum.SurfaceType.Smooth
+		obj49.Material = Enum.Material.SmoothPlastic
+		obj49.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj49.BrickColor = BrickColor.new("Pastel brown")
+		obj49.Friction = 0.30000001192093
+		obj49.Shape = Enum.PartType.Ball
+		obj49.Name = "stretchlol"
+		obj49.Parent = obj41
+
+		-- 50 - stretchlol
+		local obj50 = Instance.new("Part")
+		obj50.CFrame = CFrame.new(Vector3.new(66.7165604, 3.84708691, 6.77684498)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj50.CanCollide = false
+		obj50.Transparency = 1
+		obj50.TopSurface = Enum.SurfaceType.Smooth
+		obj50.BottomSurface = Enum.SurfaceType.Smooth
+		obj50.Material = Enum.Material.SmoothPlastic
+		obj50.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj50.BrickColor = BrickColor.new("Pastel brown")
+		obj50.Friction = 0.30000001192093
+		obj50.Shape = Enum.PartType.Ball
+		obj50.Name = "stretchlol"
+		obj50.Parent = obj41
+
+		-- 51 - stretchlol
+		local obj51 = Instance.new("Part")
+		obj51.CFrame = CFrame.new(Vector3.new(66.9846878, 4.29528904, 7.14047909)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj51.CanCollide = false
+		obj51.Transparency = 1
+		obj51.TopSurface = Enum.SurfaceType.Smooth
+		obj51.BottomSurface = Enum.SurfaceType.Smooth
+		obj51.Material = Enum.Material.SmoothPlastic
+		obj51.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj51.BrickColor = BrickColor.new("Pastel brown")
+		obj51.Friction = 0.30000001192093
+		obj51.Shape = Enum.PartType.Ball
+		obj51.Name = "stretchlol"
+		obj51.Parent = obj41
+
+		-- 52 - stretchlol
+		local obj52 = Instance.new("Part")
+		obj52.CFrame = CFrame.new(Vector3.new(66.868927, 3.45350599, 6.82578087)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj52.CanCollide = false
+		obj52.Transparency = 1
+		obj52.TopSurface = Enum.SurfaceType.Smooth
+		obj52.BottomSurface = Enum.SurfaceType.Smooth
+		obj52.Material = Enum.Material.SmoothPlastic
+		obj52.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj52.BrickColor = BrickColor.new("Pastel brown")
+		obj52.Friction = 0.30000001192093
+		obj52.Shape = Enum.PartType.Ball
+		obj52.Name = "stretchlol"
+		obj52.Parent = obj41
+
+		-- 53 - stretchlol
+		local obj53 = Instance.new("Part")
+		obj53.CFrame = CFrame.new(Vector3.new(67.287262, 3.10603261, 7.30382156)) * CFrame.Angles(9.1487750708552e-09, -0.34906616806984, -1.0471986532211)
+		obj53.CanCollide = false
+		obj53.Transparency = 1
+		obj53.TopSurface = Enum.SurfaceType.Smooth
+		obj53.BottomSurface = Enum.SurfaceType.Smooth
+		obj53.Material = Enum.Material.SmoothPlastic
+		obj53.Size = Vector3.new(1.79999995, 1.04999995, 1.04999995)
+		obj53.BrickColor = BrickColor.new("Pastel brown")
+		obj53.Friction = 0.30000001192093
+		obj53.Shape = Enum.PartType.Cylinder
+		obj53.Name = "stretchlol"
+		obj53.Parent = obj41
+
+		-- 54 - stretchlol
+		local obj54 = Instance.new("Part")
+		obj54.CFrame = CFrame.new(Vector3.new(66.4686813, 4.02028799, 7.16550922)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj54.CanCollide = false
+		obj54.Transparency = 1
+		obj54.TopSurface = Enum.SurfaceType.Smooth
+		obj54.BottomSurface = Enum.SurfaceType.Smooth
+		obj54.Material = Enum.Material.SmoothPlastic
+		obj54.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj54.BrickColor = BrickColor.new("Pastel brown")
+		obj54.Friction = 0.30000001192093
+		obj54.Shape = Enum.PartType.Ball
+		obj54.Name = "stretchlol"
+		obj54.Parent = obj41
+
+		-- 55 - stretchlol
+		local obj55 = Instance.new("Part")
+		obj55.CFrame = CFrame.new(Vector3.new(66.6615219, 4.17028332, 7.3953228)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj55.CanCollide = false
+		obj55.Transparency = 1
+		obj55.TopSurface = Enum.SurfaceType.Smooth
+		obj55.BottomSurface = Enum.SurfaceType.Smooth
+		obj55.Material = Enum.Material.SmoothPlastic
+		obj55.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj55.BrickColor = BrickColor.new("Pastel brown")
+		obj55.Friction = 0.30000001192093
+		obj55.Shape = Enum.PartType.Ball
+		obj55.Name = "stretchlol"
+		obj55.Parent = obj41
+
+		-- 56 - stretchlol
+		local obj56 = Instance.new("Part")
+		obj56.CFrame = CFrame.new(Vector3.new(66.753746, 3.12474751, 7.32704115)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj56.CanCollide = false
+		obj56.Transparency = 1
+		obj56.TopSurface = Enum.SurfaceType.Smooth
+		obj56.BottomSurface = Enum.SurfaceType.Smooth
+		obj56.Material = Enum.Material.SmoothPlastic
+		obj56.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj56.BrickColor = BrickColor.new("Pastel brown")
+		obj56.Friction = 0.30000001192093
+		obj56.Shape = Enum.PartType.Ball
+		obj56.Name = "stretchlol"
+		obj56.Parent = obj41
+
+		-- 57 - stretchlol
+		local obj57 = Instance.new("Part")
+		obj57.CFrame = CFrame.new(Vector3.new(67.2306061, 4.11047649, 7.28319883)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj57.CanCollide = false
+		obj57.Transparency = 1
+		obj57.TopSurface = Enum.SurfaceType.Smooth
+		obj57.BottomSurface = Enum.SurfaceType.Smooth
+		obj57.Material = Enum.Material.SmoothPlastic
+		obj57.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj57.BrickColor = BrickColor.new("Pastel brown")
+		obj57.Friction = 0.30000001192093
+		obj57.Shape = Enum.PartType.Ball
+		obj57.Name = "stretchlol"
+		obj57.Parent = obj41
+
+		-- 58 - stretchlol
+		local obj58 = Instance.new("Part")
+		obj58.CFrame = CFrame.new(Vector3.new(67.0756683, 3.79114079, 7.63403416)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj58.CanCollide = false
+		obj58.Transparency = 1
+		obj58.TopSurface = Enum.SurfaceType.Smooth
+		obj58.BottomSurface = Enum.SurfaceType.Smooth
+		obj58.Material = Enum.Material.SmoothPlastic
+		obj58.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj58.BrickColor = BrickColor.new("Pastel brown")
+		obj58.Friction = 0.30000001192093
+		obj58.Shape = Enum.PartType.Ball
+		obj58.Name = "stretchlol"
+		obj58.Parent = obj41
+
+		-- 59 - stretchlol
+		local obj59 = Instance.new("Part")
+		obj59.CFrame = CFrame.new(Vector3.new(66.5005493, 3.73548079, 7.38994217)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj59.CanCollide = false
+		obj59.Transparency = 1
+		obj59.TopSurface = Enum.SurfaceType.Smooth
+		obj59.BottomSurface = Enum.SurfaceType.Smooth
+		obj59.Material = Enum.Material.SmoothPlastic
+		obj59.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj59.BrickColor = BrickColor.new("Pastel brown")
+		obj59.Friction = 0.30000001192093
+		obj59.Shape = Enum.PartType.Ball
+		obj59.Name = "stretchlol"
+		obj59.Parent = obj41
+
+		-- 60 - stretchlol
+		local obj60 = Instance.new("Part")
+		obj60.CFrame = CFrame.new(Vector3.new(67.6487045, 3.41425848, 7.1938138)) * CFrame.Angles(-2.0021269321442, 1.2287007570267, 1.6869416236877)
+		obj60.CanCollide = false
+		obj60.Transparency = 1
+		obj60.TopSurface = Enum.SurfaceType.Smooth
+		obj60.BottomSurface = Enum.SurfaceType.Smooth
+		obj60.Material = Enum.Material.SmoothPlastic
+		obj60.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj60.BrickColor = BrickColor.new("Pastel brown")
+		obj60.Friction = 0.30000001192093
+		obj60.Shape = Enum.PartType.Ball
+		obj60.Name = "stretchlol"
+		obj60.Parent = obj41
+
+		-- 61 - stretchlol
+		local obj61 = Instance.new("Part")
+		obj61.CFrame = CFrame.new(Vector3.new(67.3677139, 3.85357118, 7.33310223)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj61.CanCollide = false
+		obj61.Transparency = 1
+		obj61.TopSurface = Enum.SurfaceType.Smooth
+		obj61.BottomSurface = Enum.SurfaceType.Smooth
+		obj61.Material = Enum.Material.SmoothPlastic
+		obj61.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj61.BrickColor = BrickColor.new("Pastel brown")
+		obj61.Friction = 0.30000001192093
+		obj61.Shape = Enum.PartType.Ball
+		obj61.Name = "stretchlol"
+		obj61.Parent = obj41
+
+		-- 62 - stretchlol
+		local obj62 = Instance.new("Part")
+		obj62.CFrame = CFrame.new(Vector3.new(66.6352844, 3.40356588, 7.06651878)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj62.CanCollide = false
+		obj62.Transparency = 1
+		obj62.TopSurface = Enum.SurfaceType.Smooth
+		obj62.BottomSurface = Enum.SurfaceType.Smooth
+		obj62.Material = Enum.Material.SmoothPlastic
+		obj62.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj62.BrickColor = BrickColor.new("Pastel brown")
+		obj62.Friction = 0.30000001192093
+		obj62.Shape = Enum.PartType.Ball
+		obj62.Name = "stretchlol"
+		obj62.Parent = obj41
+
+		-- 63 - stretchlol
+		local obj63 = Instance.new("Part")
+		obj63.CFrame = CFrame.new(Vector3.new(66.7236328, 4.28189754, 7.20509195)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj63.CanCollide = false
+		obj63.Transparency = 1
+		obj63.TopSurface = Enum.SurfaceType.Smooth
+		obj63.BottomSurface = Enum.SurfaceType.Smooth
+		obj63.Material = Enum.Material.SmoothPlastic
+		obj63.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj63.BrickColor = BrickColor.new("Pastel brown")
+		obj63.Friction = 0.30000001192093
+		obj63.Shape = Enum.PartType.Ball
+		obj63.Name = "stretchlol"
+		obj63.Parent = obj41
+
+		-- 64 - stretchlol
+		local obj64 = Instance.new("Part")
+		obj64.CFrame = CFrame.new(Vector3.new(66.5712891, 4.02028799, 6.8835969)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj64.CanCollide = false
+		obj64.Transparency = 1
+		obj64.TopSurface = Enum.SurfaceType.Smooth
+		obj64.BottomSurface = Enum.SurfaceType.Smooth
+		obj64.Material = Enum.Material.SmoothPlastic
+		obj64.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj64.BrickColor = BrickColor.new("Pastel brown")
+		obj64.Friction = 0.30000001192093
+		obj64.Shape = Enum.PartType.Ball
+		obj64.Name = "stretchlol"
+		obj64.Parent = obj41
+
+		-- 65 - stretchlol
+		local obj65 = Instance.new("Part")
+		obj65.CFrame = CFrame.new(Vector3.new(66.4981842, 3.66047978, 7.01661682)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj65.CanCollide = false
+		obj65.Transparency = 1
+		obj65.TopSurface = Enum.SurfaceType.Smooth
+		obj65.BottomSurface = Enum.SurfaceType.Smooth
+		obj65.Material = Enum.Material.SmoothPlastic
+		obj65.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj65.BrickColor = BrickColor.new("Pastel brown")
+		obj65.Friction = 0.30000001192093
+		obj65.Shape = Enum.PartType.Ball
+		obj65.Name = "stretchlol"
+		obj65.Parent = obj41
+
+		-- 66 - stretchlol
+		local obj66 = Instance.new("Part")
+		obj66.CFrame = CFrame.new(Vector3.new(66.7920303, 4.28189754, 7.01715183)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj66.CanCollide = false
+		obj66.Transparency = 1
+		obj66.TopSurface = Enum.SurfaceType.Smooth
+		obj66.BottomSurface = Enum.SurfaceType.Smooth
+		obj66.Material = Enum.Material.SmoothPlastic
+		obj66.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj66.BrickColor = BrickColor.new("Pastel brown")
+		obj66.Friction = 0.30000001192093
+		obj66.Shape = Enum.PartType.Ball
+		obj66.Name = "stretchlol"
+		obj66.Parent = obj41
+
+		-- 67 - stretchlol
+		local obj67 = Instance.new("Part")
+		obj67.CFrame = CFrame.new(Vector3.new(66.5950623, 4.18188763, 7.05188084)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj67.CanCollide = false
+		obj67.Transparency = 1
+		obj67.TopSurface = Enum.SurfaceType.Smooth
+		obj67.BottomSurface = Enum.SurfaceType.Smooth
+		obj67.Material = Enum.Material.SmoothPlastic
+		obj67.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj67.BrickColor = BrickColor.new("Pastel brown")
+		obj67.Friction = 0.30000001192093
+		obj67.Shape = Enum.PartType.Ball
+		obj67.Name = "stretchlol"
+		obj67.Parent = obj41
+
+		-- 68 - stretchlol
+		local obj68 = Instance.new("Part")
+		obj68.CFrame = CFrame.new(Vector3.new(67.4115601, 3.73646879, 7.01420689)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj68.CanCollide = false
+		obj68.Transparency = 1
+		obj68.TopSurface = Enum.SurfaceType.Smooth
+		obj68.BottomSurface = Enum.SurfaceType.Smooth
+		obj68.Material = Enum.Material.SmoothPlastic
+		obj68.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj68.BrickColor = BrickColor.new("Pastel brown")
+		obj68.Friction = 0.30000001192093
+		obj68.Shape = Enum.PartType.Ball
+		obj68.Name = "stretchlol"
+		obj68.Parent = obj41
+
+		-- 69 - stretchlol
+		local obj69 = Instance.new("Part")
+		obj69.CFrame = CFrame.new(Vector3.new(66.8643951, 3.88548112, 7.14990711)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj69.CanCollide = false
+		obj69.Transparency = 1
+		obj69.TopSurface = Enum.SurfaceType.Smooth
+		obj69.BottomSurface = Enum.SurfaceType.Smooth
+		obj69.Material = Enum.Material.SmoothPlastic
+		obj69.Size = Vector3.new(1.04999995, 1.04999995, 1.04999995)
+		obj69.BrickColor = BrickColor.new("Pastel brown")
+		obj69.Friction = 0.30000001192093
+		obj69.Shape = Enum.PartType.Ball
+		obj69.Name = "stretchlol"
+		obj69.Parent = obj41
+
+		-- 70 - stretchlol
+		local obj70 = Instance.new("Part")
+		obj70.CFrame = CFrame.new(Vector3.new(67.4108353, 3.29388237, 6.88037777)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj70.CanCollide = false
+		obj70.Transparency = 1
+		obj70.TopSurface = Enum.SurfaceType.Smooth
+		obj70.BottomSurface = Enum.SurfaceType.Smooth
+		obj70.Material = Enum.Material.SmoothPlastic
+		obj70.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj70.BrickColor = BrickColor.new("Pastel brown")
+		obj70.Friction = 0.30000001192093
+		obj70.Shape = Enum.PartType.Ball
+		obj70.Name = "stretchlol"
+		obj70.Parent = obj41
+
+		-- 71 - stretchlol
+		local obj71 = Instance.new("Part")
+		obj71.CFrame = CFrame.new(Vector3.new(67.1960983, 3.65356374, 6.79175806)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj71.CanCollide = false
+		obj71.Transparency = 1
+		obj71.TopSurface = Enum.SurfaceType.Smooth
+		obj71.BottomSurface = Enum.SurfaceType.Smooth
+		obj71.Material = Enum.Material.SmoothPlastic
+		obj71.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj71.BrickColor = BrickColor.new("Pastel brown")
+		obj71.Friction = 0.30000001192093
+		obj71.Shape = Enum.PartType.Ball
+		obj71.Name = "stretchlol"
+		obj71.Parent = obj41
+
+		-- 72 - stretchlol
+		local obj72 = Instance.new("Part")
+		obj72.CFrame = CFrame.new(Vector3.new(66.944519, 3.22988653, 7.64748716)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj72.CanCollide = false
+		obj72.Transparency = 1
+		obj72.TopSurface = Enum.SurfaceType.Smooth
+		obj72.BottomSurface = Enum.SurfaceType.Smooth
+		obj72.Material = Enum.Material.SmoothPlastic
+		obj72.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj72.BrickColor = BrickColor.new("Pastel brown")
+		obj72.Friction = 0.30000001192093
+		obj72.Shape = Enum.PartType.Ball
+		obj72.Name = "stretchlol"
+		obj72.Parent = obj41
+
+		-- 73 - stretchlol
+		local obj73 = Instance.new("Part")
+		obj73.CFrame = CFrame.new(Vector3.new(66.851532, 3.04020095, 7.04717398)) * CFrame.Angles(-3.058357000351, 0.5446692109108, 2.5818355083466)
+		obj73.CanCollide = false
+		obj73.Transparency = 1
+		obj73.TopSurface = Enum.SurfaceType.Smooth
+		obj73.BottomSurface = Enum.SurfaceType.Smooth
+		obj73.Material = Enum.Material.SmoothPlastic
+		obj73.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj73.BrickColor = BrickColor.new("Pastel brown")
+		obj73.Friction = 0.30000001192093
+		obj73.Shape = Enum.PartType.Ball
+		obj73.Name = "stretchlol"
+		obj73.Parent = obj41
+
+		-- 74 - stretchlol
+		local obj74 = Instance.new("Part")
+		obj74.CFrame = CFrame.new(Vector3.new(66.5551376, 3.48395109, 7.33871603)) * CFrame.Angles(-2.4803557395935, 1.123170375824, 2.1302044391632)
+		obj74.CanCollide = false
+		obj74.Transparency = 1
+		obj74.TopSurface = Enum.SurfaceType.Smooth
+		obj74.BottomSurface = Enum.SurfaceType.Smooth
+		obj74.Material = Enum.Material.SmoothPlastic
+		obj74.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj74.BrickColor = BrickColor.new("Pastel brown")
+		obj74.Friction = 0.30000001192093
+		obj74.Shape = Enum.PartType.Ball
+		obj74.Name = "stretchlol"
+		obj74.Parent = obj41
+
+		-- 75 - stretchlol
+		local obj75 = Instance.new("Part")
+		obj75.CFrame = CFrame.new(Vector3.new(66.8069, 3.60357046, 7.60786104)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj75.CanCollide = false
+		obj75.Transparency = 1
+		obj75.TopSurface = Enum.SurfaceType.Smooth
+		obj75.BottomSurface = Enum.SurfaceType.Smooth
+		obj75.Material = Enum.Material.SmoothPlastic
+		obj75.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj75.BrickColor = BrickColor.new("Pastel brown")
+		obj75.Friction = 0.30000001192093
+		obj75.Shape = Enum.PartType.Ball
+		obj75.Name = "stretchlol"
+		obj75.Parent = obj41
+
+		-- 76 - stretchlol
+		local obj76 = Instance.new("Part")
+		obj76.CFrame = CFrame.new(Vector3.new(67.0182953, 3.88547921, 6.72704411)) * CFrame.Angles(-3.1415927410126, 0.34906616806984, 2.6179955005646)
+		obj76.CanCollide = false
+		obj76.Transparency = 1
+		obj76.TopSurface = Enum.SurfaceType.Smooth
+		obj76.BottomSurface = Enum.SurfaceType.Smooth
+		obj76.Material = Enum.Material.SmoothPlastic
+		obj76.Size = Vector3.new(0.300000012, 0.300000012, 0.300000012)
+		obj76.BrickColor = BrickColor.new("Pastel brown")
+		obj76.Friction = 0.30000001192093
+		obj76.Shape = Enum.PartType.Ball
+		obj76.Name = "stretchlol"
+		obj76.Parent = obj41
+		obj1.PrimaryPart = obj4
+
+		local stretches = obj41:GetChildren()
+		for i,v in pairs(stretches) do
+			v.Anchored = true
+			v.Parent = obj1
+		end
+		for i,v in pairs(obj2:GetChildren()) do
+			v.Anchored = true
+			v.Parent = obj1
+		end
+		obj2:Destroy()
+		obj41:Destroy()
+
+		local previous = nil
+		for i,v in pairs(obj1:GetChildren()) do
+			if v:IsA('BasePart') then
+				if previous then
+					local weld = Instance.new('Weld',v)
+					weld.Part0 = v
+					weld.Part1 = previous
+					weld.C0 = v.CFrame:inverse() * previous.CFrame
+					previous.Anchored = false
+					previous.CanCollide = false
+					local vee = v
+					weld.AncestryChanged:connect(function(mez,par)
+						wait()
+						weld.Parent = vee
+					end)
+				end
+				previous = v
+			end
+		end
+		previous.Anchored = false
+		previous.CanCollide = false
+		obj1:SetPrimaryPartCFrame(handle.CFrame*CFrame.Angles(0,math.rad(180),0)+Vector3.new(0,100,0))
+		-- 2 - Part
+		local ree = Instance.new("Part")
+		ree.CFrame = CFrame.new(Vector3.new(50.5, 141, 5.5))
+		ree.Transparency = 0.80000001192093
+		ree.Material = Enum.Material.Neon
+		ree.CFrame = CFrame.new(obj4.Position)
+		ree.Size = Vector3.new(5, math.huge, 5)
+		ree.BrickColor = BrickColor.new("New Yeller")
+		ree.Friction = 0.30000001192093
+		ree.Shape = Enum.PartType.Block
+		ree.Parent = handle
+
+		-- 3 - Mesh
+		local ree2 = Instance.new("CylinderMesh")
+		ree2.Parent = ree
+		local thing = Instance.new('BodyPosition',obj9)
+		local thing2 = Instance.new('BodyPosition',ree)
+		thing2.P = 100000
+		thing2.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+		thing.MaxForce = Vector3.new(10000,10000,10000)
+		for i=1,100 do
+			thing2.Position = obj4.Position
+			obj1:SetPrimaryPartCFrame(CFrame.new(obj1.PrimaryPart.Position)*CFrame.Angles(math.rad(handle.Orientation.X),math.rad(handle.Orientation.Y),math.rad(handle.Orientation.Z))*CFrame.Angles(0,math.rad(180),0))
+			thing.Position = handle.Position+(handle.CFrame.rightVector*0.5)
+			wait()
+		end
+		thing:Destroy()
+		local lmfao = Instance.new('Weld',obj4)
+		lmfao.C0 = CFrame.new(2.5,0.2,0)*CFrame.Angles(0,math.rad(180),0)
+		lmfao.Part0 = obj4
+		lmfao.Part1 = handle
+		ree:Destroy()
+		working = false
+	end
+
+	function katanamode()
+		blademode = "katana"
+		-- 1 - weeb shit
+		local weebshit1 = handle
+
+		-- 16 - top cap
+		local weebshit16 = Instance.new("Part")
+		weebshit16.CFrame = CFrame.new(Vector3.new(206.400146, 11.5499945, 5.00058556)) * CFrame.Angles(-3.1415927410126, 0, 1.5707963705063)
+		weebshit16.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.Size = Vector3.new(0.1, 0.05,0.05) --0.65, 0.65
+		weebshit16.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit16.Anchored = false
+		weebshit16.BrickColor = BrickColor.new("Really black")
+		weebshit16.Friction = 0.30000001192093
+		weebshit16.Shape = Enum.PartType.Cylinder
+		weebshit16.Name = "top cap"
+		weebshit16.Parent = weebshit1
+		local weld = Instance.new('Weld',weebshit16)
+		weld.Part0 = weebshit16
+		weld.Part1 = handle
+		weld.C1 = CFrame.new(0.6, 0, 0, 1.00000048, 0, 0, 0, 1, 0, 0, 0, 1.00000048)
+		--weld,part,endsize,endpos,amntime
+		grow(weld,weebshit16,Vector3.new(0.1,0.65,0.65),CFrame.new(0.6, 0, 0, 1.00000048, 0, 0, 0, 1, 0, 0, 0, 1.00000048),0.1)
+
+		-- 8 - blade
+		local weebshit8 = Instance.new("Part")
+		weebshit8.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.Material = Enum.Material.Metal
+		weebshit8.Size = Vector3.new(0.23,0.05, 0.1)
+		weebshit8.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit8.Anchored = false
+		weebshit8.BrickColor = BrickColor.new("Dark stone grey")
+		weebshit8.Friction = 0.30000001192093
+		weebshit8.Shape = Enum.PartType.Block
+		weebshit8.Name = "blade"
+		weebshit8.Parent = weebshit1
+		weebshit8:BreakJoints()
+		local bld1 = weebshit8
+		local weld2 = Instance.new('Weld',weebshit8)
+		weld2.Part0 = weebshit8
+		weld2.Part1 = handle
+		weld2.C1 = CFrame.new(0.75, 0, 0) * CFrame.Angles(math.rad(180), 0, math.rad(-90))
+		local coru=coroutine.wrap(function()
+			grow(weld2,weebshit8,Vector3.new(0.23,1.17,0.1),CFrame.new(1.25, 0, 0) * CFrame.Angles(math.rad(180), 0, math.rad(-90)),0.05)
+		end)
+		coru()
+
+		-- 9 - blade
+		local weebshit9 = Instance.new("Part")
+		weebshit9.CFrame = CFrame.new(Vector3.new(206.475388, 13.3372736, 5.00158167)) * CFrame.Angles(-0, 0, 0.052359949797392)
+		weebshit9.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.Material = Enum.Material.Metal
+		weebshit9.Size = Vector3.new(0.100000009, 0.05, 0.0500000007)
+		weebshit9.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit9.Anchored = false
+		weebshit9.BrickColor = BrickColor.new("Pearl")
+		weebshit9.Friction = 0.30000001192093
+		weebshit9.Shape = Enum.PartType.Block
+		weebshit9.Name = "blade"
+		weebshit9.Parent = weebshit8
+		local bld2 = weebshit9
+		local weld3 = Instance.new('Weld',weebshit9)
+		weld3.Part0 = weebshit9
+		weld3.Part1 = weebshit8
+		weld3.C1 = CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0)
+		grow(weld3,weebshit9,Vector3.new(0.100000009, 1.17, 0.0500000007),CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0),0.05)
+		-- 10 - blade
+		local weebshit10 = Instance.new("Part")
+		weebshit10.CFrame = CFrame.new(Vector3.new(206.26973, 14.458313, 5)) * CFrame.Angles(-0, 0, 0.10472027212381)
+		weebshit10.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.Material = Enum.Material.Metal
+		weebshit10.Size = Vector3.new(0.229999945, 0.05, 0.100000009)
+		weebshit10.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit10.Anchored = false
+		weebshit10.BrickColor = BrickColor.new("Dark stone grey")
+		weebshit10.Friction = 0.30000001192093
+		weebshit10.Shape = Enum.PartType.Block
+		weebshit10.Name = "blade"
+		weebshit10.Parent = weebshit1
+		local weld4 = Instance.new('Weld',weebshit10)
+		weld4.Part0 = weebshit10
+		weld4.Part1 = weebshit8
+		weld4.C1 = CFrame.new(-0.01, 0.55, -1.14440918e-05, 0.998631477, 0.0523363762, -1.25522347e-05, 0.0523363687, -0.998631358, -8.97663813e-06, -1.3056685e-05, 8.01841452e-06, -1.00000095)
+		local coru=coroutine.wrap(function()
+			grow(weld4,weebshit10,Vector3.new(0.23,1.17,0.1),CFrame.new(-0.0285797119, 1.14634609, -1.14440918e-05, 0.998631477, 0.0523363762, -1.25522347e-05, 0.0523363687, -0.998631358, -8.97663813e-06, -1.3056685e-05, 8.01841452e-06, -1.00000095),0.1)
+		end)
+		coru()
+		-- 11 - blade
+		local weebshit11 = Instance.new("Part")
+		weebshit11.CFrame = CFrame.new(Vector3.new(206.384079, 14.4703341, 5.00158167)) * CFrame.Angles(-0, 0, 0.10472027212381)
+		weebshit11.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.Material = Enum.Material.Metal
+		weebshit11.Size = Vector3.new(0.100000009, 0.05, 0.0500000007)
+		weebshit11.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit11.Anchored = false
+		weebshit11.BrickColor = BrickColor.new("Pearl")
+		weebshit11.Friction = 0.30000001192093
+		weebshit11.Shape = Enum.PartType.Block
+		weebshit11.Name = "blade"
+		weebshit11.Parent = weebshit1
+		local weld5 = Instance.new('Weld',weebshit10)
+		weld5.Part0 = weebshit10
+		weld5.Part1 = weebshit11
+		weld5.C1 = CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0)
+		grow(weld5,weebshit11,Vector3.new(0.100000009, 1.16999841, 0.0500000007),CFrame.new(-0.11, 0, 0) * CFrame.Angles(0, 0, 0),0.1)
+
+		-- 15 - blade
+		local weebshit15 = Instance.new("Part")
+		weebshit15.CFrame = CFrame.new(Vector3.new(206.36055, 13.3312511, 5)) * CFrame.Angles(-0, 0, 0.052359949797392)
+		weebshit15.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.Material = Enum.Material.Metal
+		weebshit15.Size = Vector3.new(0.229999945, 0.55, 0.100000009)
+		weebshit15.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit15.Anchored = false
+		weebshit15.BrickColor = BrickColor.new("Dark stone grey")
+		weebshit15.Friction = 0.30000001192093
+		weebshit15.Shape = Enum.PartType.Block
+		weebshit15.Name = "blade"
+		weebshit15.Parent = weebshit1
+		local weld6 = Instance.new('Weld',weebshit15)
+		weld6.Part0 = weebshit15
+		weld6.Part1 = weebshit10
+		weld6.C1 = CFrame.new(-0.01, -0.55, 0, 0.99863112, -0.0523363762, 5.34574838e-07, -0.0523363203, -0.998631358, 9.75034527e-06, 9.04611142e-08, -1.00508332e-05, -1.0000006)
+		local coru=coroutine.wrap(function()
+			grow(weld6,weebshit15,Vector3.new(0.229999945, 1.17000151, 0.100000009),CFrame.new(-0.0274810791, -1.13038063, 0, 0.99863112, -0.0523363762, 5.34574838e-07, -0.0523363203, -0.998631358, 9.75034527e-06, 9.04611142e-08, -1.00508332e-05, -1.0000006),0.1)
+		end)
+		coru()
+
+		-- 12 - blade
+		local weebshit12 = Instance.new("Part")
+		weebshit12.CFrame = CFrame.new(Vector3.new(206.50705, 12.1849957, 5.00158167)) * CFrame.Angles(-0, 0, -0)
+		weebshit12.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.Material = Enum.Material.Metal
+		weebshit12.Size = Vector3.new(0.100000009, 0.05, 0.0500000007)
+		weebshit12.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit12.Anchored = false
+		weebshit12.BrickColor = BrickColor.new("Pearl")
+		weebshit12.Friction = 0.30000001192093
+		weebshit12.Shape = Enum.PartType.Block
+		weebshit12.Name = "blade"
+		weebshit12.Parent = weebshit1
+		local weld7 = Instance.new('Weld',weebshit12)
+		weld7.Part0 = weebshit12
+		weld7.Part1 = weebshit15
+		weld7.C1 = CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0)
+		grow(weld7,weebshit12,Vector3.new(0.100000009, 1.16999841, 0.0500000007),CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0),0.1)
+
+		-- 14 - blade
+		local weebshit14 = Instance.new("Part")
+		weebshit14.CFrame = CFrame.new(Vector3.new(206.155365, 15.3628922, 5)) * CFrame.Angles(-0, 0, 0.15708021819592)
+		weebshit14.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.Material = Enum.Material.Metal
+		weebshit14.Size = Vector3.new(0.229999945, 0.05, 0.100000009)
+		weebshit14.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit14.Anchored = false
+		weebshit14.BrickColor = BrickColor.new("Dark stone grey")
+		weebshit14.Friction = 0.30000001192093
+		weebshit14.Shape = Enum.PartType.Block
+		weebshit14.Name = "blade"
+		weebshit14.Parent = weebshit1
+		local weld8 = Instance.new('Weld',weebshit14)
+		weld8.Part0 = weebshit14
+		weld8.Part1 = weebshit15
+		weld8.C1 = CFrame.new(-0.01, 0.45, -1.43051147e-06, 0.99862963, 0.0522801876, -1.10407145e-05, 0.0522794127, 0.998632491, -1.50609173e-06, 8.47656065e-06, 1.7598054e-06, 1)
+		local coru=coroutine.wrap(function()
+			grow(weld8,weebshit14,Vector3.new(0.229999945, 0.700001657, 0.100000009),CFrame.new(-0.0191650391, 0.911635399, -1.43051147e-06, 0.99862963, 0.0522801876, -1.10407145e-05, 0.0522794127, 0.998632491, -1.50609173e-06, 8.47656065e-06, 1.7598054e-06, 1),0.1)
+		end)
+		coru()
+
+		-- 13 - blade
+		local weebshit13 = Instance.new("Part")
+		weebshit13.CFrame = CFrame.new(Vector3.new(206.268967, 15.3808832, 5.00158167)) * CFrame.Angles(-0, 0, 0.15708021819592)
+		weebshit13.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.Material = Enum.Material.Metal
+		weebshit13.Size = Vector3.new(0.100000009, 0.05, 0.0500000007)
+		weebshit13.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit13.Anchored = false
+		weebshit13.BrickColor = BrickColor.new("Pearl")
+		weebshit13.Friction = 0.30000001192093
+		weebshit13.Shape = Enum.PartType.Block
+		weebshit13.Name = "blade"
+		weebshit13.Parent = weebshit1
+		local weld9 = Instance.new('Weld',weebshit13)
+		weld9.Part0 = weebshit13
+		weld9.Part1 = weebshit14
+		weld9.C1 = CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0)
+		grow(weld9,weebshit13,Vector3.new(0.100000009, 0.699998796, 0.0500000007),CFrame.new(0.11, 0, 0) * CFrame.Angles(0, 0, 0),0.1)
+
+		-- 18 - blade
+		local weebshit18 = Instance.new("WedgePart")
+		weebshit18.CFrame = CFrame.new(Vector3.new(206.077118, 15.85674, 5)) * CFrame.Angles(1.5707963705063, -1.4137160778046, 1.5707963705063)
+		weebshit18.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.Material = Enum.Material.Metal
+		weebshit18.Size = Vector3.new(0.100000009, 0.05, 0.230000108)
+		weebshit18.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit18.Anchored = false
+		weebshit18.BrickColor = BrickColor.new("Dark stone grey")
+		weebshit18.Friction = 0.30000001192093
+		weebshit18.Name = "blade"
+		weebshit18.Parent = weebshit1
+		local weld10 = Instance.new('Weld',weebshit18)
+		weld10.Part0 = weebshit18
+		weld10.Part1 = weebshit14
+		weld10.C1 = CFrame.new(-0.015, 0.299937057, 2.86102295e-06)*CFrame.Angles(0,math.rad(-90),0)
+		local coru=coroutine.wrap(function()
+			grow(weld10,weebshit18,Vector3.new(0.1, 0.3, 0.23),CFrame.new(0, 0.499937057, 2.86102295e-06)*CFrame.Angles(0,math.rad(-90),0),0.1)
+		end)
+		coru()
+
+		-- 19 - blade
+		local weebshit19 = Instance.new("WedgePart")
+		weebshit19.CFrame = CFrame.new(Vector3.new(206.096375, 15.8952179, 5.00177383)) * CFrame.Angles(1.5707963705063, -1.4137160778046, 1.5707963705063)
+		weebshit19.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.Material = Enum.Material.Metal
+		weebshit19.Size = Vector3.new(0.0500000007, 0.05, 0.280000091)
+		weebshit19.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		weebshit19.Anchored = false
+		weebshit19.BrickColor = BrickColor.new("Pearl")
+		weebshit19.Friction = 0.30000001192093
+		weebshit19.Name = "blade"
+		weebshit19.Parent = weebshit1
+		local weld11 = Instance.new('Weld',weebshit19)
+		weld11.Part0 = weebshit19
+		weld11.Part1 = weebshit18
+		weld11.C1 = CFrame.new(0, 0, -0.029) * CFrame.Angles(0, 0, 0)
+		local coru=coroutine.wrap(function()
+			grow(weld11,weebshit19,Vector3.new(0.05, 0.37, 0.28),CFrame.new(0, 0.011, -0.029) * CFrame.Angles(0, 0, 0),0.1)
+		end)
+		coru()
+	end
+
+	function gunmode()
+		working = true
+
+		working = false
+	end
+
+	function knifemode()
+		blademode = "knife"
+		-- 6 - thicc cap
+		local obj6 = Instance.new("Part")
+		obj6.CFrame = CFrame.new(Vector3.new(202.399948, 10.5999813, 5.00099993)) * CFrame.Angles(-0, 0, 3.5017728805542e-07)
+		obj6.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.Size = Vector3.new(0.3, 0.3, 0.3)
+		obj6.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj6.Anchored = false
+		obj6.BrickColor = BrickColor.new("Really black")
+		obj6.Friction = 0.30000001192093
+		obj6.Shape = Enum.PartType.Ball
+		obj6.Name = "thicc cap"
+		obj6.Parent = handle
+		local weld2 = Instance.new('Weld',obj6)
+		weld2.Part0 = obj6
+		weld2.Part1 = handle
+		weld2.C0 = CFrame.new(0.4, 0, 0)
+		grow(weld2,obj6,Vector3.new(0.3, 0.3, 0.3),CFrame.new(-0.15, 0, 0),0.1)
+
+		-- 8 - thicc top cap
+		local obj8 = Instance.new("Part")
+		obj8.CFrame = CFrame.new(Vector3.new(202.399963, 11.3000078, 5.00099993)) * CFrame.Angles(-0, 0, 3.5017728805542e-07)
+		obj8.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.Size = Vector3.new(0.3, 0.3, 0.3)
+		obj8.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj8.Anchored = false
+		obj8.BrickColor = BrickColor.new("Really black")
+		obj8.Friction = 0.30000001192093
+		obj8.Shape = Enum.PartType.Ball
+		obj8.Name = "thicc top cap"
+		obj8.Parent = handle
+		local weld1 = Instance.new('Weld',obj8)
+		weld1.Part0 = obj8
+		weld1.Part1 = handle
+		weld1.C0 = CFrame.new(-0.4, 0, 0)
+		grow(weld1,obj8,Vector3.new(0.3, 0.3, 0.3),CFrame.new(0.15, 0, 0),0.1)
+		-- 4 - thicc blade
+		local obj4 = Instance.new("Part")
+		obj4.CFrame = CFrame.new(Vector3.new(202.40007, 12.1600046, 5.00099707)) * CFrame.Angles(-0, 0, -0)
+		obj4.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.Material = Enum.Material.Metal
+		obj4.Size = Vector3.new(0.23, 0.1, 0.1)
+		obj4.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj4.Anchored = false 
+		obj4.BrickColor = BrickColor.new("Dark stone grey")
+		obj4.Friction = 0.30000001192093
+		obj4.Shape = Enum.PartType.Block
+		obj4.Name = "blade"
+		obj4.Parent = handle
+		local weld4 = Instance.new('Weld',obj4)
+		weld4.Part0 = obj4
+		weld4.Part1 = handle
+		weld4.C0 = CFrame.new(0, -0.535, 0)*CFrame.Angles(0,0,math.rad(90))
+		local coru=coroutine.wrap(function()
+			grow(weld4,obj4,Vector3.new(0.23, 1.19, 0.1),CFrame.new(0.5, 0, 0),0.1)
+		end)
+		coru()
+
+		-- 5 - thicc blade
+		local obj5 = Instance.new("Part")
+		obj5.CFrame = CFrame.new(Vector3.new(202.507141, 12.1749954, 5.00158167)) * CFrame.Angles(-0, 0, -0)
+		obj5.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.Material = Enum.Material.Metal
+		obj5.Size = Vector3.new(0.100000009, 0.1, 0.0500000007)
+		obj5.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj5.Anchored = false
+		obj5.BrickColor = BrickColor.new("Pearl")
+		obj5.Friction = 0.30000001192093
+		obj5.Shape = Enum.PartType.Block
+		obj5.Name = "blade"
+		obj5.Parent = handle
+		local weld5 = Instance.new('Weld',obj5)
+		weld5.Part0 = obj5
+		weld5.Part1 = obj4
+		weld5.C0 = CFrame.new(0.09, 0, 0)*CFrame.Angles(0,0,0)
+		grow(weld5,obj5,Vector3.new(0.1, 1.19, 0.05),CFrame.new(0, 0, 0),0.1)
+
+		-- 3 - thicc blade
+		local obj3 = Instance.new("WedgePart")
+		obj3.CFrame = CFrame.new(Vector3.new(202.40007, 12.9000006, 5.00099707)) * CFrame.Angles(-0, -1.5707963705063, 0)
+		obj3.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.Material = Enum.Material.Metal
+		obj3.Size = Vector3.new(0.1, 0, 0.23)
+		obj3.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj3.Anchored = false
+		obj3.BrickColor = BrickColor.new("Dark stone grey")
+		obj3.Friction = 0.30000001192093
+		obj3.Name = "blade"
+		obj3.Parent = handle
+		local weld6 = Instance.new('Weld',obj3)
+		weld6.Part0 = obj3
+		weld6.Part1 = obj4
+		weld6.C0 = CFrame.new(0, -0.595, 0)*CFrame.Angles(math.rad(0),math.rad(270),math.rad(0))
+		local coru=coroutine.wrap(function()
+			grow(weld6,obj3,Vector3.new(0.1, 0.3, 0.23),CFrame.new(0, 0.15, 0),0.05)
+		end)
+		coru()
+
+		-- 2 - thicc blade
+		local obj2 = Instance.new("WedgePart")
+		obj2.CFrame = CFrame.new(Vector3.new(202.423431, 12.9305696, 5.00099707)) * CFrame.Angles(-0, -1.5707963705063, 0)
+		obj2.LeftSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.TopSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.RightSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.FrontSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.Material = Enum.Material.Metal
+		obj2.Size = Vector3.new(0.05, 0, 0.26)
+		obj2.BottomSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.BackSurface = Enum.SurfaceType.SmoothNoOutlines
+		obj2.Anchored = false
+		obj2.BrickColor = BrickColor.new("Lily white")
+		obj2.Friction = 0.30000001192093
+		obj2.Name = "blade"
+		obj2.Parent = handle
+		local weld7 = Instance.new('Weld',obj2)
+		weld7.Part0 = obj2
+		weld7.Part1 = obj4
+		weld7.C0 = CFrame.new(0, -0.595, 0)*CFrame.Angles(math.rad(0),math.rad(270),math.rad(0))
+		grow(weld7,obj2,Vector3.new(0.05, 0.33, 0.24),CFrame.new(-0.02, 0.165, 0),0.05)
+	end
+
+	function raep()
+		working = true
+		pcall(function()
+			local holyshit = Instance.new("Sound", handle)
+			holyshit.SoundId = "rbxassetid://4887063009"
+			holyshit.Volume = 1
+			holyshit:Play()
+			holyshit.TimePosition = 0.6
+		local waitwhatthefuck = Instance.new("Sound", handle)
+		waitwhatthefuck.SoundId = "rbxassetid://7807987190"
+		waitwhatthefuck:Play()
+		waitwhatthefuck.Volume = 0.5
+			local coru=coroutine.wrap(function()
+				wait(1.95)
+				holyshit.TimePosition = 2.8
+			end)
+			coru()
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			local lweld = Instance.new("Weld", char["Left Arm"])
+			lweld.Part0 = char.Torso
+			lweld.Part1 = char["Left Arm"]
+			lweld.C0 = CFrame.new(-1.5, 0, 0)
+
+			char.Humanoid.WalkSpeed = 16
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.75, 0, 0.35) * CFrame.Angles(math.rad(-20), math.rad(0), math.rad(50)),0.2)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, -0.25, 0) * CFrame.Angles(math.rad(-15), math.rad(-45), math.rad(0)),0.2)
+			end)
+			cor()
+			cor2()
+			lerp(lweld,lweld.C0,CFrame.new(-1.75, 0, -0.35) * CFrame.Angles(math.rad(20), math.rad(0), math.rad(-20)),0.2)
+
+			local particl = Instance.new("ParticleEmitter")
+			particl.LightEmission = 3
+			particl.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(42, 0, 255)), ColorSequenceKeypoint.new(0.25, Color3.fromRGB(248, 153, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 0))})
+			particl.LightInfluence = 0.75
+			particl.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})
+			particl.Lifetime = NumberRange.new(0.1, 0.5)
+			particl.Rate = 50
+			particl.RotSpeed = NumberRange.new(300, 300)
+			particl.Speed = NumberRange.new(0, 1)
+			particl.SpreadAngle = Vector2.new(90, 90)
+			particl.Parent = handle
+
+			for i, v in pairs(handle["pink toy"]:GetChildren()) do
+				if v:IsA("Part") then
+					coolreboot = particl:Clone()
+					coolreboot.Parent = v
+				end
+			end
+
+			particl:Remove()
+
+			wait(1)
+			MOAN = true
+
+			char.Humanoid.WalkSpeed = 75
+
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.6, 0.5, -0.75) * CFrame.Angles(0, math.rad(55), math.rad(90)),0.06)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(30), math.rad(0)),0.06)
+			end)
+			local cor3 = coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(270),math.rad(-90),math.rad(180)), 0.06)
+			end)
+			cor()
+			cor2()
+			cor3()
+			lerp(lweld,lweld.C0,CFrame.new(-1.75, 0, 0.35) * CFrame.Angles(math.rad(-20), math.rad(0), math.rad(-20)),0.06)
+			local omgg = 0
+			repeat wait(0.05) omgg = omgg+0.05 until aidsificating ~= nil or omgg > 2
+			holyshit:Destroy()
+			char.Humanoid.WalkSpeed = 16
+			MOAN = false
+			if aidsificating == nil then
+				for i, v in pairs(handle["pink toy"]:GetChildren()) do
+					if v:IsA("Part") then
+						v:FindFirstChild("ParticleEmitter"):Destroy()
+					end
+				end
+				local cor = coroutine.wrap(function()
+					lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.08)
+				end)
+				local cor2 = coroutine.wrap(function()
+					lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.08)
+				end)
+				local cor3 = coroutine.wrap(function()
+					lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.08)
+				end)
+				cor()
+				cor2()
+				cor3()
+				lerp(lweld,lweld.C0,CFrame.new(-1.75, 0, 0.35) * CFrame.Angles(math.rad(-20), math.rad(0), math.rad(-20)),0.08)
+
+				lweld:Remove()
+				rweld:Remove()
+				tweld:Remove()
+
+				if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
+					local clone = torsoclone:Clone()
+					clone.Part0 = char.HumanoidRootPart
+					clone.Part1 = char.Torso
+					clone.Parent = char.HumanoidRootPart
+				end
+				if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+					local clone = leftclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Left Arm"]
+					clone.Parent = char.Torso
+				end
+				if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+					local clone = rightclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Right Arm"]
+					clone.Parent = char.Torso
+				end
+			else
+				pcall(function()
+					aidsificating.HumanoidRootPart:Destroy()
+				end)
+				pcall(function()
+					ragdollpart(aidsificating,"Right Arm")
+					ragdollpart(aidsificating,"Right Leg")
+					ragdollpart(aidsificating,"Left Arm")
+					ragdollpart(aidsificating,"Left Leg")
+				end)
+				pcall(function()
+					ragdollpart(aidsificating,"RightUpperArm")
+					ragdollpart(aidsificating,"RightUpperLeg")
+					ragdollpart(aidsificating,"LeftUpperArm")
+					ragdollpart(aidsificating,"LeftUpperLeg")
+				end)
+				pcall(function()
+					local weld = Instance.new('Weld',aidsificating.Torso)
+					weld.Part0 = aidsificating.Torso
+					weld.Part1 = handle
+					weld.C0 = CFrame.new(0.2,-2.5,2)*CFrame.Angles(math.rad(135),0,math.rad(-90))
+					for i,v in pairs(handle["pink toy"]:GetChildren()) do
+						if v:IsA('BasePart') and v.Name == "stretchlol" then
+							v.BrickColor = aidsificating.Torso.BrickColor
+							v.Transparency = 0
+						end
+					end
+				end)
+				pcall(function()
+					local weld = Instance.new('Weld',aidsificating.UpperTorso)
+					weld.Part0 = aidsificating.UpperTorso
+					weld.Part1 = handle
+					weld.C0 = CFrame.new(0.2,-2.5,2)*CFrame.Angles(math.rad(135),0,math.rad(-90))
+					for i,v in pairs(handle["pink toy"]:GetChildren()) do
+						if v:IsA('BasePart') and v.Name == "stretchlol" then
+							v.BrickColor = aidsificating.UpperTorso.BrickColor
+							v.Transparency = 0
+						end
+					end
+				end)
+				lerp(rweld,rweld.C0,CFrame.new(1.6, 1, -0.5) * CFrame.Angles(0, math.rad(55), math.rad(145)),0.06)
+				wait(2)
+				for i,v in pairs(aidsificating:GetDescendants()) do
+					if v:IsA('Weld') then v:Destroy() end
+				end
+				pcall(function()
+					ragdollpart(aidsificating,"Head")
+				end)
+				pcall(function()
+					local thang = "Torso"
+					if aidsificating:FindFirstChild('UpperTorso') then
+						thang = "UpperTorso"
+					end
+					local ayybleed = Instance.new('Part',aidsificating)
+					ayybleed.Size = Vector3.new(0.2,0.2,0.2)
+					ayybleed.BrickColor = BrickColor.new('Maroon')
+					ayybleed.Material = Enum.Material.SmoothPlastic
+					ayybleed.Name = "ayybleed"
+					ayybleed.CanCollide = false
+					ayybleed.Transparency = 1
+					ayybleed.CFrame = aidsificating[thang].CFrame
+					ayybleed:BreakJoints()
+					local attachment1 = Instance.new('Attachment',ayybleed)
+					attachment1.Position = Vector3.new(0,-1,0)
+					attachment1.Orientation = Vector3.new(180, 0, 0)
+					local attachment0 = Instance.new('Attachment',aidsificating[thang])
+					if attachment0 and attachment1 then
+						local constraint = Instance.new("HingeConstraint")
+						constraint.Attachment0 = attachment0
+						constraint.Attachment1 = attachment1
+						constraint.LimitsEnabled = true
+						constraint.UpperAngle = 0
+						constraint.LowerAngle = 0
+						constraint.Parent = aidsificating
+					end
+					local bleedBLEED= coroutine.wrap(function()
+						bleed(ayybleed,true)
+					end)
+					bleedBLEED()
+				end)
+				aidsificating = nil
+				pcall(function()
+					for i,v in pairs(handle["pink toy"]:GetChildren()) do
+						if v:IsA('BasePart') and v.Name == "stretchlol" then
+							v.Transparency = 1
+						end
+					end
+				end)
+				local cor = coroutine.wrap(function()
+					lerp(rweld,rweld.C0,CFrame.new(1.6, -0.25, 0.75) * CFrame.Angles(0, math.rad(55), math.rad(145)),0.04)
+				end)
+				local cor2 = coroutine.wrap(function()
+					lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(-30), math.rad(0)),0.04)
+				end)
+				cor()
+				cor2()
+				lerp(lweld,lweld.C0,CFrame.new(-1.75, 0, 0.35) * CFrame.Angles(math.rad(-20), math.rad(0), math.rad(-20)),0.04)
+				wait(0.1)
+				local cor = coroutine.wrap(function()
+					lerp(rweld,rweld.C0,CFrame.new(1.6, -0.5, 1) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+				end)
+				local cor2 = coroutine.wrap(function()
+					lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(-30), math.rad(0)),0.08)
+				end)
+				local cor3 = coroutine.wrap(function()
+					lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.08)
+				end)
+				cor()
+				cor2()
+				cor3()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.08)
+
+				lweld:Remove()
+				rweld:Remove()
+				tweld:Remove()
+
+				if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
+					local clone = torsoclone:Clone()
+					clone.Part0 = char.HumanoidRootPart
+					clone.Part1 = char.Torso
+					clone.Parent = char.HumanoidRootPart
+				end
+				if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+					local clone = leftclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Left Arm"]
+					clone.Parent = char.Torso
+				end
+				if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+					local clone = rightclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Right Arm"]
+					clone.Parent = char.Torso
+				end
+			end
+		end)
+		working = false
+	end
+
+	function katanaQ()
+		working = true
+		swinging = true
+		gettingeem = true
+		pcall(function()
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			pcall(function()
+				rweld.Part0 = char["Torso"]
+				rweld.Part1 = char["Right Arm"]
+				rweld.C0 = CFrame.new(1.5, 0, 0)
+				tweld.Part0 = char.HumanoidRootPart
+				tweld.Part1 = char.Torso
+			end)
+
+			char:FindFirstChildOfClass('Humanoid').WalkSpeed = 100
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(5, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(1, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.9), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+			local coru=coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.35, 0.5, -1.2) * CFrame.Angles(0, math.rad(90), math.rad(90)),0.08)
+			end)
+			coru()
+			lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(270),math.rad(-90),math.rad(180)), 0.08)
+			local ree=0
+			while goteem == nil and ree < 1 do
+				wait(0.05)
+				ree=ree+0.05
+			end
+			char:FindFirstChildOfClass('Humanoid').WalkSpeed = 16
+			gettingeem = false
+			swinging = false
+			if goteem then
+				wait(2)
+				pcall(function()
+					local sounn = Instance.new("Sound", goteem.Torso)
+					local lipp = math.random(1, 3)
+					if lipp == 1 then sounn.SoundId = "rbxassetid://444667844" end
+					if lipp == 2 then sounn.SoundId = "rbxassetid://444667824" end
+					if lipp == 3 then sounn.SoundId = "rbxassetid://444667859" end
+					sounn:Play()
+				end)
+				ragdollpart(goteem,"Head")
+				for i,v in pairs(goteem:GetDescendants()) do
+					if v:IsA('Weld') then v:Destroy() end
+				end
+				goteem = nil
+			end
+			trail:Destroy()
+			at1:Destroy()
+			at2:Destroy()
+			lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.05)
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+			rweld:Destroy()
+			tweld:Destroy()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+		end)
+		swinging = false
+		gettingeem = false
+		working = false
+	end
+	local function katanaE()
+		working = true
+		swinging = true
+		SLESH = true
+		pcall(function()
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+
+			char:FindFirstChildOfClass('Humanoid').WalkSpeed = 100
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(5, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(1, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.9), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+			local coru=coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(2, 1, 0) * CFrame.Angles(math.rad(0), 0, math.rad(60)),0.08)
+			end)
+			coru()
+			lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(270),math.rad(-270),math.rad(0)), 0.08)
+
+			wait(1)
+			char:FindFirstChildOfClass('Humanoid').WalkSpeed = 16
+			trail:Destroy()
+			at1:Destroy()
+			at2:Destroy()
+			lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.05)
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+			rweld:Destroy()
+			tweld:Destroy()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+		end)
+		swinging = false
+		SLESH = false
+		working = false
+	end
+
+	function begoneTHOUGHT()
+		working = true
+		pcall(function()
+			local thott = Instance.new("Sound", char)
+			thott.SoundId = "rbxassetid://373066560"
+			thott.Volume = 10
+			thott.TimePosition = 0.5
+			thott.PlaybackSpeed = 1
+			thott.EmitterSize = player.CameraMaxZoomDistance+1
+			thott.MaxDistance = player.CameraMaxZoomDistance+1
+			thott:Play()
+
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+
+			local coru=coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(math.rad(60), math.rad(0), math.rad(0)),0.25)
+			end)
+			coru()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0),math.rad(-45),math.rad(0)), 0.25)
+
+			wait(0.5)
+			local thote = Instance.new("Sound", char)
+			thote.SoundId = "rbxassetid://972134931"
+			thote.Volume = 10
+			thote:Play()
+
+
+
+			local coru=coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(90)),0.04)
+			end)
+			coru()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0),math.rad(90),math.rad(0)), 0.04)
+			wait(0.04)
+			local ree = Instance.new('Part',workspace)
+			ree.Shape = Enum.PartType.Cylinder
+			ree.CanCollide = false
+			ree.Anchored = false
+			ree.Size = Vector3.new(0.5,2,2)
+			ree.TopSurface = Enum.SurfaceType.Smooth
+			ree.BottomSurface = Enum.SurfaceType.Smooth
+			ree.Transparency = 0.8
+			ree.Material =Enum.Material.Neon
+			ree.BrickColor = BrickColor.new('Toothpaste')
+			ree.CFrame = handle.CFrame*CFrame.Angles(0,0,math.rad(90))
+			ree:BreakJoints()
+			local reee = Instance.new("Sound", ree)
+			reee.SoundId = "rbxassetid://138677306"
+			reee:Play()
+			local heck = Instance.new('BodyVelocity',ree)
+			heck.Velocity = ree.CFrame.rightVector*50
+			heck.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			local coru=coroutine.wrap(function()
+				for i=1,21 do
+					local cf = ree.CFrame
+					ree.Size = ree.Size+Vector3.new(0,2,2)
+					ree.CFrame = cf
+					wait()
+				end
+				for i=1,4 do
+					local cf = ree.CFrame
+					ree.Size = ree.Size+Vector3.new(0,2,2)
+					ree.CFrame = cf
+					ree.Transparency = ree.Transparency + 0.05
+					wait()
+				end
+				ree:Destroy()
+			end)
+			coru()
+			ree.Touched:connect(function(hit)
+				if hit.Parent and hit.Parent ~= char and hit.Parent:FindFirstChildOfClass('Humanoid') then
+					hit.Parent:FindFirstChildOfClass('Humanoid').Health = 100
+					ragdollpart(hit.Parent,"Head")
+				end
+			end)
+			wait(0.5)
+			local coru=coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.8)
+			end)
+			coru()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0),math.rad(0),math.rad(0)), 0.8)
+
+			rweld:Destroy()
+			tweld:Destroy()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+		end)
+		working = false
+	end
+
+	function katanaswing()
+		working = true
+		pcall(function()
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local lweld = Instance.new("Weld", char["Left Arm"])
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			lweld.Part0 = char.Torso
+			lweld.Part1 = char["Left Arm"]
+			lweld.C0 = CFrame.new(-1.5, 0, 0)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(45), 0),0.08)
+			end)
+			cor()
+			lerp(rweld,rweld.C0,CFrame.new(1.35, 0.5, -1.2) * CFrame.Angles(0, math.rad(110), math.rad(90)),0.08)
+			wait(0.2)
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(5, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(1, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, trail.Parent.Color), ColorSequenceKeypoint.new(1, trail.Parent.Color)})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.9), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+
+			swinging = true
+
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-45), 0),0.04)
+			end)
+			cor()
+			lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.04)
+			wait(0.2)
+			swinging = false
+			trail:Destroy()
+			at1:Destroy()
+			at2:Destroy()
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+			rweld:Destroy()
+			lweld:Destroy()
+			tweld:Destroy()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+		end)
+		working = false
+	end
+
+	function throw()
+		working = true
+		pcall(function()
+			local rweld = char["Right Arm"]:FindFirstChild("Weld")
+			local lweld = char["Left Arm"]:FindFirstChild("Weld")
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+			local throwsound = Instance.new("Sound", char.Head)
+			throwsound.SoundId = "rbxassetid://158037267"
+			throwsound.PlaybackSpeed = 1
+
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.04)
+			end)
+			cor()
+			cor2()
+			grabweld:Remove()
+			throwsound:Play()
+
+			local throwvel = Instance.new("BodyThrust")
+			throwvel.Force = Vector3.new(0, 3000, -2000)
+			pcall(function()
+				throwvel.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				throwvel.Parent = grabbed.UpperTorso
+			end)
+
+			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
+			wait(0.15)
+			throwvel:Remove()
+			local cor = coroutine.wrap(function()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			cor2()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			lweld:Remove()
+			rweld:Remove()
+			tweld:Remove()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+			local lolgrabbed = grabbed
+			spawn(function()
+				wait(2)
+				unstun(lolgrabbed)
+			end)
+		end)
+		grabbed = nil
+		working = false
+	end
+
+	function whoosh(vroom)
+		vroom.Parent = workspace
+		vroom.Name = "Projectile"
+		vroom.CFrame = CFrame.new(char.Head.CFrame.p,mouse.Hit.p)*CFrame.Angles(math.rad(0),math.rad(90),math.rad(0))
+		vroom.Anchored = true
+		vroom.Velocity = Vector3.new(0,0,0)
+		vroom.RotVelocity = Vector3.new(0,0,0)
+		vroom.Anchored = false
+		game:GetService('Debris'):AddItem(vroom,10)
+		local flyy = Instance.new('BodyVelocity',vroom)
+		flyy.Velocity = vroom.CFrame.rightVector*200
+		local touched = false
+		for i,v in pairs(vroom:GetChildren()) do
+			if v:IsA('BasePart') then
+				v.Touched:connect(function(hit)
+					local pos = vroom.CFrame
+					if touched == false then
+						if hit and hit.Parent and hit.Transparency ~= 1 and hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent~= char then
+							touched = true
+							local before = hit.Anchored
+							vroom.Anchored = true
+							vroom.Velocity = Vector3.new(0,0,0)
+							vroom.RotVelocity = Vector3.new(0,0,0)
+							vroom.CFrame = vroom.CFrame-(vroom.CFrame.rightVector)
+							hit.Anchored = true
+							flyy:Destroy()
+							pcall(function()
+								local weld = Instance.new('Weld',hit)
+								weld.Part0 = hit
+								weld.Part1 = vroom
+								weld.C0 = hit.CFrame:toObjectSpace(vroom.CFrame)
+								local ayybleed = Instance.new('Part',hit)
+								ayybleed.Size = Vector3.new(0.2,0.2,0.2)
+								ayybleed.BrickColor = BrickColor.new('Maroon')
+								ayybleed.Material = Enum.Material.SmoothPlastic
+								ayybleed.Name = "ayybleed"
+								ayybleed.CanCollide = false
+								ayybleed.Transparency = 1
+								ayybleed.CFrame = hit.CFrame
+								ayybleed:BreakJoints()
+								local attachment1 = Instance.new('Attachment',ayybleed)
+								local attachment0 = Instance.new('Attachment',hit)
+								for i,v in pairs(vroom:GetChildren()) do
+									if v.Name == "blade" and v.Size == Vector3.new(0.23, 1.19, 0.1) then
+										v.Name = "REEEE"
+									end
+								end
+								attachment1.Orientation = vroom["REEEE"].Orientation+Vector3.new(90,0,0)
+								attachment0.Position = hit.CFrame:toObjectSpace(vroom["REEEE"].CFrame).p-(hit.CFrame:toObjectSpace(vroom["REEEE"].CFrame).upVector)
+								if attachment0 and attachment1 then
+									local constraint = Instance.new("HingeConstraint")
+									constraint.Attachment0 = attachment0
+									constraint.Attachment1 = attachment1
+									constraint.LimitsEnabled = true
+									constraint.UpperAngle = 0
+									constraint.LowerAngle = 0
+									constraint.Parent = attachment0
+								end
+								local bleedBLEED= coroutine.wrap(function()
+									bleed(ayybleed)
+								end)
+								bleedBLEED()
+								if hit.Name ~= "Head" and hit.Name ~= "UpperTorso" and hit.Name ~= "Torso" and hit.Name ~= "LowerTorso" then
+									game:GetService('Debris'):AddItem(ayybleed,7.5)
+								end
+							end)
+							hit.Anchored = before
+							vroom.Anchored = false
+							vroom.CanCollide = true
+							pcall(function()
+								vroom:FindFirstChildOfClass('Trail'):Destroy()
+							end)
+							for i,v in pairs(vroom:GetChildren()) do
+								if v:IsA('BasePart') then
+									v.CanCollide = true
+								end
+							end
+							if hit.Name == "Head" or hit.Name == "UpperTorso" or hit.Name == "Torso" or hit.Name == "LowerTorso" then
+								pcall(function()
+									hit.Parent.HumanoidRootPart:Destroy()
+								end)
+								pcall(function()
+									ragdollpart(hit.Parent,"Left Arm")
+									ragdollpart(hit.Parent,"Left Leg")
+									ragdollpart(hit.Parent,"Right Arm")
+									ragdollpart(hit.Parent,"Right Leg")
+								end)
+								pcall(function()
+									ragdollpart(hit.Parent,"LeftUpperLeg")
+									ragdollpart(hit.Parent,"RightUpperLeg")
+									ragdollpart(hit.Parent,"LeftUpperArm")
+									ragdollpart(hit.Parent,"RightUpperArm")
+								end)
+								spawn(function()
+									wait(5)
+									ragdollpart(hit.Parent,"Head")
+								end)
+							else
+								pcall(function()
+									ragdollpart(hit.Parent,hit.Name)
+								end)
+							end
+						elseif hit and hit.CanCollide == true and hit.Parent and hit.Parent ~= char then
+							touched = true
+							local before = hit.Anchored
+							vroom.Anchored = true
+							vroom.Velocity = Vector3.new(0,0,0)
+							vroom.RotVelocity = Vector3.new(0,0,0)
+							hit.Anchored = true
+							flyy:Destroy()
+							vroom.CFrame = vroom.CFrame-vroom.CFrame.rightVector
+							pcall(function()
+								local weld = Instance.new('Weld',hit)
+								weld.Part0 = hit
+								weld.Part1 = vroom
+								weld.C0 = hit.CFrame:toObjectSpace(vroom.CFrame)
+							end)
+							pcall(function()
+								vroom:FindFirstChildOfClass('Trail'):Destroy()
+							end)
+							hit.Anchored = before
+							vroom.Anchored = false
+						end
+					end
+				end)
+			end
+		end
+	end
+
+	function fling()
+		working = true
+		pcall(function()
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local lweld = Instance.new("Weld", char["Left Arm"])
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			lweld.Part0 = char.Torso
+			lweld.Part1 = char["Left Arm"]
+			lweld.C0 = CFrame.new(-1.5, 0, 0)
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(2, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(-0.3, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.75, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(45)),0.07)
+			end)
+			cor()
+			lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, -0.5) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(0)),0.07)
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.75, 1, 0.25) * CFrame.Angles(math.rad(35), math.rad(0), math.rad(150)),0.07)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-45), math.rad(0)),0.07)
+			end)
+			local cor3 = coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -2.5, 0) * CFrame.Angles(math.rad(90),math.rad(90), 0),0.12)
+			end)
+			cor()
+			cor2()
+			cor3()
+			lerp(lweld,lweld.C0,CFrame.new(-1.75, 0.5, -0.5) * CFrame.Angles(math.rad(90), math.rad(0), math.rad(-45)),0.07)
+			wait(0.2)
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 1, 0.25) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(170)),0.03)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.03)
+			end)
+			cor()
+			cor2()
+			lerp(lweld,lweld.C0,CFrame.new(-1, 0, -0.45) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(45)),0.03)
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0.5, -0.5) * CFrame.Angles(math.rad(0), math.rad(60), math.rad(90)),0.03)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(45), math.rad(0)),0.01)
+			end)
+			cor()
+			cor2()
+			whoosh(handle:Clone())
+			for i, v in pairs(handle:GetChildren()) do
+				if v:IsA("Part") then
+					v.Transparency = 1
+				end
+			end
+			handle.Transparency = 1
+			trail:Remove()
+			at1:Remove()
+			at2:Remove()
+			lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(0)),0.01)
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(0.5, 0.4, -1) * CFrame.Angles(math.rad(0), math.rad(180), math.rad(75)),0.04)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(55), math.rad(0)),0.04)
+			end)
+			cor()
+			cor2()
+			lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(0)),0.04)
+			wait(0.2)
+
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.07)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.07)
+			end)
+			cor()
+			cor2()
+			lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),0.07)
+
+			for i, v in pairs(handle:GetChildren()) do
+				if v:IsA("Part") then
+					v.Transparency = 0
+				end
+			end
+			handle.Transparency = 0
+			hweld.C0 = CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0)
+
+			lweld:Remove()
+			rweld:Remove()
+			tweld:Remove()
+
+			if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+		end)
+		working = false
+	end
+
+	function kill()
+		working = true
+		pcall(function()
+			local rweld = char["Right Arm"]:FindFirstChild("Weld")
+			local lweld = char["Left Arm"]:FindFirstChild("Weld")
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+			local killsound = Instance.new("Sound", grabbed.Head)
+			killsound.SoundId = "rbxassetid://150315649"
+			killsound.PlaybackSpeed = 1.2
+			local killsoundac = Instance.new("Sound", grabbed.Head)
+			killsoundac.SoundId = "rbxassetid://162194585"
+			killsoundac.PlaybackSpeed = 1
+			killsoundac.Volume = 1
+			local throwsound = Instance.new("Sound", char.Head)
+			throwsound.SoundId = "rbxassetid://711753382"
+			throwsound.PlaybackSpeed = 0.75
+			local chokesound = Instance.new("Sound", grabbed.Head)
+			chokesound.SoundId = "rbxassetid://418658161"
+			chokesound.TimePosition = 3
+			chokesound.PlaybackSpeed = 1
+			local bleedsound = Instance.new("Sound", grabbed.Head)
+			bleedsound.SoundId = "rbxassetid://244502094"
+			bleedsound.PlaybackSpeed = 1.5
+			bleedsound.Volume = 1
+
+			pitchun = math.random(9, 12)/10
+			pitchdos = math.random(9, 13)/10
+
+			killsound.PlaybackSpeed = pitchun
+			killsoundac.PlaybackSpeed = pitchdos
+			chokesound.PlaybackSpeed = pitchun
+
+			pcall(function()
+				--grabbed.HumanoidRootPart:Destroy()
+			end)
+
+			lerp(rweld,rweld.C0,CFrame.new(0.5, 0.7, -0.70) * CFrame.Angles(0, math.rad(100), math.rad(105)),0.1)
+			wait(0.2)
+			lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.04)
+
+			killsound:Play()
+			killsoundac:Play()
+			chokesound:Play()
+			bleedsound:Play()
+
+			local ayybleed = Instance.new('Part',grabbed)
+			ayybleed.Size = Vector3.new(0.2,0.2,0.2)
+			ayybleed.BrickColor = BrickColor.new('Maroon')
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0.5
+			ayybleed.CFrame = grabbed.Head.CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(-0.55,0,0)
+			attachment1.Orientation = Vector3.new(90, 0, -90)
+			local attachment0 = Instance.new('Attachment')
+			pcall(function()
+				attachment0.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				attachment0.Parent = grabbed.UpperTorso
+			end)
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				pcall(function()
+					constraint.Parent = grabbed.Torso
+				end)
+				pcall(function()
+					constraint.Parent = grabbed.UpperTorso
+				end)
+			end
+			local bleedBLEED= coroutine.wrap(function()
+				bleed(ayybleed)
+			end)
+			bleedBLEED()
+
+			wait(0.2)
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(2, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(-0.3, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-40), math.rad(15)),0.08)
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.1)
+			local coru=coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.09)
+			end)
+			coru()
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
+			end)
+			cor()
+			grabweld:Remove()
+			throwsound:Play()
+
+			local throwvel = Instance.new("BodyThrust")
+			throwvel.Force = Vector3.new(0, 3000, -1000)
+			pcall(function()
+				throwvel.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				throwvel.Parent = grabbed.UpperTorso
+			end)
+
+			trail:Remove()
+			at1:Remove()
+			at2:Remove()
+			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
+			pcall(function()
+				ragdollpart(grabbed,"Left Arm")
+				ragdollpart(grabbed,"Left Leg")
+				ragdollpart(grabbed,"Right Arm")
+				ragdollpart(grabbed,"Right Leg")
+			end)
+			pcall(function()
+				ragdollpart(grabbed,"LeftUpperLeg")
+				ragdollpart(grabbed,"RightUpperLeg")
+				ragdollpart(grabbed,"LeftUpperArm")
+				ragdollpart(grabbed,"RightUpperArm")
+			end)
+			wait(0.15)
+			throwvel:Remove()
+			local cor = coroutine.wrap(function()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			cor2()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+
+			lweld:Remove()
+			rweld:Remove()
+			tweld:Remove()
+
+			if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			local coru2=coroutine.wrap(function()
+				local whyy = grabbed
+				local continue = true
+				local repeats = 0
+				while continue == true do
+					local ree = pcall(function()
+						if repeats < 20 then
+							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-4.9
+							repeats = repeats+1
+							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
+								continue = false
+							end
+						else
+							continue = false
+						end
+					end)
+					if ree == false then
+						continue = false
+					end
+					if continue == true then
+						wait(0.2)
+					end
+				end
+				ragdollpart(whyy,"Head")
+			end)
+			coru2()
+			throwsound:Remove()
+			killsound:Remove()
+		end)
+		grabbed = nil
+		working = false
+	end
+
+	function release()
+		working = true
+		pcall(function()
+			unstun(grabbed)
+			grabbed = nil
+			grabweld:Destroy()
+			removewelds(char["Right Arm"])
+			removewelds(char["Left Arm"])
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local lweld = Instance.new("Weld", char["Left Arm"])
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1, 0.7, -0.75) * CFrame.Angles(0, math.rad(95), math.rad(105))
+			lweld.Part0 = char.Torso
+			lweld.Part1 = char["Left Arm"]
+			lweld.C0 = CFrame.new(-1.25, 0.7, -0.75) * CFrame.Angles(0, math.rad(-140), math.rad(-105))
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0),0.08)
+			end)
+			cor()
+			cor2()
+			lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+			lweld:Remove()
+			rweld:Remove()
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+		end)
+		working = false
+	end
+
+	function grab()
+		working = true
+		pcall(function()
+			local rweld = Instance.new("Weld", char["Right Arm"])
+			local lweld = Instance.new("Weld", char["Left Arm"])
+			rweld.Part0 = char["Torso"]
+			rweld.Part1 = char["Right Arm"]
+			rweld.C0 = CFrame.new(1.5, 0, 0)
+			lweld.Part0 = char.Torso
+			lweld.Part1 = char["Left Arm"]
+			lweld.C0 = CFrame.new(-1.5, 0, 0)
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(2, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(-0.3, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+
+			local spinnyshit = coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(90), 0), 0.07)
+			end)
+			spinnyshit()
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.08)
+			end)
+			cor()
+			lerp(lweld,lweld.C0,CFrame.new(-2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(-90)),0.08)
+			wait(0.15)
+			grabbing = true
+			local cor = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1, 0.7, -0.75) * CFrame.Angles(0, math.rad(95), math.rad(105)),0.08)
+			end)
+			cor()
+			lerp(lweld,lweld.C0,CFrame.new(-1.25, 0.7, -0.75) * CFrame.Angles(0, math.rad(-140), math.rad(-105)),0.08)
+			at1:Remove()
+			at2:Remove()
+			trail:Remove()
+			wait(0.3)
+			grabbing = false
+
+			if grabbed == nil then
+				local cor = coroutine.wrap(function()
+					lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+				end)
+				local cor2 = coroutine.wrap(function()
+					lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0),0.08)
+				end)
+				cor()
+				cor2()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
+				lweld:Remove()
+				rweld:Remove()
+				if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+					local clone = leftclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Left Arm"]
+					clone.Parent = char.Torso
+				end
+				if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+					local clone = rightclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Right Arm"]
+					clone.Parent = char.Torso
+				end
+			end
+		end)
+		working = false
+	end
+
+	mouse.KeyDown:connect(function(kkk)
+		local key = kkk:lower()
+		if usable and working == false then
+			if key == "z" then
+				if equipped == false then
+					if firsttime then
+						firsttime = false
+						notify("Equipped || Press X or C to equip one of two weapons",true)
+					else
+						notify("Equipped")
+					end
+					equip()
+				else
+					notify("Unequipped")
+					unequip()
+				end
+			elseif key == "x" then
+				if blademode ~= "katana" and equipped == true then
+					getrid(handle)
+					if firsttime2 then
+						firsttime2 = false
+						notify("Katana mode enabled || Press Q, E, or click to perform an action",true)
+					else
+						notify("Katana mode enabled")
+					end
+					katanamode()
+				elseif blademode == "katana" then
+					getrid(handle)
+					notify("Katana mode disabled")
+				end
+			elseif key == "v" then
+				if blademode ~= "gun" and equipped == true then
+					getrid(handle)
+					if firsttime5 then
+						firsttime5 = false
+						notify("Gun mode enabled || Click to perform an action",true)
+					else
+						notify("Gun mode enabled")
+					end
+					gunmode()
+				elseif blademode == "gun" then
+					getrid(handle)
+					notify("Gun mode disabled")
+				end
+			elseif key == "b" then
+				if childlock == false then
+					if blademode ~= "reboot" and equipped == true and childlock == false then
+						getrid(handle)
+						if firsttime4 then
+							firsttime4 = false
+							notify("sausage mode enabled || click to perform an super duper scary action",true)
+						else
+							notify("sausage mode enabled")
+						end
+						reboot()
+					elseif blademode == "reboot" then
+						notify("sausage mode disabled")
+						getrid(handle)
+					end
+				end
+			elseif key == "c" then
+				if blademode ~= "knife" and equipped == true then
+					getrid(handle)
+					if firsttime3 then
+						firsttime3 = false
+						notify("Knife mode enabled || Press F, E, T, or Q to set modes; Click to perform an action",true)
+					else
+						notify("Knife mode enabled")
+					end
+					knifemode()
+				elseif blademode == "knife" then
+					notify("Knife mode disabled")
+					getrid(handle)
+				end
+			elseif key == "q" then
+				if blademode == "katana" then
+					notify()
+					katanaQ()
+				elseif blademode == "knife" then
+					mode = "release"
+					notify("Mode changed to "..mode)
+				end
+			elseif key == "e" then
+				if blademode == "katana" then
+					notify()
+					katanaE()
+				elseif blademode == "knife" then
+					mode = "throw"
+					notify("Mode changed to "..mode)
+				end
+			elseif key == "f" then
+				if blademode == "handle" then
+					notify([[BEGONE    
+THOT]])
+					begoneTHOUGHT()
+				elseif blademode == "knife" then
+					mode = "kill"
+					notify("Mode changed to "..mode)
+				end
+			elseif key == "t" then
+				if blademode == "knife" then
+					mode = "fling"
+					notify("Mode changed to "..mode)
+				end
+			end
+		end
+		if key == "m" and sounding == false then
+			--badass mode
+			pcall(function()
+				if badass.Playing == false then
+					sounding = true
+					for i,v in pairs(workspace:GetDescendants()) do
+						if v:IsA('Sound') and v~=player.Character.Head.Badass then
+							v:Stop()
+						end
+					end
+					badass:Play()
+					badass.Volume = 10
+					sounding = false
+				else
+					sounding = true
+					for i=1,100 do
+						badass.Volume = badass.Volume-0.1
+						wait()
+					end
+					badass.Volume = 0
+					badass:Stop()
+					sounding = false
+				end
+			end)
+		end
+		if key == "r" then
+			rag1 = true
+			if rag1 == true and rag2 == true then
+				oogabooga()
+			end
+		end
+		if key == "g" then
+			rag2 = true
+			if rag1 == true and rag2 == true then
+				oogabooga()
+			end
+		end
+	end)
+	mouse.KeyUp:connect(function(key)
+		if key == "r" then
+			rag1 = false
+		end
+		if key == "g" then
+			rag2 = false
+		end
+	end)
+
+	handle.ChildAdded:connect(function(child)
+		if child:IsA('BasePart') then
+			child.CanCollide = false
+			if child.Name == "blade" then
+				child.Touched:connect(function(hit)
+					if blademode == "katana" and swinging then
+						if gettingeem then
+							if goteem == nil then
+								if hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+									local sounn = Instance.new("Sound", char.Torso)
+									local lipp = math.random(1, 3)
+									if lipp == 1 then sounn.SoundId = "rbxassetid://444667844" end
+									if lipp == 2 then sounn.SoundId = "rbxassetid://444667824" end
+									if lipp == 3 then sounn.SoundId = "rbxassetid://444667859" end
+									sounn:Play()
+									goteem = hit.Parent
+									pcall(function()
+										goteem.HumanoidRootPart:Destroy()
+									end)
+									pcall(function()
+										ragdollpart(goteem,"Right Arm")
+										ragdollpart(goteem,"Right Leg")
+										ragdollpart(goteem,"Left Arm")
+										ragdollpart(goteem,"Left Leg")
+									end)
+									pcall(function()
+										ragdollpart(goteem,"RightUpperArm")
+										ragdollpart(goteem,"RightUpperLeg")
+										ragdollpart(goteem,"LeftUpperArm")
+										ragdollpart(goteem,"LeftUpperLeg")
+									end)
+									pcall(function()
+										local weld = Instance.new('Weld',goteem.Torso)
+										weld.Part0 = goteem.Torso
+										weld.Part1 = handle
+										weld.C0 = CFrame.new(0,0,2)*CFrame.Angles(math.rad(90),0,math.rad(-90))
+									end)
+									pcall(function()
+										local weld = Instance.new('Weld',goteem.UpperTorso)
+										weld.Part0 = goteem.UpperTorso
+										weld.Part1 = handle
+										weld.C0 = CFrame.new(0,0,2)*CFrame.Angles(math.rad(90),0,math.rad(-90))
+									end)
+									pcall(function()
+										local thang = "Torso"
+										if goteem:FindFirstChild('UpperTorso') then
+											thang = "UpperTorso"
+										end
+										local ayybleed = Instance.new('Part',goteem)
+										ayybleed.Size = Vector3.new(0.2,0.2,0.2)
+										ayybleed.BrickColor = BrickColor.new('Maroon')
+										ayybleed.Material = Enum.Material.SmoothPlastic
+										ayybleed.Name = "ayybleed"
+										ayybleed.CanCollide = false
+										ayybleed.Transparency = 1
+										ayybleed.CFrame = goteem[thang].CFrame
+										ayybleed:BreakJoints()
+										local attachment1 = Instance.new('Attachment',ayybleed)
+										attachment1.Position = Vector3.new(0,0,0)
+										attachment1.Orientation = Vector3.new(-90, 0, -90)
+										local attachment0 = Instance.new('Attachment',goteem[thang])
+										if attachment0 and attachment1 then
+											local constraint = Instance.new("HingeConstraint")
+											constraint.Attachment0 = attachment0
+											constraint.Attachment1 = attachment1
+											constraint.LimitsEnabled = true
+											constraint.UpperAngle = 0
+											constraint.LowerAngle = 0
+											constraint.Parent = goteem
+										end
+										local bleedBLEED= coroutine.wrap(function()
+											bleed(ayybleed)
+										end)
+										bleedBLEED()
+									end)
+								end
+							end
+						elseif SLESH then
+
+							if hit.Parent and hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+								local sounn = Instance.new("Sound", char.Torso)
+								local lipp = math.random(1, 3)
+								if lipp == 1 then sounn.SoundId = "rbxassetid://444667844" end
+								if lipp == 2 then sounn.SoundId = "rbxassetid://444667824" end
+								if lipp == 3 then sounn.SoundId = "rbxassetid://444667859" end
+								sounn:Play()
+								ragdollpart(hit.Parent,hit.Name,false)
+							end
+						else
+							if hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+								local sounn = Instance.new("Sound", char.Torso)
+								local lipp = math.random(1, 3)
+								if lipp == 1 then sounn.SoundId = "rbxassetid://444667844" end
+								if lipp == 2 then sounn.SoundId = "rbxassetid://444667824" end
+								if lipp == 3 then sounn.SoundId = "rbxassetid://444667859" end
+								sounn:Play()
+								swinging = false
+								ragdollpart(hit.Parent,"Head",true,false)
+							end
+						end
+					elseif blademode == "knife" then
+						if grabbing == true and grabbed == nil then
+							if hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+								grabbed = hit.Parent
+
+								stun(grabbed)
+
+								local grabwelds = Instance.new("Weld", char.Torso)
+								grabwelds.Part0 = char.Torso
+								pcall(function()
+									grabwelds.Part1 = grabbed.Torso
+								end)
+								pcall(function()
+									grabwelds.Part1 = grabbed.UpperTorso
+								end)
+								grabwelds.C0 = CFrame.new(-0.45, 0, -1)
+								grabweld = grabwelds
+							end
+						end
+					end
+				end)
+			end
+		elseif child:IsA("Model") or child.Name == "pink toy" then
+			child.ChildAdded:connect(function(reboottip)
+				if reboottip:IsA('BasePart') or reboottip:IsA('Part') then
+					reboottip.Touched:connect(function(hit)
+						if MOAN == true then
+							if hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+								local sound = Instance.new('Sound',hit.Parent.Head)
+								sound.SoundId = 'rbxassetid://702631545'
+								sound.Volume = 5
+								sound:Play()
+								local sound3 = Instance.new("Sound",hit.Parent.Head)
+								sound3.Volume = 5.5
+								local soundies = {565424468, 1080614222}
+								local whattheoop = soundies[math.random(1, 2)]
+								sound3.SoundId = "rbxassetid://".. whattheoop
+								sound3:Play()
+								pcall(function()
+									for i,v in pairs(hit.Parent.Head:GetChildren()) do
+										if v:IsA('Decal') then v:Destroy() end
+									end
+								end)
+								pcall(function()
+									local ree=Instance.new('Decal',hit.Parent.Head)		
+									ree.Name = "face"
+									ree.Texture = "rbxassetid://47555230"
+								end)
+								MOAN = false
+								aidsificating = hit.Parent
+								for i, v in pairs(handle["pink toy"]:GetChildren()) do
+									if v:IsA("Part") then
+										v:FindFirstChild("ParticleEmitter"):Destroy()
+									end
+								end
+							end
+						end
+					end)
+				end
+			end)
+		end
+	end)
+
+	mouse.Button1Down:connect(function(jew)
+		if usable and working == false and equipped then
+			if blademode == "katana" then
+				notify()
+				katanaswing()
+			elseif blademode == "knife" then
+				notify()
+				if grabbed == nil then
+					if mode == "fling" then
+						fling()
+					else
+						grab()
+					end
+				elseif grabbed ~= nil then
+					if mode == "kill" then
+						kill()
+					elseif mode == "throw" then
+						throw()
+					elseif mode == "release" then
+						release()
+					end
+				end
+			elseif blademode == "reboot" then
+				raep()
+			end
+		end
+	end)
+
+end
+spawned()
+
+player.CharacterAdded:connect(function()
+	spawned()
+end)
+local avgs = {}
+
+game:GetService('RunService').Heartbeat:connect(function(step)
+	local ofps = math.floor((60/(step*60))*10)/10
+	if #avgs > 100 then
+		table.remove(avgs,1)
+	end
+	table.insert(avgs,#avgs+1,ofps)
+	local fpsa = 0
+	for i,v in pairs(avgs) do
+		fpsa = fpsa+v
+	end
+	fpsa = math.floor(fpsa/#avgs)
+	fps.Text = 'FPS: '..tostring(fpsa)
+end)
+
+while true do
+	for i,v in pairs(rekt) do
+		if v.Parent ~= nil then
+			if v:FindFirstChildOfClass('Humanoid') and v:FindFirstChildOfClass('Humanoid').Health>0 then
+				for a,c in pairs(v:GetChildren()) do
+					if c:IsA('Tool') then
+						c.ManualActivationOnly = true
+						wait()
+						if game:GetService('Players'):GetPlayerFromCharacter(v) then
+							c.Parent = game:GetService('Players'):GetPlayerFromCharacter(v).Backpack
+							c.ManualActivationOnly = false
+						end
+					end
+				end
+				v:FindFirstChildOfClass('Humanoid').PlatformStand = true
+				v:FindFirstChildOfClass('Humanoid').Sit = false
+				v:FindFirstChildOfClass('Humanoid').JumpPower = 0
+				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 0
+				v:FindFirstChildOfClass('Humanoid').Name = "hecc"
+			else
+				table.remove(rekt,i)
+			end
+		else
+			table.remove(rekt,i)
+		end
+	end
+	wait()
+end
