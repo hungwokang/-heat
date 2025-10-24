@@ -406,19 +406,12 @@ Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 --// Buttons
 local buttonData = {
-	{label = "equip", key = "z"},
-	{label = "knife", key = "c"},
-	{label = "sausage", key = "b"},
-	{label = "katana", key = "x"},
-	{label = "gun", key = "v"},
-	{label = "reboot", key = "b"},
-	{label = "E", key = "e"},
-	{label = "f", key = "f"},
-	{label = "t", key = "t"},
-	{label = "m", key = "m"},
-	{label = "r", key = "r"},
-	{label = "f", key = "f"},
-	{label = "g", key = "g"},
+	{label = "Equip", key = "z"},
+	{label = "Knife", key = "c"},
+	{label = "Sausage", key = "b"},
+	{label = "Katana", key = "x"},
+	{label = "Gun", key = "v"},
+	{label = "Blows", key = "f"},
 }
 
 for _, info in ipairs(buttonData) do
@@ -630,7 +623,7 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('Created by Server.',true)
+		notify('Press EQUIP first. Created by Server.',true)
 	else
 		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	end
