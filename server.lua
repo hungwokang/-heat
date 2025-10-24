@@ -315,6 +315,95 @@ TextBox.FocusLost:connect(function()
 	end
 end)
 
+
+--// Simple Key Control GUI by hungwokang
+--// UI setup
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+ScreenGui.Name = "KeyControlGUI"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BackgroundTransparency = 0.5
+Frame.BorderColor3 = Color3.new(1, 0, 0)
+Frame.Position = UDim2.new(0.05, 0, 0.2, 0)
+Frame.Size = UDim2.new(0, 180, 0, 120)
+Frame.Active = true
+Frame.Draggable = true
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Text = "SERVER"
+Title.Size = UDim2.new(1, 0, 0, 20)
+Title.BackgroundTransparency = 0.2
+Title.BackgroundColor3 = Color3.new(0, 0, 0)
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.TextTransparency = 0.2
+Title.Font = Enum.Font.Code
+Title.TextSize = 12
+
+--// Make minimize button
+local Minimize = Instance.new("TextButton", Frame)
+Minimize.Size = UDim2.new(0, 20, 0, 20)
+Minimize.Position = UDim2.new(1, -22, 0, 0)
+Minimize.Text = "-"
+Minimize.BackgroundTransparency = 0.3
+Minimize.TextColor3 = Color3.new(1, 0, 0)
+Minimize.Font = Enum.Font.Code
+Minimize.TextSize = 12
+
+--// Button setup function
+local function makeButton(txt, key, x, y)
+	local b = Instance.new("TextButton", Frame)
+	b.Text = txt
+	b.Size = UDim2.new(0, 50, 0, 20)
+	b.Position = UDim2.new(0, x, 0, y)
+	b.BackgroundTransparency = 0.2
+	b.BackgroundColor3 = Color3.new(0, 0, 0)
+	b.TextColor3 = Color3.new(1, 1, 1)
+	b.BorderColor3 = Color3.new(1, 0, 0)
+	b.Font = Enum.Font.Code
+	b.TextSize = 10
+
+	b.MouseButton1Click:Connect(function()
+		local virtualKey = key:lower()
+		-- simulate key press
+		mouse.KeyDown:Fire(virtualKey)
+	end)
+end
+
+--// Create buttons grid (same layout you wanted)
+-- Row 1
+makeButton("A", "a", 10, 30)
+makeButton("B", "b", 65, 30)
+makeButton("C", "c", 120, 30)
+-- Row 2
+makeButton("D", "d", 10, 55)
+makeButton("E", "e", 65, 55)
+makeButton("F", "f", 120, 55)
+-- Row 3
+makeButton("Z", "z", 10, 80)
+makeButton("X", "x", 65, 80)
+makeButton("V", "v", 120, 80)
+-- Add more if you want
+makeButton("Q", "q", 10, 105)
+makeButton("R", "r", 65, 105)
+makeButton("G", "g", 120, 105)
+makeButton("T", "t", 10, 130)
+makeButton("M", "m", 65, 130)
+
+--// Minimize logic
+local minimized = false
+Minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	for _,v in pairs(Frame:GetChildren()) do
+		if v:IsA("TextButton") and v ~= Minimize then
+			v.Visible = not minimized
+		end
+	end
+end)
+
 local mousedown = false
 mouse.Button1Down:connect(function()
 	mousedown = true
