@@ -4882,7 +4882,7 @@ while true do
 end
 
 
---// Simple Small Tight GUI (Black/Red Minimal Style)
+--// Simple Small Tight GUI (Black/Red Minimal Style)d
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local TitleBar = Instance.new("Frame")
