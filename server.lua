@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !qqq
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -97,6 +97,87 @@ pcall(function()
 end)
 
 
+
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Position = UDim2.new(0, 0, 0.100000001, 0)
+TextLabel.Size = UDim2.new(0.300000012, 0, 0.200000003, 0)
+TextLabel.Font = Enum.Font.SourceSansLight
+TextLabel.FontSize = Enum.FontSize.Size14
+TextLabel.Text = "Blood Color: [255, 255, 255]"
+TextLabel.TextColor3 = Color3.new(1, 1, 1)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14
+TextLabel.TextWrapped = true
+TextLabel.TextXAlignment = Enum.TextXAlignment.Right
+
+Frame_2.Parent = TextLabel
+Frame_2.BackgroundColor3 = Color3.new(0.458824, 0, 0)
+Frame_2.BorderSizePixel = 0
+Frame_2.Position = UDim2.new(1.04999995, 0, 0, 0)
+Frame_2.Size = UDim2.new(1, 0, 1, 0)
+Frame_2.SizeConstraint = Enum.SizeConstraint.RelativeYY
+
+Frame_3.Parent = Frame
+Frame_3.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame_3.BackgroundTransparency = 1
+Frame_3.BorderSizePixel = 0
+Frame_3.Position = UDim2.new(0.0500000007, 0, 0.449999988, 0)
+Frame_3.Size = UDim2.new(0.5, 0, 0.5, 0)
+Frame_3.SizeConstraint = Enum.SizeConstraint.RelativeYY
+
+ImageLabel.Parent = Frame_3
+ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+ImageLabel.Image = "rbxassetid://328298876"
+
+R.Name = "R"
+R.Parent = Frame_3
+R.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+R.BorderSizePixel = 0
+R.Position = UDim2.new(1.39999998, 0, 0, 0)
+R.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+R.Font = Enum.Font.SourceSans
+R.FontSize = Enum.FontSize.Size14
+R.Text = "Input"
+R.TextColor3 = Color3.new(1, 1, 1)
+R.TextScaled = true
+R.TextSize = 14
+R.TextWrapped = true
+R.TextXAlignment = Enum.TextXAlignment.Left
+
+G.Name = "G"
+G.Parent = Frame_3
+G.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+G.BorderSizePixel = 0
+G.Position = UDim2.new(1.39999998, 0, 0.349999994, 0)
+G.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+G.Font = Enum.Font.SourceSans
+G.FontSize = Enum.FontSize.Size14
+G.Text = "Input"
+G.TextColor3 = Color3.new(1, 1, 1)
+G.TextScaled = true
+G.TextSize = 14
+G.TextWrapped = true
+G.TextXAlignment = Enum.TextXAlignment.Left
+
+B.Name = "B"
+B.Parent = Frame_3
+B.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+B.BorderSizePixel = 0
+B.Position = UDim2.new(1.39999998, 0, 0.699999988, 0)
+B.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+B.Font = Enum.Font.SourceSans
+B.FontSize = Enum.FontSize.Size14
+B.Text = "Input"
+B.TextColor3 = Color3.new(1, 1, 1)
+B.TextScaled = true
+B.TextSize = 14
+B.TextWrapped = true
+B.TextXAlignment = Enum.TextXAlignment.Left
 
 TextLabel_2.Parent = Frame_3
 TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
