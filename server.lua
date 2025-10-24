@@ -14,7 +14,7 @@ end
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ServerGui_UI"
 local playerGui = player:WaitForChild("PlayerGui")
-ScreenGui.Parent = playerGui -- safe: put GUI in PlayerGui
+ScreenGui.Parent = playerGui -- safe: put GUI in PlafyerGui
 
 local MainFrame = Instance.new("Frame")
 local TitleBar = Instance.new("Frame")
