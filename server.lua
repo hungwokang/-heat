@@ -11,6 +11,8 @@ local hes = game.Players.LocalPlayer.Character.Humanoid
 Class_Name=string.reverse"ihS-ihS yB tidE "
 -- Edit more !a
 
+-- Disable all notify calls
+function notify(...) return end
 
 local player = game:GetService('Players').LocalPlayer
 local rightclone = Instance.new('Motor6D')
@@ -305,8 +307,7 @@ Black.BorderSizePixel = 0
 Black.BackgroundColor3 = Color3.new(0,0,0)
 Black.Parent = Frame_3
 
--- Disable all notify calls
-function notify(...) return end
+
 
 TextBox.FocusLost:connect(function()
 	if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
