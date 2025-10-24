@@ -398,7 +398,7 @@ Holder.Position = UDim2.new(0.5, 0, 0, 0)
 local Layout = Instance.new("UIGridLayout")
 Layout.Parent = Holder
 Layout.CellSize = UDim2.new(0, 46, 0, 25)
-Layout.CellPadding = UDim2.new(0, 4, 0, 4)
+Layout.CellPadding = UDim2.new(0, 2, 0, 2)
 Layout.FillDirectionMaxCells = 3
 Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -409,7 +409,7 @@ local buttonData = {
 	{label = "Sausage", key = "b"},
 	{label = "Katana", key = "x"},
 	{label = "Q", key = "q"},
-	{label = "E", key = "z"},
+	{label = "Z", key = "z"},
 	{label = "F", key = "f"},
 	{label = "R", key = "r"},
 	{label = "G", key = "g"},
