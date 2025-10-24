@@ -1,5 +1,5 @@
 --//============================\\--
---// Simple Small Tight GUI (Black/Red Minimal Style)
+--// Simple Small Tight GUI (Black/dRed Minimal Style)
 --//============================\\--
 
 local ScreenGui = Instance.new("ScreenGui")
