@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !!
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -95,6 +95,61 @@ Nuee.ResetOnSpawn = false
 pcall(function()
 	Nuee.Parent = player.PlayerGui
 end)
+
+
+
+TextLabel_2.Parent = Frame_3
+TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.Position = UDim2.new(1.04999995, 0, 0, 0)
+TextLabel_2.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_2.Font = Enum.Font.SourceSansLight
+TextLabel_2.FontSize = Enum.FontSize.Size14
+TextLabel_2.Text = "R"
+TextLabel_2.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_2.TextScaled = true
+TextLabel_2.TextSize = 14
+TextLabel_2.TextWrapped = true
+
+TextLabel_3.Parent = Frame_3
+TextLabel_3.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_3.BackgroundTransparency = 1
+TextLabel_3.Position = UDim2.new(1.04999995, 0, 0.349999994, 0)
+TextLabel_3.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_3.Font = Enum.Font.SourceSansLight
+TextLabel_3.FontSize = Enum.FontSize.Size14
+TextLabel_3.Text = "G"
+TextLabel_3.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_3.TextScaled = true
+TextLabel_3.TextSize = 14
+TextLabel_3.TextWrapped = true
+
+TextLabel_4.Parent = Frame_3
+TextLabel_4.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_4.BackgroundTransparency = 1
+TextLabel_4.Position = UDim2.new(1.04999995, 0, 0.699999988, 0)
+TextLabel_4.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_4.Font = Enum.Font.SourceSansLight
+TextLabel_4.FontSize = Enum.FontSize.Size14
+TextLabel_4.Text = "B"
+TextLabel_4.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_4.TextScaled = true
+TextLabel_4.TextSize = 14
+TextLabel_4.TextWrapped = true
+
+Slider.Name = "Slider"
+Slider.Parent = Frame
+Slider.BackgroundColor3 = Color3.new(0.121569, 0.121569, 0.121569)
+Slider.Position = UDim2.new(0.0500000007, 0, 0.375, 0)
+Slider.Size = UDim2.new(0.230000004, 0, 0.00999999978, 0)
+
+Slidee.Name = "Slidee"
+Slidee.Parent = Slider
+Slidee.AnchorPoint = Vector2.new(0.5, 0.5)
+Slidee.BackgroundColor3 = Color3.new(0.0941177, 0.0941177, 0.0941177)
+Slidee.BorderSizePixel = 0
+Slidee.Size = UDim2.new(0.0299999993, 0, 7, 0)
+Slidee.ImageTransparency = 1
 
 ChildLock.Name = "ChildLock"
 ChildLock.Parent = Frame
