@@ -9,8 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !a
-
+-- Edit more !a4
 -- Disable all notify calls
 function notify(...) return end
 
