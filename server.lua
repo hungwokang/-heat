@@ -315,7 +315,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","GUN","D1K","KATANA","59999","F"}
+local labels = {"KNIFE","GUN","D1K","KATANA","59999","ffffF"}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
