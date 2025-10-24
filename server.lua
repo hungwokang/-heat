@@ -315,7 +315,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","GUN","D1K","KATANA","5555","F"}
+local labels = {"KNIFE","GUN","D1K","KATANA","59999","F"}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -4978,26 +4978,5 @@ while true do
 	end
 	wait()
 
-local function deactivateAll()
-		if blademode ~= nil then
-			getrid(handle)
-			blademode = nil
-		end
-	end
-	
-	buttons["KNIFE"].MouseButton1Click:Connect(function()
-		if equipped == false then
-			if firsttime then
-				firsttime = false
-				notify("Equipped || Press X or C to equip one of two weapons",true)
-			else
-				notify("Equipped")
-			end
-			equip()
-		else
-			notify("Unequipped")
-			unequip()
-		end
-	end)
 
 end
