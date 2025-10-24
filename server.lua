@@ -315,7 +315,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","GUN","D1K","KATANA","E","F"}
+local labels = {"KNIFE","GUN","D1K","KATANA","EEEE","F"}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -4591,10 +4591,18 @@ function spawned()
 	end
 	
 	buttons["KNIFE"].MouseButton1Click:Connect(function()
-		deactivateAll()
-		if equipped == false then equip() end
-		blademode = "knife"
-		knifemode()
+		if equipped == false then
+			if firsttime then
+				firsttime = false
+				notify("Equipped || Press X or C to equip one of two weapons",true)
+			else
+				notify("Equipped")
+			end
+			equip()
+		else
+			notify("Unequipped")
+			unequip()
+		end
 	end)
 	
 	buttons["GUN"].MouseButton1Click:Connect(function()
