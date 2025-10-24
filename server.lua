@@ -398,9 +398,10 @@ Holder.Position = UDim2.new(0.5, 0, 0, 0)
 local Layout = Instance.new("UIGridLayout")
 Layout.Parent = Holder
 Layout.CellSize = UDim2.new(0, 46, 0, 25)
-Layout.CellPadding = UDim2.new(0, 8, 0, 8)
+Layout.CellPadding = UDim2.new(0, 2, 0, 2)
 Layout.FillDirectionMaxCells = 3
 Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.VerticalAlignment = Enum.VerticalAlignment.Center
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 --// Buttons
@@ -568,19 +569,60 @@ function removewelds(part)
 	end
 end
 
-
-function notify(msg,remove)
-	local coru= coroutine.wrap(function()
-		for i,v in pairs(Nuee:GetChildren()) do
-			if v:IsA('TextLabel') then v:Destroy() end
+function notify(msg, remove)
+	local coru = coroutine.wrap(function()
+		for _, v in pairs(Nuee:GetChildren()) do
+			if v:IsA("TextLabel") then
+				v:Destroy()
+			end
 		end
+
 		if msg then
 			local TextLabel = Instance.new("TextLabel")
-			local Frame = Instance.new("Frame")
+			TextLabel.Parent = Nuee
+			TextLabel.BackgroundTransparency = 1 -- no background
+			TextLabel.BorderSizePixel = 0
+			TextLabel.Position = UDim2.new(0.5, 0, 0.1, 0)
+			TextLabel.AnchorPoint = Vector2.new(0.5, 0)
+			TextLabel.Size = UDim2.new(0, 0, 0, 40)
+			TextLabel.Font = Enum.Font.Code
+			TextLabel.TextColor3 = Color3.new(1, 1, 1)
+			TextLabel.TextSize = 14
+			TextLabel.TextScaled = true
+			TextLabel.Text = ""
+			TextLabel.TextXAlignment = Enum.TextXAlignment.Center
+			TextLabel.TextYAlignment = Enum.TextYAlignment.Center
+			TextLabel.TextTransparency = 1
+
+			-- Fade in
+			for i = 1, 10 do
+				TextLabel.TextTransparency = TextLabel.TextTransparency - 0.1
+				TextLabel.Position = TextLabel.Position + UDim2.new(0, 0, 0, 1)
+				wait()
+			end
+
+			-- Typewriter effect
+			for i = 1, #msg do
+				TextLabel.Text = string.sub(msg, 1, i)
+				wait(0.02)
+			end
+
+			wait(1.2)
+
+			-- Fade out (if remove isn’t true)
+			if not remove then
+				for i = 1, 10 do
+					TextLabel.TextTransparency = TextLabel.TextTransparency + 0.1
+					TextLabel.Position = TextLabel.Position - UDim2.new(0, 0, 0, 1)
+					wait()
+				end
+				TextLabel:Destroy()
+			end
 		end
 	end)
 	coru()
 end
+
 
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
