@@ -65,124 +65,268 @@ warn(Class_Name.." #4817")
 local rekt = {}
 
 -- Objects
--- // Server GUI (Draggable + Minimizable)
-local CoreGui = game:GetService("CoreGui")
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ServerGUI"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = CoreGui
-
--- Main Frame
+local Nuee = Instance.new("ScreenGui")
+local Customize = Instance.new("TextButton")
 local Frame = Instance.new("Frame")
-Frame.Name = "MainFrame"
-Frame.Size = UDim2.new(0, 220, 0, 180)
-Frame.Position = UDim2.new(0.5, -110, 0.4, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BorderSizePixel = 2
-Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
-Frame.Active = true
-Frame.Draggable = true
-Frame.Parent = ScreenGui
+local TextLabel = Instance.new("TextLabel")
+local Frame_2 = Instance.new("Frame")
+local Frame_3 = Instance.new("Frame")
+local ImageLabel = Instance.new("ImageLabel")
+local R = Instance.new("TextBox")
+local G = Instance.new("TextBox")
+local B = Instance.new("TextBox")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local TextLabel_4 = Instance.new("TextLabel")
+local Slider = Instance.new("Frame")
+local Slidee = Instance.new("ImageButton")
+local ChildLock = Instance.new("Frame")
+local TextLabel_5 = Instance.new("TextLabel")
+local mathz = Instance.new("TextLabel")
+local TextBox = Instance.new("TextBox")
+local Black = Instance.new('Frame')
+local fps = Instance.new('TextLabel')
 
--- Title Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 24)
-TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TitleBar.BorderSizePixel = 0
-TitleBar.Parent = Frame
+-- Properties
 
-local TitleText = Instance.new("TextLabel")
-TitleText.Text = "Server"
-TitleText.Size = UDim2.new(1, -30, 1, 0)
-TitleText.Position = UDim2.new(0, 8, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
-TitleText.Font = Enum.Font.SourceSansBold
-TitleText.TextSize = 18
-TitleText.Parent = TitleBar
-
-local MinimizeButton = Instance.new("TextButton")
-MinimizeButton.Text = "–"
-MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
-MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeButton.BorderSizePixel = 0
-MinimizeButton.Font = Enum.Font.SourceSansBold
-MinimizeButton.TextSize = 18
-MinimizeButton.Parent = TitleBar
-
--- Button container
-local ButtonContainer = Instance.new("Frame")
-ButtonContainer.Size = UDim2.new(1, -10, 1, -34)
-ButtonContainer.Position = UDim2.new(0, 5, 0, 28)
-ButtonContainer.BackgroundTransparency = 1
-ButtonContainer.Parent = Frame
-
--- Button generator
-local function CreateButton(name, text, y, callback)
-	local btn = Instance.new("TextButton")
-	btn.Name = name
-	btn.Text = text
-	btn.Size = UDim2.new(1, 0, 0, 28)
-	btn.Position = UDim2.new(0, 0, 0, y)
-	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	btn.Font = Enum.Font.SourceSansBold
-	btn.TextSize = 16
-	btn.BorderSizePixel = 1
-	btn.BorderColor3 = Color3.fromRGB(255, 255, 255)
-	btn.Parent = ButtonContainer
-	btn.MouseButton1Click:Connect(callback)
-	return btn
-end
-
--- Toggle collapse
-local minimized = false
-MinimizeButton.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	ButtonContainer.Visible = not minimized
-	if minimized then
-		Frame.Size = UDim2.new(0, 220, 0, 24)
-	else
-		Frame.Size = UDim2.new(0, 220, 0, 180)
-	end
+Nuee.Name = "Nuee"
+Nuee.ResetOnSpawn = false
+pcall(function()
+	Nuee.Parent = player.PlayerGui
 end)
 
--- === Buttons ===
-local equipped = false
 
-CreateButton("Equip", "Equip / Unequip", 0, function()
-	if equipped == false then
-		equip()
-		equipped = true
-		notify("Equipped")
-	else
-		unequip()
-		equipped = false
-		notify("Unequipped")
-	end
-end)
+Customize.Name = "Customize"
+Customize.Parent = Nuee
+Customize.BackgroundColor3 = Color3.new(0, 0.776471, 0.282353)
+Customize.BorderSizePixel = 0
+Customize.Position = UDim2.new(0.15, 0, 0.9, 0)
+Customize.Size = UDim2.new(0.699999988, 0, 0.100000001, 0)
+Customize.Font = Enum.Font.SourceSans
+Customize.FontSize = Enum.FontSize.Size14
+Customize.Text = "Customize"
+Customize.TextColor3 = Color3.new(1, 1, 1)
+Customize.TextScaled = true
+Customize.TextSize = 14
+Customize.TextWrapped = true
 
-CreateButton("Katana", "Katana Mode", 35, function()
-	getrid(handle)
-	katanamode()
-	notify("Katana Mode Enabled")
-end)
+Frame.Parent = Customize
+Frame.BackgroundColor3 = Color3.new(0.164706, 0.164706, 0.164706)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0, 0, 1, 0)
+Frame.Size = UDim2.new(1, 0, 6.5, 0)
 
-CreateButton("Gun", "Gun Mode", 70, function()
-	getrid(handle)
-	gunmode()
-	notify("Gun Mode Enabled")
-end)
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Position = UDim2.new(0, 0, 0.100000001, 0)
+TextLabel.Size = UDim2.new(0.300000012, 0, 0.200000003, 0)
+TextLabel.Font = Enum.Font.SourceSansLight
+TextLabel.FontSize = Enum.FontSize.Size14
+TextLabel.Text = "Blood Color: [255, 255, 255]"
+TextLabel.TextColor3 = Color3.new(1, 1, 1)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14
+TextLabel.TextWrapped = true
+TextLabel.TextXAlignment = Enum.TextXAlignment.Right
 
-CreateButton("Knife", "Knife Mode", 105, function()
-	getrid(handle)
-	knifemode()
-	notify("Knife Mode Enabled")
-end)
+Frame_2.Parent = TextLabel
+Frame_2.BackgroundColor3 = Color3.new(0.458824, 0, 0)
+Frame_2.BorderSizePixel = 0
+Frame_2.Position = UDim2.new(1.04999995, 0, 0, 0)
+Frame_2.Size = UDim2.new(1, 0, 1, 0)
+Frame_2.SizeConstraint = Enum.SizeConstraint.RelativeYY
+
+Frame_3.Parent = Frame
+Frame_3.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame_3.BackgroundTransparency = 1
+Frame_3.BorderSizePixel = 0
+Frame_3.Position = UDim2.new(0.0500000007, 0, 0.449999988, 0)
+Frame_3.Size = UDim2.new(0.5, 0, 0.5, 0)
+Frame_3.SizeConstraint = Enum.SizeConstraint.RelativeYY
+
+ImageLabel.Parent = Frame_3
+ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+ImageLabel.Image = "rbxassetid://328298876"
+
+R.Name = "R"
+R.Parent = Frame_3
+R.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+R.BorderSizePixel = 0
+R.Position = UDim2.new(1.39999998, 0, 0, 0)
+R.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+R.Font = Enum.Font.SourceSans
+R.FontSize = Enum.FontSize.Size14
+R.Text = "Input"
+R.TextColor3 = Color3.new(1, 1, 1)
+R.TextScaled = true
+R.TextSize = 14
+R.TextWrapped = true
+R.TextXAlignment = Enum.TextXAlignment.Left
+
+G.Name = "G"
+G.Parent = Frame_3
+G.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+G.BorderSizePixel = 0
+G.Position = UDim2.new(1.39999998, 0, 0.349999994, 0)
+G.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+G.Font = Enum.Font.SourceSans
+G.FontSize = Enum.FontSize.Size14
+G.Text = "Input"
+G.TextColor3 = Color3.new(1, 1, 1)
+G.TextScaled = true
+G.TextSize = 14
+G.TextWrapped = true
+G.TextXAlignment = Enum.TextXAlignment.Left
+
+B.Name = "B"
+B.Parent = Frame_3
+B.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+B.BorderSizePixel = 0
+B.Position = UDim2.new(1.39999998, 0, 0.699999988, 0)
+B.Size = UDim2.new(0.75, 0, 0.300000012, 0)
+B.Font = Enum.Font.SourceSans
+B.FontSize = Enum.FontSize.Size14
+B.Text = "Input"
+B.TextColor3 = Color3.new(1, 1, 1)
+B.TextScaled = true
+B.TextSize = 14
+B.TextWrapped = true
+B.TextXAlignment = Enum.TextXAlignment.Left
+
+TextLabel_2.Parent = Frame_3
+TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.Position = UDim2.new(1.04999995, 0, 0, 0)
+TextLabel_2.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_2.Font = Enum.Font.SourceSansLight
+TextLabel_2.FontSize = Enum.FontSize.Size14
+TextLabel_2.Text = "R"
+TextLabel_2.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_2.TextScaled = true
+TextLabel_2.TextSize = 14
+TextLabel_2.TextWrapped = true
+
+TextLabel_3.Parent = Frame_3
+TextLabel_3.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_3.BackgroundTransparency = 1
+TextLabel_3.Position = UDim2.new(1.04999995, 0, 0.349999994, 0)
+TextLabel_3.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_3.Font = Enum.Font.SourceSansLight
+TextLabel_3.FontSize = Enum.FontSize.Size14
+TextLabel_3.Text = "G"
+TextLabel_3.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_3.TextScaled = true
+TextLabel_3.TextSize = 14
+TextLabel_3.TextWrapped = true
+
+TextLabel_4.Parent = Frame_3
+TextLabel_4.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_4.BackgroundTransparency = 1
+TextLabel_4.Position = UDim2.new(1.04999995, 0, 0.699999988, 0)
+TextLabel_4.Size = UDim2.new(0.300000012, 0, 0.300000012, 0)
+TextLabel_4.Font = Enum.Font.SourceSansLight
+TextLabel_4.FontSize = Enum.FontSize.Size14
+TextLabel_4.Text = "B"
+TextLabel_4.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_4.TextScaled = true
+TextLabel_4.TextSize = 14
+TextLabel_4.TextWrapped = true
+
+Slider.Name = "Slider"
+Slider.Parent = Frame
+Slider.BackgroundColor3 = Color3.new(0.121569, 0.121569, 0.121569)
+Slider.Position = UDim2.new(0.0500000007, 0, 0.375, 0)
+Slider.Size = UDim2.new(0.230000004, 0, 0.00999999978, 0)
+
+Slidee.Name = "Slidee"
+Slidee.Parent = Slider
+Slidee.AnchorPoint = Vector2.new(0.5, 0.5)
+Slidee.BackgroundColor3 = Color3.new(0.0941177, 0.0941177, 0.0941177)
+Slidee.BorderSizePixel = 0
+Slidee.Size = UDim2.new(0.0299999993, 0, 7, 0)
+Slidee.ImageTransparency = 1
+
+ChildLock.Name = "ChildLock"
+ChildLock.Parent = Frame
+ChildLock.Active = true
+ChildLock.BackgroundColor3 = Color3.new(0, 0, 0)
+ChildLock.BackgroundTransparency = 0.60000002384186
+ChildLock.BorderSizePixel = 0
+ChildLock.Position = UDim2.new(0.600000024, 0, 0, 0)
+ChildLock.Size = UDim2.new(0.400000006, 0, 1, 0)
+ChildLock.ZIndex = 2
+
+TextLabel_5.Parent = ChildLock
+TextLabel_5.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_5.BackgroundTransparency = 1
+TextLabel_5.BorderSizePixel = 0
+TextLabel_5.Position = UDim2.new(0.125, 0, 0.150000006, 0)
+TextLabel_5.Size = UDim2.new(0.75, 0, 0.200000003, 0)
+TextLabel_5.ZIndex = 3
+TextLabel_5.Font = Enum.Font.SourceSans
+TextLabel_5.FontSize = Enum.FontSize.Size14
+TextLabel_5.Text = "do this math to disable child lock"
+TextLabel_5.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_5.TextScaled = true
+TextLabel_5.TextSize = 14
+TextLabel_5.TextWrapped = true
+
+mathz.Name = "mathz"
+mathz.Parent = ChildLock
+mathz.BackgroundColor3 = Color3.new(1, 1, 1)
+mathz.BackgroundTransparency = 1
+mathz.Position = UDim2.new(0.125, 0, 0.449999988, 0)
+mathz.Size = UDim2.new(0.75, 0, 0.200000003, 0)
+mathz.ZIndex = 3
+mathz.Font = Enum.Font.SourceSans
+mathz.FontSize = Enum.FontSize.Size14
+mathz.Text = math1.."("..math2.."r - "..math3..") = "..math4
+mathz.TextColor3 = Color3.new(1, 1, 1)
+mathz.TextScaled = true
+mathz.TextSize = 14
+mathz.TextWrapped = true
+
+fps.Name = "fps"
+fps.Parent = Frame
+fps.BackgroundColor3 = Color3.new(1, 1, 1)
+fps.BackgroundTransparency = 1
+fps.Size = UDim2.new(0.75, 0, 0.05, 0)
+fps.ZIndex = 3
+fps.Font = Enum.Font.SourceSansLight
+fps.FontSize = Enum.FontSize.Size14
+fps.Text = "FPS: N/A"
+fps.TextColor3 = Color3.new(1, 1, 1)
+fps.TextScaled = true
+fps.TextSize = 14
+fps.TextWrapped = true
+fps.TextXAlignment = Enum.TextXAlignment.Left
+
+TextBox.Parent = ChildLock
+TextBox.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.200000003, 0, 0.699999988, 0)
+TextBox.Size = UDim2.new(0.600000024, 0, 0.200000003, 0)
+TextBox.ZIndex = 3
+TextBox.Font = Enum.Font.SourceSans
+TextBox.FontSize = Enum.FontSize.Size14
+TextBox.Text = "Answer (rounded to nearest tenth)"
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+TextBox.TextScaled = true
+TextBox.TextSize = 14
+TextBox.TextWrapped = true
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+Black.Size = UDim2.new(1,0,1,0)
+Black.BackgroundTransparency = 1
+Black.BorderSizePixel = 0
+Black.BackgroundColor3 = Color3.new(0,0,0)
+Black.Parent = Frame_3
+
+
 
 local mousedown = false
 mouse.Button1Down:connect(function()
