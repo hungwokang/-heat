@@ -1,8 +1,21 @@
---//============================\\--
---// Simple Small Tight GUI (Black/dRed Minimal Style)
---//============================\\--
+-- Full fixed LocalScript: Small Black/Red GUI + Full Knife spawn/equip logic
+-- Put this in a LocalScript (StarterPlayerScripts or a LocalScript that runs on client)
 
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+
+local player = Players.LocalPlayer
+if not player then
+    -- Not running in a client context (LocalPlayer nil) — stop to avoid errors
+    return
+end
+
+-- GUI creation
 local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ServerGui_UI"
+local playerGui = player:WaitForChild("PlayerGui")
+ScreenGui.Parent = playerGui -- safe: put GUI in PlayerGui
+
 local MainFrame = Instance.new("Frame")
 local TitleBar = Instance.new("Frame")
 local TitleText = Instance.new("TextLabel")
@@ -11,10 +24,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","B","C","D","E","F"}
-
--- Parent
-ScreenGui.Parent = game:GetService("CoreGui")
+local labels = {"A","B","C","D","E","F"}
 
 -- MainFrame
 MainFrame.Name = "ServerGui"
@@ -69,106 +79,162 @@ ButtonFrame.Position = UDim2.new(0, 0, 0, 18)
 
 -- Create Buttons
 for i, label in ipairs(labels) do
-	local btn = Instance.new("TextButton")
-	btn.Parent = ButtonFrame
-	btn.Text = label
-	btn.Font = Enum.Font.Code
-	btn.TextSize = 12
-	btn.TextColor3 = Color3.new(1, 1, 1)
-	btn.BackgroundColor3 = Color3.new(0, 0, 0)
-	btn.BackgroundTransparency = 0.2
-	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	btn.Size = UDim2.new(0, 45, 0, 25)
-	btn.Position = UDim2.new(0, ((i-1)%3)*52 + 6, 0, math.floor((i-1)/3)*30 + 6)
-	buttons[label] = btn
+    local btn = Instance.new("TextButton")
+    btn.Parent = ButtonFrame
+    btn.Text = label
+    btn.Font = Enum.Font.Code
+    btn.TextSize = 12
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.BackgroundColor3 = Color3.new(0, 0, 0)
+    btn.BackgroundTransparency = 0.2
+    btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    btn.Size = UDim2.new(0, 45, 0, 25)
+    btn.Position = UDim2.new(0, ((i-1)%3)*52 + 6, 0, math.floor((i-1)/3)*30 + 6)
+    buttons[label] = btn
 end
 
 -- Minimize Logic
 local minimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	if minimized then
-		ButtonFrame.Visible = false
-		MainFrame.Size = UDim2.new(0, 160, 0, 18)
-		MinimizeButton.Text = "+"
-	else
-		ButtonFrame.Visible = true
-		MainFrame.Size = UDim2.new(0, 160, 0, 100)
-		MinimizeButton.Text = "-"
-	end
+    minimized = not minimized
+    if minimized then
+        ButtonFrame.Visible = false
+        MainFrame.Size = UDim2.new(0, 160, 0, 18)
+        MinimizeButton.Text = "+"
+    else
+        ButtonFrame.Visible = true
+        MainFrame.Size = UDim2.new(0, 160, 0, 100)
+        MinimizeButton.Text = "-"
+    end
 end)
 
---//============================\\--
---// KNIFE MODE FUNCTIONS        //--
---//============================\\--
+-- =========================================
+-- KNIFE MODE: full knife spawn/equip logic
+-- =========================================
 
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+-- State
+local KnifeTool = nil
+local knifeEquipped = false
 
--- simple variable holders
-local Knife = nil
-local equipped = false
+-- Utility: ensure Backpack exists
+local backpack = player:WaitForChild("Backpack")
 
--- unequip function
-local function unequip()
-	if Knife then
-		Knife:Destroy()
-		Knife = nil
-	end
-	equipped = false
+-- Clean up function
+local function destroyKnife()
+    if KnifeTool and KnifeTool.Parent then
+        KnifeTool:Destroy()
+    end
+    KnifeTool = nil
+    knifeEquipped = false
 end
 
--- equip function
-local function equip()
-	if equipped or Knife then return end
-	local tool = Instance.new("Tool")
-	tool.Name = "Knife"
-	tool.RequiresHandle = true
+-- Create & equip the Knife tool (spawn parts + basic behavior)
+local function createAndEquipKnife()
+    -- destroy existing
+    destroyKnife()
 
-	local handle = Instance.new("Part")
-	handle.Name = "Handle"
-	handle.Size = Vector3.new(0.3, 1.2, 0.2)
-	handle.BrickColor = BrickColor.new("Really red")
-	handle.Material = Enum.Material.Metal
-	handle.Parent = tool
+    -- Build tool
+    local tool = Instance.new("Tool")
+    tool.Name = "Knife"
+    tool.RequiresHandle = true
+    tool.CanBeDropped = true
+    tool.Parent = backpack
 
-	local mesh = Instance.new("SpecialMesh", handle)
-	mesh.MeshType = Enum.MeshType.FileMesh
-	mesh.MeshId = "rbxassetid://12221720" -- knife blade
-	mesh.TextureId = "rbxassetid://12221739"
-	mesh.Scale = Vector3.new(1.2, 1.2, 1.2)
+    -- Create handle (actual visible piece)
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(0.23, 1.19, 0.1)
+    handle.BrickColor = BrickColor.new("Dark stone grey")
+    handle.Material = Enum.Material.Metal
+    handle.CanCollide = false
+    handle.Parent = tool
 
-	tool.Parent = player.Backpack
-	Knife = tool
-	equipped = true
+    -- A thin blade mesh (if you prefer no mesh, comment out)
+    -- Using a simple wedge construction would be more similar to original; here we add a simple mesh.
+    local mesh = Instance.new("SpecialMesh")
+    mesh.MeshType = Enum.MeshType.Brick
+    mesh.Scale = Vector3.new(1, 1, 1)
+    mesh.Parent = handle
+
+    -- Example: add a thin "blade" part welded to handle for nicer visuals (optional)
+    local blade = Instance.new("Part")
+    blade.Name = "BladePart"
+    blade.Size = Vector3.new(0.23, 1.19, 0.05)
+    blade.BrickColor = BrickColor.new("Institutional white")
+    blade.Material = Enum.Material.Metal
+    blade.CanCollide = false
+    blade.Parent = tool
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = handle
+    weld.Part1 = blade
+    weld.Parent = handle
+    blade.CFrame = handle.CFrame * CFrame.new(0.5, 0, 0)
+
+    -- Equip state
+    KnifeTool = tool
+    knifeEquipped = true
+
+    -- Connect attack (Activated) - replicate the original handling in simplified form
+    tool.Activated:Connect(function()
+        -- brief visual flash
+        if handle and handle.Parent then
+            handle.BrickColor = BrickColor.new("Bright red")
+            Debris:AddItem(handle, 0.2) -- optional short-lived visual change (keeps code simple)
+            -- recreate handle after debris removal if you'd rather not destroy it:
+            -- we are just changing the color then letting Debris remove the original handle;
+            -- in production you might tween color instead of Debris:AddItem.
+            wait(0.18)
+            if tool and tool.Parent then
+                -- restore a handle if it was removed; but here we simply re-create minimal handle if missing:
+                if not tool:FindFirstChild("Handle") then
+                    local h2 = Instance.new("Part")
+                    h2.Name = "Handle"
+                    h2.Size = Vector3.new(0.23, 1.19, 0.1)
+                    h2.BrickColor = BrickColor.new("Dark stone grey")
+                    h2.Material = Enum.Material.Metal
+                    h2.CanCollide = false
+                    h2.Parent = tool
+                end
+            end
+        end
+    end)
 end
 
--- knife mode activation (spawns and equips)
-local function knifemode()
-	unequip()
-	equip()
-
-	local knifeTool = Knife
-	if not knifeTool then return end
-
-	-- attack logic
-	knifeTool.Activated:Connect(function()
-		local handle = knifeTool:FindFirstChild("Handle")
-		if handle then
-			handle.BrickColor = BrickColor.new("Bright red")
-			game:GetService("Debris"):AddItem(handle, 0.2)
-		end
-	end)
+-- Toggle knife: spawn/equip/unequip
+local function toggleKnife()
+    if knifeEquipped then
+        destroyKnife()
+    else
+        createAndEquipKnife()
+    end
 end
 
---//============================\\--
---// BIND BUTTONS TO KNIFE MODE  //--
---//============================\\--
+-- Ensure we cleanup & rebind on respawn
+local function onCharacterAdded(char)
+    -- nothing special needed here for current simple tool, but we ensure state resets
+    destroyKnife()
+end
 
-buttons["A"].MouseButton1Click:Connect(function()
-	if equipped then
-		unequip()
-	else
-		knifemode()
-	end
+-- Listen for respawn
+player.CharacterAdded:Connect(function(char)
+    onCharacterAdded(char)
 end)
+
+-- Button binding: A toggles knife
+if buttons["A"] then
+    buttons["A"].MouseButton1Click:Connect(function()
+        toggleKnife()
+    end)
+else
+    warn("Button A missing")
+end
+
+-- Optional: cleanup when player leaves / GUI removed
+player.AncestryChanged:Connect(function()
+    if not player:IsDescendantOf(game) then
+        destroyKnife()
+    end
+end)
+
+-- End of LocalScript
