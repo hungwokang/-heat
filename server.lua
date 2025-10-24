@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !sss
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -95,6 +95,9 @@ Nuee.ResetOnSpawn = false
 pcall(function()
 	Nuee.Parent = player.PlayerGui
 end)
+
+
+
 
 TextLabel.Parent = Frame
 TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -305,6 +308,7 @@ Black.BorderSizePixel = 0
 Black.BackgroundColor3 = Color3.new(0,0,0)
 Black.Parent = Frame_3
 
+
 --// Simple Small Tight GUI (Black/Red Minimal Style)
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -315,7 +319,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","GUN","D1K","KATANA","59999","ffffF"}
+local labels = {"KNIFE","GUN","D1K","KATANA","",""}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -401,7 +405,6 @@ MinimizeButton.MouseButton1Click:Connect(function()
 		MinimizeButton.Text = "-"
 	end
 end)
-
 
 
 TextBox.FocusLost:connect(function()
@@ -522,9 +525,9 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('',true)
+		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	else
-		notify('',true)
+		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	end
 else
 	notify('LOL this game has filtering disabled so it literally wont work here')
@@ -774,7 +777,6 @@ function ragdollJoint(character, part0, part1, attachmentName, className, proper
 		constraint.Parent = character
 	end
 end
-
 
 function R6ragdollJoint(character,limbname,attached,heded)
 	pcall(function()
@@ -4583,7 +4585,6 @@ function spawned()
 		working = false
 	end
 
-
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
 		if usable and working == false then
@@ -4977,6 +4978,4 @@ while true do
 		end
 	end
 	wait()
-
-
 end
