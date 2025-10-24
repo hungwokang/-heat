@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !h
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -64,36 +64,96 @@ print("put this in childlock to bypass: "..answer)
 warn(Class_Name.." #4817")
 local rekt = {}
 
--- Objects
-
-local Nuee = Instance.new("ScreenGui")
-local Customize = Instance.new("TextButton")
-local Frame = Instance.new("Frame")
-local TextLabel = Instance.new("TextLabel")
-local Frame_2 = Instance.new("Frame")
-local Frame_3 = Instance.new("Frame")
-local ImageLabel = Instance.new("ImageLabel")
-local R = Instance.new("TextBox")
-local G = Instance.new("TextBox")
-local B = Instance.new("TextBox")
-local TextLabel_2 = Instance.new("TextLabel")
-local TextLabel_3 = Instance.new("TextLabel")
-local TextLabel_4 = Instance.new("TextLabel")
-local Slider = Instance.new("Frame")
-local Slidee = Instance.new("ImageButton")
-local ChildLock = Instance.new("Frame")
-local TextLabel_5 = Instance.new("TextLabel")
-local mathz = Instance.new("TextLabel")
-local TextBox = Instance.new("TextBox")
-local Black = Instance.new('Frame')
-local fps = Instance.new('TextLabel')
-
 -- Properties
 
 Nuee.Name = "Nuee"
 Nuee.ResetOnSpawn = false
 pcall(function()
 	Nuee.Parent = player.PlayerGui
+end)
+
+ChildLock.Name = "ChildLock"
+ChildLock.Parent = Frame
+ChildLock.Active = true
+ChildLock.BackgroundColor3 = Color3.new(0, 0, 0)
+ChildLock.BackgroundTransparency = 0.60000002384186
+ChildLock.BorderSizePixel = 0
+ChildLock.Position = UDim2.new(0.600000024, 0, 0, 0)
+ChildLock.Size = UDim2.new(0.400000006, 0, 1, 0)
+ChildLock.ZIndex = 2
+
+TextLabel_5.Parent = ChildLock
+TextLabel_5.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_5.BackgroundTransparency = 1
+TextLabel_5.BorderSizePixel = 0
+TextLabel_5.Position = UDim2.new(0.125, 0, 0.150000006, 0)
+TextLabel_5.Size = UDim2.new(0.75, 0, 0.200000003, 0)
+TextLabel_5.ZIndex = 3
+TextLabel_5.Font = Enum.Font.SourceSans
+TextLabel_5.FontSize = Enum.FontSize.Size14
+TextLabel_5.Text = "do this math to disable child lock"
+TextLabel_5.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_5.TextScaled = true
+TextLabel_5.TextSize = 14
+TextLabel_5.TextWrapped = true
+
+mathz.Name = "mathz"
+mathz.Parent = ChildLock
+mathz.BackgroundColor3 = Color3.new(1, 1, 1)
+mathz.BackgroundTransparency = 1
+mathz.Position = UDim2.new(0.125, 0, 0.449999988, 0)
+mathz.Size = UDim2.new(0.75, 0, 0.200000003, 0)
+mathz.ZIndex = 3
+mathz.Font = Enum.Font.SourceSans
+mathz.FontSize = Enum.FontSize.Size14
+mathz.Text = math1.."("..math2.."r - "..math3..") = "..math4
+mathz.TextColor3 = Color3.new(1, 1, 1)
+mathz.TextScaled = true
+mathz.TextSize = 14
+mathz.TextWrapped = true
+
+fps.Name = "fps"
+fps.Parent = Frame
+fps.BackgroundColor3 = Color3.new(1, 1, 1)
+fps.BackgroundTransparency = 1
+fps.Size = UDim2.new(0.75, 0, 0.05, 0)
+fps.ZIndex = 3
+fps.Font = Enum.Font.SourceSansLight
+fps.FontSize = Enum.FontSize.Size14
+fps.Text = "FPS: N/A"
+fps.TextColor3 = Color3.new(1, 1, 1)
+fps.TextScaled = true
+fps.TextSize = 14
+fps.TextWrapped = true
+fps.TextXAlignment = Enum.TextXAlignment.Left
+
+TextBox.Parent = ChildLock
+TextBox.BackgroundColor3 = Color3.new(0.137255, 0.137255, 0.137255)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.200000003, 0, 0.699999988, 0)
+TextBox.Size = UDim2.new(0.600000024, 0, 0.200000003, 0)
+TextBox.ZIndex = 3
+TextBox.Font = Enum.Font.SourceSans
+TextBox.FontSize = Enum.FontSize.Size14
+TextBox.Text = "Answer (rounded to nearest tenth)"
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+TextBox.TextScaled = true
+TextBox.TextSize = 14
+TextBox.TextWrapped = true
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+Black.Size = UDim2.new(1,0,1,0)
+Black.BackgroundTransparency = 1
+Black.BorderSizePixel = 0
+Black.BackgroundColor3 = Color3.new(0,0,0)
+Black.Parent = Frame_3
+
+TextBox.FocusLost:connect(function()
+	if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
+		ChildLock:Destroy()
+		childlock = false
+		notify("Child lock disabled, press B to enable sausage mode.",true)
+	end
 end)
 
 local mousedown = false
