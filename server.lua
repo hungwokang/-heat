@@ -315,7 +315,7 @@ local ButtonFrame = Instance.new("Frame")
 
 -- Buttons A-F
 local buttons = {}
-local labels = {"KNIFE","GUN","D1K","KATANA","EEEE","F"}
+local labels = {"KNIFE","GUN","D1K","KATANA","5555","F"}
 
 -- Parent
 ScreenGui.Parent = game:GetService("CoreGui")
@@ -388,7 +388,7 @@ for i, label in ipairs(labels) do
 end
 
 -- Minimize Logic
-local minimized = false
+ local minimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
@@ -401,6 +401,8 @@ MinimizeButton.MouseButton1Click:Connect(function()
 		MinimizeButton.Text = "-"
 	end
 end)
+
+
 
 TextBox.FocusLost:connect(function()
 	if TextBox.Text == tostring(answer) or TextBox.Text == "r="..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == "r = "..tostring(answer) or TextBox.Text == "r= "..tostring(answer) or TextBox.Text == tostring(answer).."=r" or TextBox.Text == tostring(answer).." =r" or TextBox.Text == tostring(answer).."= r" or TextBox.Text == tostring(answer).." = r" then
@@ -772,6 +774,7 @@ function ragdollJoint(character, part0, part1, attachmentName, className, proper
 		constraint.Parent = character
 	end
 end
+
 
 function R6ragdollJoint(character,limbname,attached,heded)
 	pcall(function()
@@ -4581,53 +4584,6 @@ function spawned()
 	end
 
 
-	-- // Button Actions
-	-- Ensure only one weapon active at a time
-	local function deactivateAll()
-		if blademode ~= nil then
-			getrid(handle)
-			blademode = nil
-		end
-	end
-	
-	buttons["KNIFE"].MouseButton1Click:Connect(function()
-		if equipped == false then
-			if firsttime then
-				firsttime = false
-				notify("Equipped || Press X or C to equip one of two weapons",true)
-			else
-				notify("Equipped")
-			end
-			equip()
-		else
-			notify("Unequipped")
-			unequip()
-		end
-	end)
-	
-	buttons["GUN"].MouseButton1Click:Connect(function()
-		deactivateAll()
-		if equipped == false then equip() end
-		blademode = "gun"
-		gunmode()
-	end)
-	
-	buttons["KATANA"].MouseButton1Click:Connect(function()
-		deactivateAll()
-		if equipped == false then equip() end
-		blademode = "katana"
-		katanamode()
-	end)
-	
-	buttons["D1K"].MouseButton1Click:Connect(function()
-		deactivateAll()
-		if equipped == false then equip() end
-		blademode = "reboot"
-		reboot()
-	end)
-
-
-
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
 		if usable and working == false then
@@ -5021,4 +4977,27 @@ while true do
 		end
 	end
 	wait()
+
+local function deactivateAll()
+		if blademode ~= nil then
+			getrid(handle)
+			blademode = nil
+		end
+	end
+	
+	buttons["KNIFE"].MouseButton1Click:Connect(function()
+		if equipped == false then
+			if firsttime then
+				firsttime = false
+				notify("Equipped || Press X or C to equip one of two weapons",true)
+			else
+				notify("Equipped")
+			end
+			equip()
+		else
+			notify("Unequipped")
+			unequip()
+		end
+	end)
+
 end
