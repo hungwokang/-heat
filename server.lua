@@ -9,7 +9,7 @@ local hed = char.Head
 local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
--- Edit more !m
+-- Edit more !
 
 
 local player = game:GetService('Players').LocalPlayer
@@ -63,6 +63,30 @@ answer = answer/10
 print("put this in childlock to bypass: "..answer)
 warn(Class_Name.." #4817")
 local rekt = {}
+
+-- Objects
+
+local Nuee = Instance.new("ScreenGui")
+local Customize = Instance.new("TextButton")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local Frame_2 = Instance.new("Frame")
+local Frame_3 = Instance.new("Frame")
+local ImageLabel = Instance.new("ImageLabel")
+local R = Instance.new("TextBox")
+local G = Instance.new("TextBox")
+local B = Instance.new("TextBox")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local TextLabel_4 = Instance.new("TextLabel")
+local Slider = Instance.new("Frame")
+local Slidee = Instance.new("ImageButton")
+local ChildLock = Instance.new("Frame")
+local TextLabel_5 = Instance.new("TextLabel")
+local mathz = Instance.new("TextLabel")
+local TextBox = Instance.new("TextBox")
+local Black = Instance.new('Frame')
+local fps = Instance.new('TextLabel')
 
 -- Properties
 
