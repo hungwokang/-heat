@@ -597,7 +597,8 @@ function notify(msg,remove)
 			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
 			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 			TextLabel.Text = ""
-			TextLabel.TextTransparency = 1 -- used for fade animation later
+			TextLabel.BackgroundTransparency = 1 -- used for fade animation later
+			Frame.BackgroundTransparency = 1
 				
 			for i=1,10 do
 				TextLabel.Transparency = TextLabel.Transparency-0.1
