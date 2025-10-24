@@ -97,7 +97,25 @@ pcall(function()
 end)
 
 
+Customize.Name = "Customize"
+Customize.Parent = Nuee
+Customize.BackgroundColor3 = Color3.new(0, 0.776471, 0.282353)
+Customize.BorderSizePixel = 0
+Customize.Position = UDim2.new(0.15, 0, 0.9, 0)
+Customize.Size = UDim2.new(0.699999988, 0, 0.100000001, 0)
+Customize.Font = Enum.Font.SourceSans
+Customize.FontSize = Enum.FontSize.Size14
+Customize.Text = "Customize"
+Customize.TextColor3 = Color3.new(1, 1, 1)
+Customize.TextScaled = true
+Customize.TextSize = 14
+Customize.TextWrapped = true
 
+Frame.Parent = Customize
+Frame.BackgroundColor3 = Color3.new(0.164706, 0.164706, 0.164706)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0, 0, 1, 0)
+Frame.Size = UDim2.new(1, 0, 6.5, 0)
 
 TextLabel.Parent = Frame
 TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -422,6 +440,62 @@ function removewelds(part)
 	end
 end
 
+function notify(msg,remove)
+	local coru= coroutine.wrap(function()
+		for i,v in pairs(Nuee:GetChildren()) do
+			if v:IsA('TextLabel') then v:Destroy() end
+		end
+		if msg then
+			local TextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+
+			-- Properties
+
+			TextLabel.Parent = Nuee
+			TextLabel.BackgroundColor3 = Color3.new(0.227451, 0.227451, 0.227451)
+			TextLabel.BorderSizePixel = 0
+			TextLabel.Position = UDim2.new(0.25, 0, 0.05, -10)
+			TextLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
+			TextLabel.Font = Enum.Font.SourceSans
+			TextLabel.FontSize = Enum.FontSize.Size60
+			TextLabel.TextColor3 = Color3.new(1, 1, 1)
+			TextLabel.TextSize = 50
+			TextLabel.Transparency = 1
+			TextLabel.TextScaled = true
+			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+			TextLabel.Text = ""
+			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+			Frame.Parent = TextLabel
+			Frame.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
+			Frame.BorderSizePixel = 0
+			Frame.Transparency = 1
+			Frame.Position = UDim2.new(0, 0, 1,0)
+			Frame.Size = UDim2.new(1, 0, 0, 5)
+			for i=1,10 do
+				TextLabel.Transparency = TextLabel.Transparency-0.1
+				TextLabel.Position = TextLabel.Position+UDim2.new(0,0,0,1)
+				Frame.Transparency = Frame.Transparency-0.1
+				wait()
+			end
+			for i=1,#msg do
+				TextLabel.Text = string.sub(msg,1,i)
+				wait()
+			end
+			wait(1)
+			if remove ~= true then
+				for i=1,10 do
+					TextLabel.Transparency = TextLabel.Transparency+0.1
+					TextLabel.Position = TextLabel.Position-UDim2.new(0,0,0,1)
+					Frame.Transparency = Frame.Transparency+0.1
+					wait()
+				end
+				TextLabel:Destroy()
+			end
+		end
+	end)
+	coru()
+end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
