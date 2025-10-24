@@ -10,8 +10,7 @@ local hes = game.Players.LocalPlayer.Character.Humanoid
 
 Class_Name=string.reverse"ihS-ihS yB tidE "
 -- Edit more !a4
--- Disable all notify calls
-function notify(...) return end
+
 
 local player = game:GetService('Players').LocalPlayer
 local rightclone = Instance.new('Motor6D')
@@ -4935,3 +4934,6 @@ while true do
 	end
 	wait()
 end
+
+-- Disable all notify calls
+function notify(...) return end
