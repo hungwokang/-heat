@@ -406,15 +406,19 @@ Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 --// Buttons
 local buttonData = {
-	{label = "Knife", key = "c"},
-	{label = "Sausage", key = "b"},
-	{label = "Katana", key = "x"},
-	{label = "Q", key = "q"},
-	{label = "Zzzz", key = "z"},
-	{label = "F", key = "f"},
-	{label = "R", key = "r"},
-	{label = "G", key = "g"},
-	{label = "M", key = "m"},
+	{label = "equip", key = "z"},
+	{label = "knife", key = "c"},
+	{label = "sausage", key = "b"},
+	{label = "katana", key = "x"},
+	{label = "gun", key = "v"},
+	{label = "reboot", key = "b"},
+	{label = "E", key = "e"},
+	{label = "f", key = "f"},
+	{label = "t", key = "t"},
+	{label = "m", key = "m"},
+	{label = "r", key = "r"},
+	{label = "f", key = "f"},
+	{label = "g", key = "g"},
 }
 
 for _, info in ipairs(buttonData) do
