@@ -398,7 +398,7 @@ Holder.Position = UDim2.new(0.5, 0, 0, 0)
 local Layout = Instance.new("UIGridLayout")
 Layout.Parent = Holder
 Layout.CellSize = UDim2.new(0, 46, 0, 25)
-Layout.CellPadding = UDim2.new(0, 2, 0, 2)
+Layout.CellPadding = UDim2.new(0, 5, 0, 5)
 Layout.FillDirectionMaxCells = 3
 Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 Layout.VerticalAlignment = Enum.VerticalAlignment.Center
@@ -569,51 +569,54 @@ function removewelds(part)
 	end
 end
 
-function notify(msg, remove)
-	local coru = coroutine.wrap(function()
-		for _, v in pairs(Nuee:GetChildren()) do
-			if v:IsA("TextLabel") then
-				v:Destroy()
-			end
+function notify(msg,remove)
+	local coru= coroutine.wrap(function()
+		for i,v in pairs(Nuee:GetChildren()) do
+			if v:IsA('TextLabel') then v:Destroy() end
 		end
-
 		if msg then
 			local TextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+
+			-- Properties
+
 			TextLabel.Parent = Nuee
-			TextLabel.BackgroundTransparency = 1 -- no background
+			TextLabel.BackgroundColor3 = Color3.new(0.227451, 0.227451, 0.227451)
 			TextLabel.BorderSizePixel = 0
-			TextLabel.Position = UDim2.new(0.5, 0, 0.1, 0)
-			TextLabel.AnchorPoint = Vector2.new(0.5, 0)
-			TextLabel.Size = UDim2.new(0, 0, 0, 40)
-			TextLabel.Font = Enum.Font.Code
+			TextLabel.Position = UDim2.new(0.25, 0, 0.05, -10)
+			TextLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
+			TextLabel.Font = Enum.Font.SourceSans
+			TextLabel.FontSize = Enum.FontSize.Size60
 			TextLabel.TextColor3 = Color3.new(1, 1, 1)
 			TextLabel.TextSize = 14
+			TextLabel.Transparency = 1
 			TextLabel.TextScaled = true
+			TextLabel.TextYAlignment = Enum.TextYAlignment.Top
 			TextLabel.Text = ""
-			TextLabel.TextXAlignment = Enum.TextXAlignment.Center
-			TextLabel.TextYAlignment = Enum.TextYAlignment.Center
-			TextLabel.TextTransparency = 1
+			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-			-- Fade in
-			for i = 1, 10 do
-				TextLabel.TextTransparency = TextLabel.TextTransparency - 0.1
-				TextLabel.Position = TextLabel.Position + UDim2.new(0, 0, 0, 1)
+			Frame.Parent = TextLabel
+			Frame.BackgroundColor3 = Color3.new(0.192157, 0.192157, 0.192157)
+			Frame.BorderSizePixel = 0
+			Frame.Transparency = 1
+			Frame.Position = UDim2.new(0, 0, 1,0)
+			Frame.Size = UDim2.new(1, 0, 0, 5)
+			for i=1,10 do
+				TextLabel.Transparency = TextLabel.Transparency-0.1
+				TextLabel.Position = TextLabel.Position+UDim2.new(0,0,0,1)
+				Frame.Transparency = Frame.Transparency-0.1
 				wait()
 			end
-
-			-- Typewriter effect
-			for i = 1, #msg do
-				TextLabel.Text = string.sub(msg, 1, i)
-				wait(0.02)
+			for i=1,#msg do
+				TextLabel.Text = string.sub(msg,1,i)
+				wait()
 			end
-
-			wait(1.2)
-
-			-- Fade out (if remove isn’t true)
-			if not remove then
-				for i = 1, 10 do
-					TextLabel.TextTransparency = TextLabel.TextTransparency + 0.1
-					TextLabel.Position = TextLabel.Position - UDim2.new(0, 0, 0, 1)
+			wait(1)
+			if remove ~= true then
+				for i=1,10 do
+					TextLabel.Transparency = TextLabel.Transparency+0.1
+					TextLabel.Position = TextLabel.Position-UDim2.new(0,0,0,1)
+					Frame.Transparency = Frame.Transparency+0.1
 					wait()
 				end
 				TextLabel:Destroy()
@@ -622,6 +625,7 @@ function notify(msg, remove)
 	end)
 	coru()
 end
+
 
 
 wowgoodphysOCS = true --if false then says that the game has shitty physics
