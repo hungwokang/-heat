@@ -11,239 +11,153 @@ local hes = game.Players.LocalPlayer.Character.Humanoid
 Class_Name=string.reverse"ihS-ihS yB tidE "
 -- Edit more !
 
--- ###############################
--- GUI APPEND: Clean draggable red minimal GUI
--- Paste this at the end of your existing LocalScript (after your functions)
--- ###############################
+--//==============================\\--
+--// CLEAN RED ROUNDED WEAPON GUI //--
+--//==============================\\--
 
--- silence all notify() calls from original code (no text boxes)
-notify = function(...) end
-
+--// Services
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Utility: make UI draggable
-local function makeDraggable(frame, dragHandle)
-    dragHandle = dragHandle or frame
-    local dragging, dragStart, startPos
-    dragHandle.InputBegan:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = inp.Position
-            startPos = frame.Position
-            inp.Changed:Connect(function()
-                if inp.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-    dragHandle.InputChanged:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseMovement then
-            if dragging then
-                local delta = inp.Position - dragStart
-                frame.Position = UDim2.new(
-                    startPos.X.Scale,
-                    startPos.X.Offset + delta.X,
-                    startPos.Y.Scale,
-                    startPos.Y.Offset + delta.Y
-                )
-            end
-        end
-    end)
+-- Remove old GUI if re-executed
+if playerGui:FindFirstChild("WeaponPanel") then
+	playerGui:FindFirstChild("WeaponPanel"):Destroy()
 end
 
--- Clean container
-local screen = Instance.new("ScreenGui")
-screen.Name = "WeaponToggleGUI"
-screen.DisplayOrder = 50
-screen.ResetOnSpawn = false
-screen.Parent = playerGui
+--// Create ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "WeaponPanel"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
 
--- Main window
-local window = Instance.new("Frame")
-window.Name = "MainWindow"
-window.Size = UDim2.new(0, 220, 0, 120)
-window.Position = UDim2.new(0, 20, 0, 120)
-window.BackgroundColor3 = Color3.fromRGB(40, 6, 6) -- deep red
-window.BorderSizePixel = 0
-window.AnchorPoint = Vector2.new(0,0)
-window.Parent = screen
-window.ClipsDescendants = true
-window.AutoButtonColor = false
-window.BackgroundTransparency = 0
+--// Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0, 160)
+frame.Position = UDim2.new(0.5, -110, 0.5, -80)
+frame.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Parent = gui
 
--- Round corners
-local uICorner = Instance.new("UICorner", window)
-uICorner.CornerRadius = UDim.new(0, 12)
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
 
--- Header (drag handle)
-local header = Instance.new("Frame", window)
-header.Name = "Header"
-header.Size = UDim2.new(1, 0, 0, 28)
-header.Position = UDim2.new(0, 0, 0, 0)
-header.BackgroundTransparency = 1
-
-local title = Instance.new("TextLabel", header)
-title.Text = "Weapon Selector"
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 14
-title.TextColor3 = Color3.fromRGB(255,255,255)
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
 title.BackgroundTransparency = 1
-title.Size = UDim2.new(1, -60, 1, 0)
-title.Position = UDim2.new(0, 8, 0, 0)
+title.Text = "Weapon Selector"
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextScaled = true
 title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
 
--- Minimize / Maximize button
-local miniBtn = Instance.new("TextButton", header)
-miniBtn.Name = "Minimize"
-miniBtn.Size = UDim2.new(0, 28, 0, 20)
-miniBtn.Position = UDim2.new(1, -36, 0, 4)
-miniBtn.BackgroundTransparency = 0
-miniBtn.BackgroundColor3 = Color3.fromRGB(90, 12, 12)
-miniBtn.BorderSizePixel = 0
-miniBtn.Font = Enum.Font.SourceSansBold
-miniBtn.TextSize = 18
-miniBtn.Text = "-"
-miniBtn.TextColor3 = Color3.fromRGB(255,255,255)
-miniBtn.AutoButtonColor = true
-miniBtn.ZIndex = 5
-local miniCorner = Instance.new("UICorner", miniBtn)
-miniCorner.CornerRadius = UDim.new(0, 8)
+-- Minimize/Expand Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 30, 0, 30)
+toggleButton.Position = UDim2.new(1, -35, 0, 5)
+toggleButton.BackgroundTransparency = 0.3
+toggleButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+toggleButton.Text = "-"
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.TextScaled = true
+toggleButton.Parent = frame
 
--- Close toggle visuals
-local collapsed = false
-miniBtn.MouseButton1Click:Connect(function()
-    if not collapsed then
-        -- collapse
-        window.Size = UDim2.new(0, 120, 0, 34)
-        title.Text = "Weapon"
-        miniBtn.Text = "+"
-        collapsed = true
-    else
-        -- expand
-        window.Size = UDim2.new(0, 220, 0, 120)
-        title.Text = "Weapon Selector"
-        miniBtn.Text = "-"
-        collapsed = false
-    end
+local tbCorner = Instance.new("UICorner")
+tbCorner.CornerRadius = UDim.new(0, 8)
+tbCorner.Parent = toggleButton
+
+-- Container for buttons
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Size = UDim2.new(1, -20, 0, 100)
+buttonContainer.Position = UDim2.new(0, 10, 0, 45)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Parent = frame
+
+-- Layout
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 8)
+layout.FillDirection = Enum.FillDirection.Vertical
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.VerticalAlignment = Enum.VerticalAlignment.Top
+layout.Parent = buttonContainer
+
+-- Active Weapon Tracker
+local activeWeapon = nil
+
+-- Helper: Create Button
+local function createButton(name, color)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 30)
+	btn.BackgroundColor3 = color
+	btn.Text = name
+	btn.Font = Enum.Font.GothamBold
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.TextScaled = true
+	btn.Parent = buttonContainer
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = btn
+
+	-- Hover effect
+	btn.MouseEnter:Connect(function()
+		btn.BackgroundColor3 = color:Lerp(Color3.new(1, 1, 1), 0.1)
+	end)
+	btn.MouseLeave:Connect(function()
+		btn.BackgroundColor3 = color
+	end)
+
+	return btn
+end
+
+-- Create buttons
+local knifeBtn = createButton("Knife", Color3.fromRGB(255, 60, 60))
+local gunBtn = createButton("Gun", Color3.fromRGB(255, 120, 120))
+local katanaBtn = createButton("Katana", Color3.fromRGB(255, 90, 90))
+
+-- Button logic (only one active)
+local function activateWeapon(weapon)
+	if activeWeapon == weapon then
+		-- same weapon pressed again, unequip
+		if unequip then unequip() end
+		activeWeapon = nil
+		return
+	end
+
+	activeWeapon = weapon
+
+	if equip then equip() end
+
+	if weapon == "Knife" and knifemode then
+		knifemode()
+	elseif weapon == "Gun" and gunmode then
+		gunmode()
+	elseif weapon == "Katana" and katanamode then
+		katanamode()
+	end
+end
+
+knifeBtn.MouseButton1Click:Connect(function() activateWeapon("Knife") end)
+gunBtn.MouseButton1Click:Connect(function() activateWeapon("Gun") end)
+katanaBtn.MouseButton1Click:Connect(function() activateWeapon("Katana") end)
+
+-- Minimize / Expand behavior
+local minimized = false
+toggleButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	toggleButton.Text = minimized and "+" or "-"
+	buttonContainer.Visible = not minimized
+	frame.Size = minimized and UDim2.new(0, 220, 0, 40) or UDim2.new(0, 220, 0, 160)
 end)
-
--- Make draggable by header
-makeDraggable(window, header)
-
--- Buttons container
-local buttonsFrame = Instance.new("Frame", window)
-buttonsFrame.Name = "Buttons"
-buttonsFrame.Position = UDim2.new(0, 8, 0, 36)
-buttonsFrame.Size = UDim2.new(1, -16, 1, -44)
-buttonsFrame.BackgroundTransparency = 1
-
--- style helper
-local function makeButton(text, pos)
-    local b = Instance.new("TextButton", buttonsFrame)
-    b.Size = UDim2.new(0, 64, 0, 64)
-    b.Position = pos
-    b.BackgroundColor3 = Color3.fromRGB(150, 10, 10)
-    b.AutoButtonColor = true
-    b.BorderSizePixel = 0
-    b.Font = Enum.Font.SourceSansBold
-    b.TextSize = 14
-    b.TextColor3 = Color3.fromRGB(255,255,255)
-    b.Text = text
-    local c = Instance.new("UICorner", b)
-    c.CornerRadius = UDim.new(0, 10)
-    return b
-end
-
-local btnKnife  = makeButton("Knife",  UDim2.new(0, 8,  0, 0))
-local btnKatana = makeButton("Katana", UDim2.new(0, 76, 0, 0))
-local btnGun    = makeButton("Gun",    UDim2.new(0, 144,0, 0))
-
--- small indicator: active
-local activeIndicator = Instance.new("TextLabel", window)
-activeIndicator.Name = "ActiveLabel"
-activeIndicator.Size = UDim2.new(1, -16, 0, 16)
-activeIndicator.Position = UDim2.new(0, 8, 1, -20)
-activeIndicator.BackgroundTransparency = 1
-activeIndicator.Font = Enum.Font.SourceSans
-activeIndicator.TextSize = 12
-activeIndicator.TextColor3 = Color3.fromRGB(255,255,255)
-activeIndicator.Text = "Active: none"
-activeIndicator.TextXAlignment = Enum.TextXAlignment.Left
-
--- State
-local currentActive = nil -- "knife" / "katana" / "gun" / nil
-
--- helper to clear other weapon (only one active at a time)
-local function deactivateAll()
-    -- call getrid(handle) if existing to clear visuals
-    pcall(function() if getrid then getrid(handle) end end)
-    -- call unequip to ensure player arms reset
-    pcall(function() if unequip then unequip() end end)
-    currentActive = nil
-    activeIndicator.Text = "Active: none"
-    -- update button visuals
-    btnKnife.BackgroundColor3  = Color3.fromRGB(150, 10, 10)
-    btnKatana.BackgroundColor3 = Color3.fromRGB(150, 10, 10)
-    btnGun.BackgroundColor3    = Color3.fromRGB(150, 10, 10)
-end
-
--- activate specific
-local function activateWeapon(which)
-    if currentActive == which then
-        -- toggling off
-        deactivateAll()
-        return
-    end
-
-    -- only one at a time: clear previous
-    deactivateAll()
-
-    if which == "knife" then
-        pcall(function()
-            -- run spawn / setup
-            if knifemode then knifemode() end
-            -- equip after spawn
-            if equip then equip() end
-        end)
-        currentActive = "knife"
-        activeIndicator.Text = "Active: Knife"
-        btnKnife.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    elseif which == "katana" then
-        pcall(function()
-            if katanamode then katanamode() end
-            if equip then equip() end
-        end)
-        currentActive = "katana"
-        activeIndicator.Text = "Active: Katana"
-        btnKatana.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    elseif which == "gun" then
-        pcall(function()
-            if gunmode then gunmode() end
-            if equip then equip() end
-        end)
-        currentActive = "gun"
-        activeIndicator.Text = "Active: Gun"
-        btnGun.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    end
-end
-
--- connect buttons
-btnKnife.MouseButton1Click:Connect(function() activateWeapon("knife") end)
-btnKatana.MouseButton1Click:Connect(function() activateWeapon("katana") end)
-btnGun.MouseButton1Click:Connect(function() activateWeapon("gun") end)
-
--- safety: if the player dies/re-spawns, we clear GUI state and disable weapon spawns
-player.CharacterRemoving:Connect(function()
-    deactivateAll()
-end)
-
--- Expose quick functions on screen for debugging (optional)
-screen.Name = "WeaponToggleGUI_" .. tostring(math.random(1000,9999))
-
--- Done: GUI appended
 
 
 local player = game:GetService('Players').LocalPlayer
