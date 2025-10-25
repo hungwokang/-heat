@@ -439,6 +439,7 @@ local function refreshButtons()
 	else
 		makeButton("UNEQUIP", function()
 			equipped = false
+			pressKey("z")
 			refreshButtons()
 		end)
 		makeButton("KNIFE", function()
@@ -446,6 +447,9 @@ local function refreshButtons()
 		end)
 		makeButton("KATANA", function()
 			pressKey("x")
+		end)
+		makeButton("F", function()
+			pressKey("f")
 		end)
 	end
 
@@ -5043,7 +5047,7 @@ THOT]])
 				notify()
 				if grabbed == nil then
 					if mode == "fling" then
-						kill()
+						fling()
 					else
 						grab()
 					end
