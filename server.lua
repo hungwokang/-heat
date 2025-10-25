@@ -321,150 +321,155 @@ end)
 
 
 
---// Server Control GUI (Black/Red Minimal Style)
---// by hungwokang
-
-local player = game.Players.LocalPlayer
+--// Services
+local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
-local tween = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
 
---// GUI Setup
-local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-ScreenGui.Name = "ServerGui"
+--// Create GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "ServerGUI"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
 
-local MainFrame = Instance.new("Frame")
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-MainFrame.BackgroundTransparency = 0.5
-MainFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
-MainFrame.Size = UDim2.new(0, 160, 0, 50)
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.BorderSizePixel = 2
-MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
-MainFrame.ClipsDescendants = true
+--// Main Frame
+local frame = Instance.new("Frame")
+frame.Parent = gui
+frame.Size = UDim2.new(0, 120, 0, 130)
+frame.Position = UDim2.new(0.5, -60, 0.5, -65)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BackgroundTransparency = 0.4
+frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+frame.Active = true
+frame.Draggable = true
 
---// Title
-local TitleBar = Instance.new("Frame", MainFrame)
-TitleBar.Size = UDim2.new(1, 0, 0, 20)
-TitleBar.BackgroundColor3 = Color3.new(0, 0, 0)
-TitleBar.BackgroundTransparency = 0.2
-TitleBar.BorderColor3 = Color3.fromRGB(255, 0, 0)
+--// Title bar
+local title = Instance.new("TextLabel")
+title.Parent = frame
+title.Size = UDim2.new(1, -20, 0, 20)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.Code
+title.Text = "00N7"
+title.TextColor3 = Color3.new(255, 0, 0)
+title.TextSize = 13
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Position = UDim2.new(0, 5, 0, 0)
 
-local TitleText = Instance.new("TextLabel", TitleBar)
-TitleText.Size = UDim2.new(1, -20, 1, 0)
-TitleText.Position = UDim2.new(0, 4, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.Font = Enum.Font.Code
-TitleText.Text = "Server"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextSize = 12
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
+--// Minimize button
+local minimize = Instance.new("TextButton")
+minimize.Parent = frame
+minimize.Size = UDim2.new(0, 20, 0, 20)
+minimize.Position = UDim2.new(1, -22, 0, 0)
+minimize.Text = "-"
+minimize.Font = Enum.Font.Code
+minimize.TextSize = 14
+minimize.BackgroundTransparency = 1
+minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
 
-local MinimizeButton = Instance.new("TextButton", TitleBar)
-MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
-MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
-MinimizeButton.BackgroundTransparency = 0.2
-MinimizeButton.BackgroundColor3 = Color3.new(0, 0, 0)
-MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-MinimizeButton.Text = "-"
-MinimizeButton.Font = Enum.Font.Code
-MinimizeButton.TextSize = 12
-MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
+--// Scroll Holder
+local scroll = Instance.new("ScrollingFrame")
+scroll.Parent = frame
+scroll.Position = UDim2.new(0, 0, 0, 22)
+scroll.Size = UDim2.new(1, 0, 1, -42)
+scroll.BackgroundTransparency = 1
+scroll.BorderSizePixel = 0
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 2
 
---// Scrollable Button Holder
-local Scroll = Instance.new("ScrollingFrame", MainFrame)
-Scroll.Size = UDim2.new(1, 0, 1, -20)
-Scroll.Position = UDim2.new(0, 0, 0, 20)
-Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-Scroll.ScrollBarThickness = 4
-Scroll.BackgroundTransparency = 1
+--// Footer
+local footer = Instance.new("TextLabel")
+footer.Parent = frame
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
+footer.BackgroundTransparency = 1
+footer.Font = Enum.Font.Code
+footer.Text = "created by server"
+footer.TextColor3 = Color3.fromRGB(255, 0, 0)
+footer.TextSize = 10
 
-local Holder = Instance.new("Frame", Scroll)
-Holder.BackgroundTransparency = 1
-Holder.Size = UDim2.new(1, 0, 0, 0)
+--// Layout
+local layout = Instance.new("UIListLayout")
+layout.Parent = scroll
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 5)
 
-local Layout = Instance.new("UIListLayout", Holder)
-Layout.Padding = UDim.new(0, 4)
-Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-Layout.VerticalAlignment = Enum.VerticalAlignment.Top
-Layout.SortOrder = Enum.SortOrder.LayoutOrder
+--// Helper - press a key
+local function pressKey(key)
+	vim:SendKeyEvent(true, Enum.KeyCode[string.upper(key)], false, game)
+	task.wait(0.1)
+	vim:SendKeyEvent(false, Enum.KeyCode[string.upper(key)], false, game)
+end
 
---// Buttons Data
-local buttonData = {
-	{label = "Equip", key = "z"},
-	{label = "Knife", key = "c"},
-	{label = "Katana", key = "x"},
-	{label = "Blows", key = "f"},
-}
-
---// Create Buttons
-local buttons = {}
-for _, info in ipairs(buttonData) do
+--// Helper - make a button
+local function makeButton(name, callback)
 	local btn = Instance.new("TextButton")
-	btn.Parent = Holder
-	btn.Text = info.label
-	btn.Font = Enum.Font.Code
-	btn.TextSize = 12
-	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Parent = scroll
+	btn.Size = UDim2.new(0.9, 0, 0, 20)
 	btn.BackgroundColor3 = Color3.new(0, 0, 0)
 	btn.BackgroundTransparency = 0.5
 	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	btn.Size = UDim2.new(0.8, 0, 0, 24)
-	btn.AutoButtonColor = true
-
-	buttons[info.label] = btn
-
-	-- Click function
-	btn.MouseButton1Click:Connect(function()
-		-- Equip special behavior
-		if info.label == "Equip" then
-			if btn.Text == "Equip" then
-				btn.Text = "Unequip"
-				vim:SendKeyEvent(true, Enum.KeyCode.Z, false, game)
-				task.wait(0.1)
-				vim:SendKeyEvent(false, Enum.KeyCode.Z, false, game)
-			else
-				btn.Text = "Equip"
-			end
-			return
-		end
-
-		-- Other buttons
-		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(info.key)], false, game)
-		task.wait(0.1)
-		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(info.key)], false, game)
-	end)
+	btn.Text = name
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.TextSize = 12
+	btn.Font = Enum.Font.Code
+	btn.MouseButton1Click:Connect(callback)
+	return btn
 end
 
---// Auto Canvas Resize
-Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-	Holder.Size = UDim2.new(1, 0, 0, Layout.AbsoluteContentSize.Y)
-	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 4)
-	MainFrame.Size = UDim2.new(0, 160, 0, math.clamp(Layout.AbsoluteContentSize.Y + 26, 50, 200))
-end)
-
---// Minimize
+--// Logic
+local equipped = false
 local minimized = false
-MinimizeButton.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 160, 0, 18) or UDim2.new(0, 160, 0, math.clamp(Layout.AbsoluteContentSize.Y + 26, 50, 200))
-	local targetText = minimized and "+" or "-"
-	tween:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {Size = targetSize}):Play()
-	Scroll.Visible = not minimized
-	MinimizeButton.Text = targetText
+
+local function refreshButtons()
+	scroll:ClearAllChildren()
+	layout.Parent = scroll
+
+	if not equipped then
+		makeButton("EQUIP", function()
+			equipped = true
+			pressKey("z")
+			refreshButtons()
+		end)
+	else
+		makeButton("UNEQUIP", function()
+			equipped = false
+			refreshButtons()
+		end)
+
+		makeButton("KNIFE", function()
+			pressKey("c")
+		end)
+
+		makeButton("KATANA", function()
+			pressKey("x")
+		end)
+	end
+
+	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end
+
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
 end)
 
---// Footer
-local Footer = Instance.new("TextLabel", MainFrame)
-Footer.BackgroundTransparency = 1
-Footer.Text = "Created by Server"
-Footer.TextColor3 = Color3.fromRGB(255, 0, 0)
-Footer.Font = Enum.Font.Code
-Footer.TextSize = 10
-Footer.AnchorPoint = Vector2.new(0.5, 1)
-Footer.Position = UDim2.new(0.5, 0, 1, -2)
-Footer.Size = UDim2.new(1, 0, 0, 12)
+--// Minimize toggle
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
+	local targetText = minimized and "+" or "-"
+
+	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = targetSize
+	}):Play()
+
+	scroll.Visible = not minimized
+	footer.Visible = not minimized
+	minimize.Text = targetText
+end)
+
+refreshButtons()
+
 
 
 
