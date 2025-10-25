@@ -4556,15 +4556,17 @@ function spawned()
 			local coru2 = coroutine.wrap(function()
 	local whyy = grabbed
 
-	-- instant kill
+	-- freeze or stun the humanoid
 	pcall(function()
 		local hum = whyy:FindFirstChildOfClass('Humanoid')
 		if hum then
-			hum.Health = 0
+			hum.WalkSpeed = 0
+			hum.JumpPower = 0
+			hum.PlatformStand = true  -- prevents movement or standing up
 		end
 	end)
 
-	-- cut / ragdoll head
+	-- optional: visual ragdoll for the head (still keeps character "alive")
 	pcall(function()
 		ragdollpart(whyy, "Head")
 	end)
