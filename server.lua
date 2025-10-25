@@ -4979,7 +4979,12 @@ THOT]])
 					if blademode == "katana" and swinging then
 						if gettingeem then
 							if goteem == nil then
-								if hit.Parent:FindFirstChildOfClass('Humanoid') and hit.Parent:FindFirstChildOfClass('Humanoid').Health > 0 and hit.Parent ~= char then
+								if hit and hit.Parent 
+								   and hit.Parent ~= char 
+								   and not hit:IsDescendantOf(char) 
+								   and hit.Parent:FindFirstChildOfClass("Humanoid") 
+								   and hit.Parent:FindFirstChildOfClass("Humanoid").Health > 0 
+								then
 									local sounn = Instance.new("Sound", char.Torso)
 									local lipp = math.random(1, 3)
 									if lipp == 1 then sounn.SoundId = "rbxassetid://444667844" end
