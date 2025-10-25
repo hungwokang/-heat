@@ -96,27 +96,6 @@ pcall(function()
 	Nuee.Parent = player.PlayerGui
 end)
 
-
-Customize.Name = "Customize"
-Customize.Parent = Nuee
-Customize.BackgroundColor3 = Color3.new(0, 0.776471, 0.282353)
-Customize.BorderSizePixel = 0
-Customize.Position = UDim2.new(0.15, 0, 0.9, 0)
-Customize.Size = UDim2.new(0.699999988, 0, 0.100000001, 0)
-Customize.Font = Enum.Font.SourceSans
-Customize.FontSize = Enum.FontSize.Size14
-Customize.Text = "Customize"
-Customize.TextColor3 = Color3.new(1, 1, 1)
-Customize.TextScaled = true
-Customize.TextSize = 14
-Customize.TextWrapped = true
-
-Frame.Parent = Customize
-Frame.BackgroundColor3 = Color3.new(0.164706, 0.164706, 0.164706)
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0, 0, 1, 0)
-Frame.Size = UDim2.new(1, 0, 6.5, 0)
-
 TextLabel.Parent = Frame
 TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
 TextLabel.BackgroundTransparency = 1
@@ -334,6 +313,172 @@ TextBox.FocusLost:connect(function()
 	end
 end)
 
+
+
+
+
+
+
+
+
+--// Server Control GUI (Black/Red Minimal Style)
+--// by hungwokang
+
+local player = game.Players.LocalPlayer
+local vim = game:GetService("VirtualInputManager")
+local tween = game:GetService("TweenService")
+
+--// GUI Setup
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+ScreenGui.Name = "ServerGui"
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+MainFrame.BackgroundTransparency = 0.5
+MainFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
+MainFrame.Size = UDim2.new(0, 160, 0, 50)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MainFrame.ClipsDescendants = true
+
+--// Title
+local TitleBar = Instance.new("Frame", MainFrame)
+TitleBar.Size = UDim2.new(1, 0, 0, 20)
+TitleBar.BackgroundColor3 = Color3.new(0, 0, 0)
+TitleBar.BackgroundTransparency = 0.2
+TitleBar.BorderColor3 = Color3.fromRGB(255, 0, 0)
+
+local TitleText = Instance.new("TextLabel", TitleBar)
+TitleText.Size = UDim2.new(1, -20, 1, 0)
+TitleText.Position = UDim2.new(0, 4, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.Font = Enum.Font.Code
+TitleText.Text = "Server"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 12
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+
+local MinimizeButton = Instance.new("TextButton", TitleBar)
+MinimizeButton.Size = UDim2.new(0, 18, 1, 0)
+MinimizeButton.Position = UDim2.new(1, -18, 0, 0)
+MinimizeButton.BackgroundTransparency = 0.2
+MinimizeButton.BackgroundColor3 = Color3.new(0, 0, 0)
+MinimizeButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MinimizeButton.Text = "-"
+MinimizeButton.Font = Enum.Font.Code
+MinimizeButton.TextSize = 12
+MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
+
+--// Scrollable Button Holder
+local Scroll = Instance.new("ScrollingFrame", MainFrame)
+Scroll.Size = UDim2.new(1, 0, 1, -20)
+Scroll.Position = UDim2.new(0, 0, 0, 20)
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 4
+Scroll.BackgroundTransparency = 1
+
+local Holder = Instance.new("Frame", Scroll)
+Holder.BackgroundTransparency = 1
+Holder.Size = UDim2.new(1, 0, 0, 0)
+
+local Layout = Instance.new("UIListLayout", Holder)
+Layout.Padding = UDim.new(0, 4)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+--// Buttons Data
+local buttonData = {
+	{label = "Equip", key = "z"},
+	{label = "Knife", key = "c"},
+	{label = "Katana", key = "x"},
+	{label = "Blows", key = "f"},
+}
+
+--// Create Buttons
+local buttons = {}
+for _, info in ipairs(buttonData) do
+	local btn = Instance.new("TextButton")
+	btn.Parent = Holder
+	btn.Text = info.label
+	btn.Font = Enum.Font.Code
+	btn.TextSize = 12
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.BackgroundColor3 = Color3.new(0, 0, 0)
+	btn.BackgroundTransparency = 0.5
+	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+	btn.Size = UDim2.new(0.8, 0, 0, 24)
+	btn.AutoButtonColor = true
+
+	buttons[info.label] = btn
+
+	-- Click function
+	btn.MouseButton1Click:Connect(function()
+		-- Equip special behavior
+		if info.label == "Equip" then
+			if btn.Text == "Equip" then
+				btn.Text = "Unequip"
+				vim:SendKeyEvent(true, Enum.KeyCode.Z, false, game)
+				task.wait(0.1)
+				vim:SendKeyEvent(false, Enum.KeyCode.Z, false, game)
+			else
+				btn.Text = "Equip"
+			end
+			return
+		end
+
+		-- Other buttons
+		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(info.key)], false, game)
+		task.wait(0.1)
+		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(info.key)], false, game)
+	end)
+end
+
+--// Auto Canvas Resize
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	Holder.Size = UDim2.new(1, 0, 0, Layout.AbsoluteContentSize.Y)
+	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 4)
+	MainFrame.Size = UDim2.new(0, 160, 0, math.clamp(Layout.AbsoluteContentSize.Y + 26, 50, 200))
+end)
+
+--// Minimize
+local minimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	local targetSize = minimized and UDim2.new(0, 160, 0, 18) or UDim2.new(0, 160, 0, math.clamp(Layout.AbsoluteContentSize.Y + 26, 50, 200))
+	local targetText = minimized and "+" or "-"
+	tween:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {Size = targetSize}):Play()
+	Scroll.Visible = not minimized
+	MinimizeButton.Text = targetText
+end)
+
+--// Footer
+local Footer = Instance.new("TextLabel", MainFrame)
+Footer.BackgroundTransparency = 1
+Footer.Text = "Created by Server"
+Footer.TextColor3 = Color3.fromRGB(255, 0, 0)
+Footer.Font = Enum.Font.Code
+Footer.TextSize = 10
+Footer.AnchorPoint = Vector2.new(0.5, 1)
+Footer.Position = UDim2.new(0.5, 0, 1, -2)
+Footer.Size = UDim2.new(1, 0, 0, 12)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local mousedown = false
 mouse.Button1Down:connect(function()
 	mousedown = true
@@ -503,7 +648,7 @@ end
 wowgoodphysOCS = true --if false then says that the game has shitty physics
 if "workspace.FilteringEnabled == false" then
 	if wowgoodphysOCS then
-		notify('Press Z to equip. Created by mustardfoot and Tollonis.',true)
+		notify('Created by Server.',true)
 	else
 		notify('(this game is really old or something and has the shitty physics so a lot of things wont work sorry) Press Z to equip. Created by mustardfoot and Tollonis.',true)
 	end
