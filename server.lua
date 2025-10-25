@@ -316,177 +316,179 @@ end)
 
 
 
-
-
-
-
-
-
 --// Services
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
-local player = game.Players.LocalPlayer
 
---// Create GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "ServerGUI"
-gui.ResetOnSpawn = false
-gui.Parent = game.CoreGui
+--// Main GUI
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 160, 0, 25)
+MainFrame.Position = UDim2.new(0.5, -80, 0.4, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BackgroundTransparency = 0.2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
 
---// Main Frame
-local frame = Instance.new("Frame")
-frame.Parent = gui
-frame.Size = UDim2.new(0, 120, 0, 130)
-frame.Position = UDim2.new(0.5, -60, 0.5, -65)
-frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.BackgroundTransparency = 0.4
-frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
-frame.Active = true
-frame.Draggable = true
+--// Title
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, -25, 0, 25)
+Title.Position = UDim2.new(0, 5, 0, 0)
+Title.Text = "Server"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Font = Enum.Font.Code
+Title.TextSize = 13
+Title.BackgroundTransparency = 1
 
---// Title bar
-local title = Instance.new("TextLabel")
-title.Parent = frame
-title.Size = UDim2.new(1, -20, 0, 20)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.Code
-title.Text = "00N7"
-title.TextColor3 = Color3.fromRGB(255, 0, 0)
-title.TextSize = 13
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Position = UDim2.new(0, 5, 0, 0)
+--// Minimize Button
+local MinimizeButton = Instance.new("TextButton", MainFrame)
+MinimizeButton.Size = UDim2.new(0, 20, 0, 20)
+MinimizeButton.Position = UDim2.new(1, -22, 0, 2)
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+MinimizeButton.Font = Enum.Font.Code
+MinimizeButton.TextSize = 14
+MinimizeButton.BackgroundTransparency = 1
 
---// Minimize button
-local minimize = Instance.new("TextButton")
-minimize.Parent = frame
-minimize.Size = UDim2.new(0, 20, 0, 20)
-minimize.Position = UDim2.new(1, -22, 0, 0)
-minimize.Text = "-"
-minimize.Font = Enum.Font.Code
-minimize.TextSize = 14
-minimize.BackgroundTransparency = 1
-minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
+--// Scrolling area
+local Scroll = Instance.new("ScrollingFrame", MainFrame)
+Scroll.Position = UDim2.new(0, 0, 0, 25)
+Scroll.Size = UDim2.new(1, 0, 0, 95)
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.BackgroundTransparency = 1
+Scroll.ScrollBarThickness = 3
 
---// Scroll Holder
-local scroll = Instance.new("ScrollingFrame")
-scroll.Parent = frame
-scroll.Position = UDim2.new(0, 0, 0, 22)
-scroll.Size = UDim2.new(1, 0, 1, -42)
-scroll.BackgroundTransparency = 1
-scroll.BorderSizePixel = 0
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-scroll.ScrollBarThickness = 2
+--// Vertical Layout
+local Layout = Instance.new("UIListLayout", Scroll)
+Layout.Padding = UDim.new(0, 4)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
---// Layout
-local layout = Instance.new("UIListLayout")
-layout.Parent = scroll
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Padding = UDim.new(0, 5)
+--// Auto resize frame
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	MainFrame.Size = UDim2.new(0, 160, 0, Layout.AbsoluteContentSize.Y + 45)
+	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end)
+
+--// Data structure
+local buttonGroups = {
+	{
+		label = "Equip",
+		subbuttons = {
+			{label = "Knife", key = "c"},
+			{label = "Katana", key = "x"},
+		}
+	},
+	{
+		label = "Other",
+		subbuttons = {
+			{label = "Dik", key = "b"},
+			{label = "Blows", key = "f"},
+		}
+	}
+}
+
+--// Create button group
+local function createButtonGroup(info)
+	local mainBtn = Instance.new("TextButton")
+	mainBtn.Parent = Scroll
+	mainBtn.Text = info.label .. " -+"
+	mainBtn.Font = Enum.Font.Code
+	mainBtn.TextSize = 12
+	mainBtn.TextColor3 = Color3.new(1, 1, 1)
+	mainBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+	mainBtn.BackgroundTransparency = 0.5
+	mainBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+	mainBtn.Size = UDim2.new(1, -10, 0, 25)
+	mainBtn.AutoButtonColor = true
+
+	local subHolder = Instance.new("Frame")
+	subHolder.Parent = Scroll
+	subHolder.BackgroundTransparency = 1
+	subHolder.Size = UDim2.new(1, -10, 0, 0)
+	subHolder.Visible = false
+
+	local subLayout = Instance.new("UIListLayout", subHolder)
+	subLayout.Padding = UDim.new(0, 3)
+	subLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	subLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+	for _, sub in ipairs(info.subbuttons) do
+		local subBtn = Instance.new("TextButton")
+		subBtn.Parent = subHolder
+		subBtn.Text = sub.label
+		subBtn.Font = Enum.Font.Code
+		subBtn.TextSize = 12
+		subBtn.TextColor3 = Color3.new(1, 1, 1)
+		subBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+		subBtn.BackgroundTransparency = 0.5
+		subBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+		subBtn.Size = UDim2.new(1, -10, 0, 22)
+		subBtn.AutoButtonColor = true
+
+		subBtn.MouseButton1Click:Connect(function()
+			vim:SendKeyEvent(true, Enum.KeyCode[string.upper(sub.key)], false, game)
+			task.wait(0.1)
+			vim:SendKeyEvent(false, Enum.KeyCode[string.upper(sub.key)], false, game)
+		end)
+	end
+
+	local equipped = false
+
+mainBtn.MouseButton1Click:Connect(function()
+	subHolder.Visible = not subHolder.Visible
+	equipped = not equipped
+
+	if equipped then
+		mainBtn.Text = "Unequip -"
+	else
+		mainBtn.Text = "Equip -+"
+	end
+
+	if subHolder.Visible then
+		subHolder.Size = UDim2.new(1, -10, 0, subLayout.AbsoluteContentSize.Y + 4)
+	else
+		subHolder.Size = UDim2.new(1, -10, 0, 0)
+	end
+end)
+
+
+	subLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		if subHolder.Visible then
+			subHolder.Size = UDim2.new(1, -10, 0, subLayout.AbsoluteContentSize.Y + 4)
+		end
+	end)
+end
+
+--// Generate all groups
+for _, group in ipairs(buttonGroups) do
+	createButtonGroup(group)
+end
 
 --// Footer
-local footer = Instance.new("TextLabel")
-footer.Parent = frame
-footer.Size = UDim2.new(1, 0, 0, 20)
-footer.Position = UDim2.new(0, 0, 1, -20)
-footer.BackgroundTransparency = 1
-footer.Font = Enum.Font.Code
-footer.Text = "created by server"
-footer.TextColor3 = Color3.fromRGB(255, 0, 0)
-footer.TextSize = 10
-
---// Helper - press a key
-local function pressKey(key)
-	vim:SendKeyEvent(true, Enum.KeyCode[string.upper(key)], false, game)
-	task.wait(0.1)
-	vim:SendKeyEvent(false, Enum.KeyCode[string.upper(key)], false, game)
-end
-
---// Helper - make a button
-local function makeButton(name, callback)
-	local btn = Instance.new("TextButton")
-	btn.Parent = scroll
-	btn.Size = UDim2.new(0.9, 0, 0, 20)
-	btn.BackgroundColor3 = Color3.new(0, 0, 0)
-	btn.BackgroundTransparency = 0.5
-	btn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	btn.Text = name
-	btn.TextColor3 = Color3.new(1, 1, 1)
-	btn.TextSize = 12
-	btn.Font = Enum.Font.Code
-	btn.MouseButton1Click:Connect(callback)
-	return btn
-end
-
---// Logic
-local equipped = false
-local minimized = false
-
-local function refreshButtons()
-	-- Remove only buttons, keep layout
-	for _, child in ipairs(scroll:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
-
-	if not equipped then
-		makeButton("EQUIP", function()
-			equipped = true
-			pressKey("z")
-			refreshButtons()
-		end)
-	else
-		makeButton("UNEQUIP", function()
-			equipped = false
-			pressKey("z")
-			refreshButtons()
-		end)
-		makeButton("KNIFE", function()
-			pressKey("c")
-		end)
-		makeButton("KATANA", function()
-			pressKey("x")
-		end)
-		makeButton("F", function()
-			pressKey("f")
-		end)
-	end
-
-	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-end
-
-layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-end)
+local Footer = Instance.new("TextLabel", MainFrame)
+Footer.Size = UDim2.new(1, 0, 0, 15)
+Footer.Position = UDim2.new(0, 0, 1, -15)
+Footer.Text = "Created by Server"
+Footer.TextColor3 = Color3.fromRGB(255, 255, 255)
+Footer.Font = Enum.Font.Code
+Footer.TextSize = 10
+Footer.BackgroundTransparency = 1
+Footer.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Minimize toggle
-minimize.MouseButton1Click:Connect(function()
+local minimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
+	local targetSize = minimized and UDim2.new(0, 160, 0, 25) or UDim2.new(0, 160, 0, MainFrame.Size.Y.Offset)
 	local targetText = minimized and "+" or "-"
-
-	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-		Size = targetSize
-	}):Play()
-
-	scroll.Visible = not minimized
-	footer.Visible = not minimized
-	minimize.Text = targetText
+	TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+	Scroll.Visible = not minimized
+	Footer.Visible = not minimized
+	MinimizeButton.Text = targetText
 end)
-
--- Initialize buttons
-refreshButtons()
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -4573,7 +4575,7 @@ function spawned()
 				while continue == true do
 					local ree = pcall(function()
 						if repeats < 20 then
-							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-4.9
+							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
 							repeats = repeats+1
 							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
 								continue = false
