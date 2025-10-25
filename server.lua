@@ -433,6 +433,7 @@ local function refreshButtons()
 	else
 		makeButton("UNEQUIP", function()
 			equipped = false
+			pressKey("z")
 			refreshButtons()
 		end)
 		makeButton("KNIFE", function()
@@ -4550,32 +4551,77 @@ function spawned()
 				clone.Part1 = char["Right Arm"]
 				clone.Parent = char.Torso
 			end
-			local coru2=coroutine.wrap(function()
-				local whyy = grabbed
-				local continue = true
-				local repeats = 0
-				while continue == true do
-					local ree = pcall(function()
-						if repeats < 20 then
-							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
-							repeats = repeats+1
-							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
-								continue = false
-							end
-						else
-							continue = false
-						end
+
+
+
+
+
+
+
+
+			local coru2 = coroutine.wrap(function()
+			local target = grabbed
+			if target and target:FindFirstChildOfClass("Humanoid") then
+				-- Instant kill
+				target:FindFirstChildOfClass("Humanoid").Health = 0
+				
+				-- Decapitate like katana
+				local head = target:FindFirstChild("Head")
+				if head then
+					local sound = Instance.new("Sound", head)
+					sound.SoundId = "rbxassetid://444667824"
+					sound.PlaybackSpeed = 1.1
+					sound:Play()
+					
+					-- Detach head from body
+					pcall(function()
+						local neck = head:FindFirstChild("Neck") or target:FindFirstChild("Neck")
+						if neck then neck:Destroy() end
 					end)
-					if ree == false then
-						continue = false
-					end
-					if continue == true then
-						wait(0.2)
-					end
+					
+					-- Create flying effect
+					head.CanCollide = true
+					local bv = Instance.new("BodyVelocity", head)
+					bv.Velocity = Vector3.new(0, 10, -8)
+					bv.P = 2000
+					game:GetService("Debris"):AddItem(bv, 0.3)
+					
+					-- Bleed particle effect
+					local blood = Instance.new("Part", target)
+					blood.Size = Vector3.new(0.2, 0.2, 0.2)
+					blood.BrickColor = BrickColor.new("Really red")
+					blood.Material = Enum.Material.Neon
+					blood.Anchored = false
+					blood.CanCollide = false
+					blood.CFrame = head.CFrame
+					local att = Instance.new("Attachment", blood)
+					local p = Instance.new("ParticleEmitter", att)
+					p.Texture = "rbxassetid://483406359" -- blood particle
+					p.Rate = 150
+					p.Lifetime = NumberRange.new(0.3, 0.6)
+					p.Speed = NumberRange.new(2, 4)
+					p.SpreadAngle = Vector2.new(30, 30)
+					game:GetService("Debris"):AddItem(blood, 2)
+					
+					-- Make head fall realistically
+					wait(0.1)
+					ragdollpart(target, "Head", true, false)
 				end
-				ragdollpart(whyy,"Head")
-			end)
-			coru2()
+			end
+		end)
+		coru2()
+
+
+
+
+
+
+
+
+
+
+
+
 			throwsound:Remove()
 			killsound:Remove()
 		end)
