@@ -4553,37 +4553,35 @@ function spawned()
 			end
 
 
-			local coru2 = coroutine.wrap(function()
-	local whyy = grabbed
-	if not whyy then return end
-
-	-- instant kill (safely inside pcall)
-	pcall(function()
+			local coru2=coroutine.wrap(function()
+				local whyy = grabbed
+				local continue = true
+				pcall(function()
 		local hum = whyy:FindFirstChildOfClass('Humanoid')
 		if hum then
 			hum.Health = 0
 		end
 	end)
 
-	-- ragdoll the head like before
+	-- cut the head
 	pcall(function()
-		ragdollpart(whyy, "Head")
-	end)
-end)
-coru2()
+		local head = whyy:FindFirstChild("Head")
+		if head then
+			-- remove neck attachments
+			local torso = whyy:FindFirstChild("Torso") or whyy:FindFirstChild("UpperTorso")
+			if torso then
+				local neck = torso:FindFirstChild("Neck")
+				if neck then neck:Destroy() end
+				local neckAtt = torso:FindFirstChild("NeckAttachment")
+				if neckAtt then neckAtt:Destroy() end
+			end
 
-
-
-
-
-
-
-
-
-
-
-
-
+			-- detach head
+			head.Parent = workspace
+			head.Anchored = false
+				ragdollpart(whyy,"Head")
+			end)
+			coru2()
 
 			throwsound:Remove()
 			killsound:Remove()
