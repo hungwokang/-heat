@@ -321,6 +321,7 @@ end)
 
 
 
+
 --// Services
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
@@ -349,8 +350,8 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "00N7"
-title.TextColor3 = Color3.new(255, 0, 0)
+title.Text = "Server"
+title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Position = UDim2.new(0, 5, 0, 0)
@@ -376,6 +377,13 @@ scroll.BorderSizePixel = 0
 scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 scroll.ScrollBarThickness = 2
 
+--// Layout
+local layout = Instance.new("UIListLayout")
+layout.Parent = scroll
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 5)
+
 --// Footer
 local footer = Instance.new("TextLabel")
 footer.Parent = frame
@@ -386,13 +394,6 @@ footer.Font = Enum.Font.Code
 footer.Text = "created by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
-
---// Layout
-local layout = Instance.new("UIListLayout")
-layout.Parent = scroll
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Padding = UDim.new(0, 5)
 
 --// Helper - press a key
 local function pressKey(key)
@@ -422,8 +423,12 @@ local equipped = false
 local minimized = false
 
 local function refreshButtons()
-	scroll:ClearAllChildren()
-	layout.Parent = scroll
+	-- Remove only buttons, keep layout
+	for _, child in ipairs(scroll:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
 
 	if not equipped then
 		makeButton("EQUIP", function()
@@ -436,11 +441,9 @@ local function refreshButtons()
 			equipped = false
 			refreshButtons()
 		end)
-
 		makeButton("KNIFE", function()
 			pressKey("c")
 		end)
-
 		makeButton("KATANA", function()
 			pressKey("x")
 		end)
@@ -468,7 +471,9 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
+-- Initialize buttons
 refreshButtons()
+
 
 
 
