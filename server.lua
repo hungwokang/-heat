@@ -4553,93 +4553,32 @@ function spawned()
 			end
 
 
-			local coru2 = coroutine.wrap(function()
-			local whyy = grabbed
-			if not whyy then return end
-		
-			-- safety locals
-			local humanoid = whyy:FindFirstChildOfClass("Humanoid")
-		
-			-- instant-kill
-			pcall(function()
-				if humanoid then
-					humanoid.Health = 0
-				end
-			end)
-		
-			-- visual blood part (similar to your katana code)
-			pcall(function()
-				local head = whyy:FindFirstChild("Head")
-				if head and head:IsA("BasePart") then
-					local ayybleed = Instance.new("Part")
-					ayybleed.Name = "ayybleed"
-					ayybleed.Size = Vector3.new(0.2, 0.2, 0.2)
-					ayybleed.BrickColor = BrickColor.new("Maroon")
-					ayybleed.Material = Enum.Material.SmoothPlastic
-					ayybleed.CanCollide = false
-					ayybleed.Transparency = 0.5
-					ayybleed.CFrame = head.CFrame
-					ayybleed.Parent = whyy
-					ayybleed:BreakJoints()
-		
-					-- try your bleed function if available, otherwise cleanup after a few seconds
-					if type(bleed) == "function" then
-						spawn(function() pcall(function() bleed(ayybleed) end) end)
-					else
-						game:GetService("Debris"):AddItem(ayybleed, 5)
+			local coru2=coroutine.wrap(function()
+				local whyy = grabbed
+				local continue = true
+				local repeats = 0
+				while continue == true do
+					local ree = pcall(function()
+						if repeats < 20 then
+							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
+							repeats = repeats+1
+							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
+								continue = false
+							end
+						else
+							continue = false
+						end
+					end)
+					if ree == false then
+						continue = false
+					end
+					if continue == true then
+						wait(0.2)
 					end
 				end
+				ragdollpart(whyy,"Head")
 			end)
-		
-			-- remove neck attachments and HumanoidRootPart to visually detach head like katana
-			pcall(function()
-				-- R6 Torso neck cleanup
-				local torso = whyy:FindFirstChild("Torso")
-				if torso then
-					local neck = torso:FindFirstChild("Neck")
-					if neck then neck:Destroy() end
-					local neckAtt = torso:FindFirstChild("NeckAttachment")
-					if neckAtt then neckAtt:Destroy() end
-				end
-		
-				-- R15 UpperTorso neck cleanup
-				local upper = whyy:FindFirstChild("UpperTorso")
-				if upper then
-					local na = upper:FindFirstChild("NeckAttachment")
-					if na then na:Destroy() end
-				end
-		
-				-- Destroy HumanoidRootPart so the character can't move (matches katana behavior)
-				if whyy:FindFirstChild("HumanoidRootPart") then
-					whyy.HumanoidRootPart:Destroy()
-				end
-			end)
-		
-			-- weld victim to your handle so they stick to the weapon (optional visual)
-			pcall(function()
-				local weldPart = whyy:FindFirstChild("Torso") or whyy:FindFirstChild("UpperTorso") or whyy:FindFirstChild("Head")
-				if weldPart and handle then
-					local weld = Instance.new("Weld")
-					weld.Parent = weldPart
-					weld.Part0 = weldPart
-					weld.Part1 = handle
-					-- align victim relative to handle; adjust offset if needed
-					weld.C0 = weldPart.CFrame:ToObjectSpace(handle.CFrame)
-				end
-			end)
-		
-			-- ragdoll head (use your existing ragdollpart function)
-			pcall(function()
-				if type(ragdollpart) == "function" then
-					ragdollpart(whyy, "Head")
-				end
-			end)
-		
-			-- cleanup
-			grabbed = nil
-		end)
-		coru2()
-
+			coru2()
 			throwsound:Remove()
 			killsound:Remove()
 		end)
