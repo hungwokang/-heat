@@ -320,13 +320,6 @@ end)
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
 local player = game.Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
---// Wait for character
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
-local hum = char:WaitForChild("Humanoid")
 
 --// Create GUI
 local gui = Instance.new("ScreenGui")
@@ -345,7 +338,7 @@ frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
 frame.Active = true
 frame.Draggable = true
 
---// Title
+--// Title bar
 local title = Instance.new("TextLabel")
 title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
@@ -357,7 +350,7 @@ title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Position = UDim2.new(0, 5, 0, 0)
 
---// Minimize
+--// Minimize button
 local minimize = Instance.new("TextButton")
 minimize.Parent = frame
 minimize.Size = UDim2.new(0, 20, 0, 20)
@@ -368,7 +361,7 @@ minimize.TextSize = 14
 minimize.BackgroundTransparency = 1
 minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
 
---// Scroll
+--// Scroll Holder
 local scroll = Instance.new("ScrollingFrame")
 scroll.Parent = frame
 scroll.Position = UDim2.new(0, 0, 0, 22)
@@ -419,117 +412,12 @@ local function makeButton(name, callback)
 	return btn
 end
 
--------------------------------------------------
---// FLY LOGIC (works PC + MOBILE)
--------------------------------------------------
-local flying = false
-local bv, bg
-local rsConn, jumpConn, inputBeganConn, inputEndedConn
-local verticalVel = 0
-local jumpingFlag = false
-local descendFlag = false
-local flySpeed = 60
-local ascendSpeed = 60
-local descendSpeed = 40
-
-local function startFly()
-	hum.PlatformStand = true
-
-	bv = Instance.new("BodyVelocity")
-	bv.MaxForce = Vector3.new(9e5, 9e5, 9e5)
-	bv.P = 1e4
-	bv.Velocity = Vector3.new(0,0,0)
-	bv.Parent = hrp
-
-	bg = Instance.new("BodyGyro")
-	bg.MaxTorque = Vector3.new(9e5, 9e5, 9e5)
-	bg.P = 1e4
-	bg.Parent = hrp
-
-	local camera = workspace.CurrentCamera
-
-	-- Jump detection
-	jumpConn = hum.Jumping:Connect(function(isActive)
-		jumpingFlag = isActive
-	end)
-
-	-- Descend detection (PC)
-	inputBeganConn = UIS.InputBegan:Connect(function(input, gp)
-		if gp then return end
-		if input.KeyCode == Enum.KeyCode.LeftShift then
-			descendFlag = true
-		end
-	end)
-	inputEndedConn = UIS.InputEnded:Connect(function(input, gp)
-		if gp then return end
-		if input.KeyCode == Enum.KeyCode.LeftShift then
-			descendFlag = false
-		end
-	end)
-
-	-- Main movement
-	rsConn = RunService.RenderStepped:Connect(function(dt)
-		if not flying then return end
-
-		-- horizontal movement
-		local moveDir = hum.MoveDirection
-		local horizontal = (moveDir.Magnitude > 0) and (moveDir.Unit * flySpeed) or Vector3.new(0,0,0)
-
-		-- vertical movement
-		if jumpingFlag then
-			verticalVel = ascendSpeed
-		elseif descendFlag then
-			verticalVel = -descendSpeed
-		else
-			if verticalVel > 0.5 then
-				verticalVel = math.max(verticalVel - 100 * dt, 0)
-			elseif verticalVel < -0.5 then
-				verticalVel = math.min(verticalVel + 100 * dt, 0)
-			else
-				verticalVel = 6 -- hover
-			end
-		end
-
-		-- apply velocity
-		bv.Velocity = horizontal + Vector3.new(0, verticalVel, 0)
-
-		-- align gyro with camera
-		if bg and camera then
-			bg.CFrame = CFrame.new(hrp.Position, hrp.Position + camera.CFrame.LookVector)
-		end
-	end)
-end
-
-local function stopFly()
-	if rsConn then rsConn:Disconnect(); rsConn = nil end
-	if jumpConn then jumpConn:Disconnect(); jumpConn = nil end
-	if inputBeganConn then inputBeganConn:Disconnect(); inputBeganConn = nil end
-	if inputEndedConn then inputEndedConn:Disconnect(); inputEndedConn = nil end
-
-	if bv then bv:Destroy(); bv = nil end
-	if bg then bg:Destroy(); bg = nil end
-	hum.PlatformStand = false
-	verticalVel = 0
-	jumpingFlag = false
-	descendFlag = false
-end
-
-local function toggleFly()
-	flying = not flying
-	if flying then
-		startFly()
-	else
-		stopFly()
-	end
-end
-
--------------------------------------------------
---// BUTTONS
--------------------------------------------------
+--// Logic
 local equipped = false
 local minimized = false
 
 local function refreshButtons()
+	-- Remove only buttons, keep layout
 	for _, child in ipairs(scroll:GetChildren()) do
 		if child:IsA("TextButton") then
 			child:Destroy()
@@ -542,24 +430,13 @@ local function refreshButtons()
 			pressKey("z")
 			refreshButtons()
 		end)
-
-		makeButton("OTHER", function()
-			makeButton("FLY", toggleFly)
-		end)
-
-		makeButton("BACK", function()
-			equipped = false
-			refreshButtons()
-		end)
 	else
 		makeButton("KNIFE", function()
 			pressKey("c")
 		end)
-
 		makeButton("KATANA", function()
 			pressKey("x")
 		end)
-
 		makeButton("BACK", function()
 			equipped = false
 			pressKey("z")
@@ -589,7 +466,7 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
---// Initialize
+-- Initialize buttons
 refreshButtons()
 
 
