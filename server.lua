@@ -795,8 +795,8 @@ function unstun(char)
 				v:FindFirstChildOfClass('Humanoid').PlatformStand = false
 				v:FindFirstChildOfClass('Humanoid').Sit = false
 				v:FindFirstChildOfClass('Humanoid').Jump = true
-				v:FindFirstChildOfClass('Humanoid').JumpPower = 0
-				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 0
+				v:FindFirstChildOfClass('Humanoid').JumpPower = 50
+				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 16
 				v:FindFirstChildOfClass('Humanoid').Name = "Humanoid"
 			end
 			table.remove(rekt,i)
@@ -4460,7 +4460,7 @@ function spawned()
 			end)
 			bleedBLEED()
 
-			wait(0.2)
+			wait(0)
 
 			local at1 = Instance.new("Attachment", handle)
 			local at2 = Instance.new("Attachment", handle)
@@ -4517,7 +4517,7 @@ function spawned()
 				ragdollpart(grabbed,"LeftUpperArm")
 				ragdollpart(grabbed,"RightUpperArm")
 			end)
-			wait(0.15)
+			wait(0)
 			throwvel:Remove()
 			local cor = coroutine.wrap(function()
 				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
@@ -4551,6 +4551,34 @@ function spawned()
 				clone.Part1 = char["Right Arm"]
 				clone.Parent = char.Torso
 			end
+
+
+			local coru2=coroutine.wrap(function()
+				local whyy = grabbed
+				local continue = true
+				local repeats = 0
+				while continue == true do
+					local ree = pcall(function()
+						if repeats < 20 then
+							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
+							repeats = repeats+1
+							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
+								continue = false
+							end
+						else
+							continue = false
+						end
+					end)
+					if ree == false then
+						continue = false
+					end
+					if continue == true then
+						wait(0.2)
+					end
+				end
+				ragdollpart(whyy,"Head")
+			end)
+			coru2()
 
 
 			throwsound:Remove()
