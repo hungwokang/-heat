@@ -443,7 +443,6 @@ local function refreshButtons()
 		end)
 		makeButton("KNIFE", function()
 			pressKey("c")
-			pressKey("f")
 		end)
 		makeButton("KATANA", function()
 			pressKey("x")
@@ -5044,7 +5043,7 @@ THOT]])
 				notify()
 				if grabbed == nil then
 					if mode == "fling" then
-						fling()
+						kill()
 					else
 						grab()
 					end
