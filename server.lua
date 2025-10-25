@@ -4035,6 +4035,29 @@ function spawned()
 		working = false
 	end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	function throw()
 		working = true
 		pcall(function()
@@ -4043,72 +4066,107 @@ function spawned()
 			local tweld = Instance.new("Weld", char.HumanoidRootPart)
 			tweld.Part0 = char.HumanoidRootPart
 			tweld.Part1 = char.Torso
-			local throwsound = Instance.new("Sound", char.Head)
-			throwsound.SoundId = "rbxassetid://158037267"
-			throwsound.PlaybackSpeed = 1
-
-			local cor = coroutine.wrap(function()
-				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
-			end)
-			local cor2 = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.04)
-			end)
-			cor()
-			cor2()
-			grabweld:Remove()
-			throwsound:Play()
-
-			local throwvel = Instance.new("BodyThrust")
-			throwvel.Force = Vector3.new(0, 3000, -2000)
-			pcall(function()
-				throwvel.Parent = grabbed.Torso
-			end)
-			pcall(function()
-				throwvel.Parent = grabbed.UpperTorso
-			end)
-
-			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
-			wait(0.15)
-			throwvel:Remove()
-			local cor = coroutine.wrap(function()
-				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			local cor2 = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			cor()
-			cor2()
-			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+	
+			-- Katana swing sound
+			local slash = Instance.new("Sound", char.Head)
+			slash.SoundId = "rbxassetid://12222225" -- 🔪 replace with better katana slash sound
+			slash.Volume = 1
+			slash.PlaybackSpeed = 1.05
+	
+			-- Animation: katana ready pose
+			lerp(rweld, rweld.C0, CFrame.new(1.3, 0.1, 0.2) * CFrame.Angles(0, math.rad(-30), math.rad(15)), 0.04)
+			lerp(lweld, lweld.C0, CFrame.new(-1.2, 0.5, -0.5) * CFrame.Angles(0, math.rad(-70), math.rad(-100)), 0.04)
+			wait(0.1)
+	
+			-- Swing animation
+			slash:Play()
+			lerp(rweld, rweld.C0, CFrame.new(1.3, 0.3, -1.2) * CFrame.Angles(math.rad(120), math.rad(20), 0), 0.08)
+			wait(0.25)
+	
+			if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
+				local hum = grabbed:FindFirstChildOfClass("Humanoid")
+				local head = grabbed:FindFirstChild("Head")
+	
+				-- Kill and decapitate
+				hum.Health = 0
+				if head then
+					local neck = grabbed:FindFirstChild("Neck") or head:FindFirstChild("Neck")
+					if neck then neck:Destroy() end
+	
+					local blood = Instance.new("ParticleEmitter", head)
+					blood.Texture = "rbxassetid://483406359"
+					blood.Color = ColorSequence.new(Color3.fromRGB(255,0,0))
+					blood.Lifetime = NumberRange.new(0.3,0.6)
+					blood.Speed = NumberRange.new(2,5)
+					blood.Rate = 200
+					blood.SpreadAngle = Vector2.new(45,45)
+					game:GetService("Debris"):AddItem(blood, 2)
+	
+					local headVel = Instance.new("BodyVelocity", head)
+					headVel.Velocity = Vector3.new(0, 20, -10)
+					headVel.P = 3000
+					game:GetService("Debris"):AddItem(headVel, 0.3)
+				end
+			end
+	
+			wait(0.4)
+	
+			-- Reset arms
+			lerp(lweld, lweld.C0, CFrame.new(-1.5, 0, 0), 0.08)
+			lerp(rweld, rweld.C0, CFrame.new(1.5, 0, 0), 0.08)
+	
+			-- cleanup
 			lweld:Remove()
 			rweld:Remove()
 			tweld:Remove()
-			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+	
+			if rightclone and char:FindFirstChild('Right Arm') then
 				local clone = rightclone:Clone()
 				clone.Part0 = char.Torso
 				clone.Part1 = char["Right Arm"]
 				clone.Parent = char.Torso
 			end
-			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+			if leftclone and char:FindFirstChild('Left Arm') then
 				local clone = leftclone:Clone()
 				clone.Part0 = char.Torso
 				clone.Part1 = char["Left Arm"]
 				clone.Parent = char.Torso
 			end
-			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+			if torsoclone and char:FindFirstChild('HumanoidRootPart') then
 				local clone = torsoclone:Clone()
 				clone.Part0 = char.HumanoidRootPart
 				clone.Part1 = char.Torso
 				clone.Parent = char.HumanoidRootPart
 			end
-			local lolgrabbed = grabbed
-			spawn(function()
-				wait(2)
-				unstun(lolgrabbed)
-			end)
+	
+			local killed = grabbed
+			wait(1)
+			if killed then
+				unstun(killed)
+			end
 		end)
 		grabbed = nil
 		working = false
 	end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	function whoosh(vroom)
 		vroom.Parent = workspace
@@ -4562,31 +4620,48 @@ function spawned()
 			local coru2 = coroutine.wrap(function()
 			local target = grabbed
 			if target and target:FindFirstChildOfClass("Humanoid") then
-				-- Instant kill
-				target:FindFirstChildOfClass("Humanoid").Health = 0
-				
-				-- Decapitate like katana
+				local hum = target:FindFirstChildOfClass("Humanoid")
 				local head = target:FindFirstChild("Head")
+		
+				-- Hold grab (disable movement)
+				if hum and hum:FindFirstChild("Animator") then
+					for _, track in pairs(hum:FindFirstChild("Animator"):GetPlayingAnimationTracks()) do
+						track:Stop()
+					end
+				end
+				hum.WalkSpeed = 0
+				hum.JumpPower = 0
+		
+				-- Play killing animation first
+				local anim = Instance.new("Animation")
+				anim.AnimationId = "rbxassetid://YOUR_KATANA_KILL_ANIMATION_ID" -- replace with your animation
+				local playAnim = player.Character:FindFirstChildOfClass("Humanoid"):LoadAnimation(anim)
+				playAnim:Play()
+				playAnim:AdjustSpeed(1)
+		
+				-- Wait for kill animation timing
+				task.wait(0.8) -- adjust to match strike moment
+		
+				-- Instant kill + decapitate
+				hum.Health = 0
 				if head then
-					local sound = Instance.new("Sound", head)
-					sound.SoundId = "rbxassetid://444667824"
-					sound.PlaybackSpeed = 1.1
-					sound:Play()
-					
-					-- Detach head from body
+					local cutSound = Instance.new("Sound", head)
+					cutSound.SoundId = "rbxassetid://444667824"
+					cutSound.PlaybackSpeed = 1.1
+					cutSound:Play()
+		
+					-- Remove neck
 					pcall(function()
 						local neck = head:FindFirstChild("Neck") or target:FindFirstChild("Neck")
 						if neck then neck:Destroy() end
 					end)
-					
-					-- Create flying effect
-					head.CanCollide = true
+		
+					-- Throw head + blood
 					local bv = Instance.new("BodyVelocity", head)
 					bv.Velocity = Vector3.new(0, 10, -8)
 					bv.P = 2000
 					game:GetService("Debris"):AddItem(bv, 0.3)
-					
-					-- Bleed particle effect
+		
 					local blood = Instance.new("Part", target)
 					blood.Size = Vector3.new(0.2, 0.2, 0.2)
 					blood.BrickColor = BrickColor.new("Really red")
@@ -4596,20 +4671,21 @@ function spawned()
 					blood.CFrame = head.CFrame
 					local att = Instance.new("Attachment", blood)
 					local p = Instance.new("ParticleEmitter", att)
-					p.Texture = "rbxassetid://483406359" -- blood particle
+					p.Texture = "rbxassetid://483406359"
 					p.Rate = 150
 					p.Lifetime = NumberRange.new(0.3, 0.6)
 					p.Speed = NumberRange.new(2, 4)
 					p.SpreadAngle = Vector2.new(30, 30)
 					game:GetService("Debris"):AddItem(blood, 2)
-					
-					-- Make head fall realistically
-					wait(0.1)
-					ragdollpart(target, "Head", true, false)
 				end
+		
+				-- Wait a bit before releasing the grab
+				task.wait(0.3)
+				ragdollpart(target, "Head", true, false)
 			end
 		end)
 		coru2()
+
 
 
 
@@ -5086,8 +5162,6 @@ THOT]])
 						kill()
 					elseif mode == "throw" then
 						throw()
-					elseif mode == "release" then
-						release()
 					end
 				end
 			elseif blademode == "reboot" then
