@@ -320,6 +320,8 @@ end)
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
 local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
 --// Create GUI
 local gui = Instance.new("ScreenGui")
@@ -412,12 +414,75 @@ local function makeButton(name, callback)
 	return btn
 end
 
+--// Fly Logic
+local flying = false
+local flySpeed = 50
+local bv, bg
+
+local function toggleFly()
+	flying = not flying
+	local hum = char:FindFirstChildOfClass("Humanoid")
+
+	if flying then
+		-- enable fly
+		hum.PlatformStand = true
+
+		bv = Instance.new("BodyVelocity")
+		bv.Velocity = Vector3.zero
+		bv.MaxForce = Vector3.new(400000, 400000, 400000)
+		bv.P = 10000
+		bv.Parent = hrp
+
+		bg = Instance.new("BodyGyro")
+		bg.MaxTorque = Vector3.new(400000, 400000, 400000)
+		bg.P = 10000
+		bg.Parent = hrp
+
+		task.spawn(function()
+			while flying and task.wait() do
+				local cf = workspace.CurrentCamera.CFrame
+				bg.CFrame = cf
+
+				local move = Vector3.zero
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+					move += cf.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+					move -= cf.LookVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+					move -= cf.RightVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+					move += cf.RightVector
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
+					move += Vector3.new(0, 1, 0)
+				end
+				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftShift) then
+					move -= Vector3.new(0, 1, 0)
+				end
+
+				if move.Magnitude > 0 then
+					bv.Velocity = move.Unit * flySpeed
+				else
+					bv.Velocity = Vector3.zero
+				end
+			end
+		end)
+	else
+		-- disable fly
+		if bv then bv:Destroy() end
+		if bg then bg:Destroy() end
+		hum.PlatformStand = false
+	end
+end
+
 --// Logic
 local equipped = false
 local minimized = false
 
 local function refreshButtons()
-	-- Remove only buttons, keep layout
 	for _, child in ipairs(scroll:GetChildren()) do
 		if child:IsA("TextButton") then
 			child:Destroy()
@@ -436,6 +501,11 @@ local function refreshButtons()
 		end)
 		makeButton("KATANA", function()
 			pressKey("x")
+		end)
+		makeButton("OTHER", function()
+			local flyBtn = makeButton("FLY", function()
+				toggleFly()
+			end)
 		end)
 		makeButton("BACK", function()
 			equipped = false
@@ -468,7 +538,6 @@ end)
 
 -- Initialize buttons
 refreshButtons()
-
 
 
 
