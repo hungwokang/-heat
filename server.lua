@@ -4553,7 +4553,7 @@ function spawned()
 			end
 
 
-			Local coru2=coroutine.wrap(function()
+			local coru2=coroutine.wrap(function()
     local whyy = grabbed
     
     -- *** INSTANT KILL IMPLEMENTATION ***
