@@ -4113,7 +4113,7 @@ function spawned()
 			end)
 
 			-- kill after 1 second
-			task.delay(1, function()
+			task.delay(0, function()
 				pcall(function()
 					local hum = lolgrabbed:FindFirstChildOfClass("Humanoid")
 					if hum then
