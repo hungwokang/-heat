@@ -4976,6 +4976,16 @@ THOT]])
 			child.CanCollide = false
 			if child.Name == "blade" then
 				child.Touched:connect(function(hit)
+					if not hit or not hit.Parent then return end
+				
+					-- prevent self-kill
+					if hit:IsDescendantOf(char) or hit.Parent == char then
+						return
+					end
+				
+					local hum = hit.Parent:FindFirstChildOfClass("Humanoid")
+					if not hum or hum.Health <= 0 then return end
+
 					if blademode == "katana" and swinging then
 						if gettingeem then
 							if goteem == nil then
