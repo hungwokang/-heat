@@ -431,16 +431,16 @@ local function refreshButtons()
 			refreshButtons()
 		end)
 	else
-		--//makeButton("UNEQUIP", function()
-		--//	equipped = false
-		--//	pressKey("z")
-		--//	refreshButtons()
-		--//end)
 		makeButton("KNIFE", function()
 			pressKey("c")
 		end)
 		makeButton("KATANA", function()
 			pressKey("x")
+		end)
+		makeButton("BACK", function()
+			equipped = false
+			pressKey("z")
+			refreshButtons()
 		end)
 	end
 
