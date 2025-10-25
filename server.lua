@@ -795,8 +795,8 @@ function unstun(char)
 				v:FindFirstChildOfClass('Humanoid').PlatformStand = false
 				v:FindFirstChildOfClass('Humanoid').Sit = false
 				v:FindFirstChildOfClass('Humanoid').Jump = true
-				v:FindFirstChildOfClass('Humanoid').JumpPower = 50
-				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 16
+				v:FindFirstChildOfClass('Humanoid').JumpPower = 0
+				v:FindFirstChildOfClass('Humanoid').WalkSpeed = 0
 				v:FindFirstChildOfClass('Humanoid').Name = "Humanoid"
 			end
 			table.remove(rekt,i)
@@ -4036,97 +4036,79 @@ function spawned()
 	end
 
 	function throw()
-	working = true
-	pcall(function()
-		local rweld = char["Right Arm"]:FindFirstChild("Weld")
-		local lweld = char["Left Arm"]:FindFirstChild("Weld")
-		local tweld = Instance.new("Weld", char.HumanoidRootPart)
-		tweld.Part0 = char.HumanoidRootPart
-		tweld.Part1 = char.Torso
-
-		local throwsound = Instance.new("Sound", char.Head)
-		throwsound.SoundId = "rbxassetid://158037267"
-		throwsound.PlaybackSpeed = 1
-
-		local cor = coroutine.wrap(function()
-			lerp(tweld, tweld.C0, CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0), 0.04)
-		end)
-		local cor2 = coroutine.wrap(function()
-			lerp(rweld, rweld.C0, CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)), 0.04)
-		end)
-		cor()
-		cor2()
-
-		grabweld:Destroy()
-		throwsound:Play()
-
-		local throwvel = Instance.new("BodyThrust")
-		throwvel.Force = Vector3.new(0, 3000, -2000)
+		working = true
 		pcall(function()
-			throwvel.Parent = grabbed:FindFirstChild("Torso") or grabbed:FindFirstChild("UpperTorso")
-		end)
+			local rweld = char["Right Arm"]:FindFirstChild("Weld")
+			local lweld = char["Left Arm"]:FindFirstChild("Weld")
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+			local throwsound = Instance.new("Sound", char.Head)
+			throwsound.SoundId = "rbxassetid://158037267"
+			throwsound.PlaybackSpeed = 1
 
-		lerp(lweld, lweld.C0, CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)), 0.04)
-		wait(0.15)
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.04)
+			end)
+			cor()
+			cor2()
+			grabweld:Remove()
+			throwsound:Play()
 
-		throwvel:Destroy()
-
-		local cor = coroutine.wrap(function()
-			lerp(lweld, lweld.C0, CFrame.new(-1.5, 0, 0), 0.08)
-		end)
-		local cor2 = coroutine.wrap(function()
-			lerp(rweld, rweld.C0, CFrame.new(1.5, 0, 0), 0.08)
-		end)
-		cor()
-		cor2()
-		lerp(tweld, tweld.C0, CFrame.new(0, 0, 0), 0.08)
-
-		lweld:Destroy()
-		rweld:Destroy()
-		tweld:Destroy()
-
-		-- restore limb joints
-		if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
-			local clone = rightclone:Clone()
-			clone.Part0 = char.Torso
-			clone.Part1 = char["Right Arm"]
-			clone.Parent = char.Torso
-		end
-		if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
-			local clone = leftclone:Clone()
-			clone.Part0 = char.Torso
-			clone.Part1 = char["Left Arm"]
-			clone.Parent = char.Torso
-		end
-		if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
-			local clone = torsoclone:Clone()
-			clone.Part0 = char.HumanoidRootPart
-			clone.Part1 = char.Torso
-			clone.Parent = char.HumanoidRootPart
-		end
-
-		local lolgrabbed = grabbed
-		if lolgrabbed then
-			-- ragdoll immediately
+			local throwvel = Instance.new("BodyThrust")
+			throwvel.Force = Vector3.new(0, 3000, -2000)
 			pcall(function()
-				ragdollpart(lolgrabbed, "Head")
+				throwvel.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				throwvel.Parent = grabbed.UpperTorso
 			end)
 
-			-- kill after 1 second
-			task.delay(0, function()
-				pcall(function()
-					local hum = lolgrabbed:FindFirstChildOfClass("Humanoid")
-					if hum then
-						hum.Health = 0
-					end
-				end)
+			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
+			wait(0.15)
+			throwvel:Remove()
+			local cor = coroutine.wrap(function()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
 			end)
-		end
-	end)
-	grabbed = nil
-	working = false
-end
-
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			cor2()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			lweld:Remove()
+			rweld:Remove()
+			tweld:Remove()
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+			local lolgrabbed = grabbed
+			spawn(function()
+				wait(2)
+				unstun(lolgrabbed)
+			end)
+		end)
+		grabbed = nil
+		working = false
+	end
 
 	function whoosh(vroom)
 		vroom.Parent = workspace
@@ -4569,28 +4551,6 @@ end
 				clone.Part1 = char["Right Arm"]
 				clone.Parent = char.Torso
 			end
-
-
-			local coru2 = coroutine.wrap(function()
-	local whyy = grabbed
-
-	-- freeze or stun the humanoid
-	pcall(function()
-		local hum = whyy:FindFirstChildOfClass('Humanoid')
-		if hum then
-			hum.WalkSpeed = 0
-			hum.JumpPower = 0
-			hum.PlatformStand = true  -- prevents movement or standing up
-		end
-	end)
-
-	-- optional: visual ragdoll for the head (still keeps character "alive")
-	pcall(function()
-		ragdollpart(whyy, "Head")
-	end)
-end)
-coru2()
-
 
 
 			throwsound:Remove()
