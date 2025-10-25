@@ -4553,32 +4553,70 @@ function spawned()
 			end
 
 
-			local coru2=coroutine.wrap(function()
-				local whyy = grabbed
-				local continue = true
-				local repeats = 0
-				while continue == true do
-					local ree = pcall(function()
-						if repeats < 20 then
-							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
-							repeats = repeats+1
-							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
-								continue = false
-							end
-						else
-							continue = false
-						end
-					end)
-					if ree == false then
-						continue = false
-					end
-					if continue == true then
-						wait(0.2)
-					end
+			local coru2 = coroutine.wrap(function()
+			local whyy = grabbed
+			if not whyy then return end
+		
+			-- instant kill
+			pcall(function()
+				local hum = whyy:FindFirstChildOfClass('Humanoid')
+				if hum then
+					hum.Health = 0
 				end
-				ragdollpart(whyy,"Head")
 			end)
-			coru2()
+		
+			-- cut the head
+			pcall(function()
+				local head = whyy:FindFirstChild("Head")
+				if head then
+					-- remove neck attachments
+					local torso = whyy:FindFirstChild("Torso") or whyy:FindFirstChild("UpperTorso")
+					if torso then
+						local neck = torso:FindFirstChild("Neck")
+						if neck then neck:Destroy() end
+						local neckAtt = torso:FindFirstChild("NeckAttachment")
+						if neckAtt then neckAtt:Destroy() end
+					end
+		
+					-- detach head
+					head.Parent = workspace
+					head.Anchored = false
+		
+					-- optional blood effect
+					local blood = Instance.new("Part", workspace)
+					blood.Size = Vector3.new(0.2,0.2,0.2)
+					blood.Position = head.Position
+					blood.BrickColor = BrickColor.new("Maroon")
+					blood.Material = Enum.Material.SmoothPlastic
+					blood.CanCollide = false
+					blood.Transparency = 0.5
+					game:GetService("Debris"):AddItem(blood, 5)
+				end
+			end)
+		
+			-- ragdoll the body
+			pcall(function()
+				ragdollpart(whyy, "Head")
+			end)
+		
+			-- clear grabbed
+			grabbed = nil
+		end)
+		coru2()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			throwsound:Remove()
 			killsound:Remove()
 		end)
