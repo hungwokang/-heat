@@ -4036,79 +4036,97 @@ function spawned()
 	end
 
 	function throw()
-		working = true
-		pcall(function()
-			local rweld = char["Right Arm"]:FindFirstChild("Weld")
-			local lweld = char["Left Arm"]:FindFirstChild("Weld")
-			local tweld = Instance.new("Weld", char.HumanoidRootPart)
-			tweld.Part0 = char.HumanoidRootPart
-			tweld.Part1 = char.Torso
-			local throwsound = Instance.new("Sound", char.Head)
-			throwsound.SoundId = "rbxassetid://158037267"
-			throwsound.PlaybackSpeed = 1
+	working = true
+	pcall(function()
+		local rweld = char["Right Arm"]:FindFirstChild("Weld")
+		local lweld = char["Left Arm"]:FindFirstChild("Weld")
+		local tweld = Instance.new("Weld", char.HumanoidRootPart)
+		tweld.Part0 = char.HumanoidRootPart
+		tweld.Part1 = char.Torso
 
-			local cor = coroutine.wrap(function()
-				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
-			end)
-			local cor2 = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.04)
-			end)
-			cor()
-			cor2()
-			grabweld:Remove()
-			throwsound:Play()
+		local throwsound = Instance.new("Sound", char.Head)
+		throwsound.SoundId = "rbxassetid://158037267"
+		throwsound.PlaybackSpeed = 1
 
-			local throwvel = Instance.new("BodyThrust")
-			throwvel.Force = Vector3.new(0, 3000, -2000)
-			pcall(function()
-				throwvel.Parent = grabbed.Torso
-			end)
-			pcall(function()
-				throwvel.Parent = grabbed.UpperTorso
-			end)
-
-			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
-			wait(0.15)
-			throwvel:Remove()
-			local cor = coroutine.wrap(function()
-				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			local cor2 = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			cor()
-			cor2()
-			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			lweld:Remove()
-			rweld:Remove()
-			tweld:Remove()
-			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
-				local clone = rightclone:Clone()
-				clone.Part0 = char.Torso
-				clone.Part1 = char["Right Arm"]
-				clone.Parent = char.Torso
-			end
-			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
-				local clone = leftclone:Clone()
-				clone.Part0 = char.Torso
-				clone.Part1 = char["Left Arm"]
-				clone.Parent = char.Torso
-			end
-			if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
-				local clone = torsoclone:Clone()
-				clone.Part0 = char.HumanoidRootPart
-				clone.Part1 = char.Torso
-				clone.Parent = char.HumanoidRootPart
-			end
-			local lolgrabbed = grabbed
-			spawn(function()
-				wait(2)
-				unstun(lolgrabbed)
-			end)
+		local cor = coroutine.wrap(function()
+			lerp(tweld, tweld.C0, CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0), 0.04)
 		end)
-		grabbed = nil
-		working = false
-	end
+		local cor2 = coroutine.wrap(function()
+			lerp(rweld, rweld.C0, CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)), 0.04)
+		end)
+		cor()
+		cor2()
+
+		grabweld:Destroy()
+		throwsound:Play()
+
+		local throwvel = Instance.new("BodyThrust")
+		throwvel.Force = Vector3.new(0, 3000, -2000)
+		pcall(function()
+			throwvel.Parent = grabbed:FindFirstChild("Torso") or grabbed:FindFirstChild("UpperTorso")
+		end)
+
+		lerp(lweld, lweld.C0, CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)), 0.04)
+		wait(0.15)
+
+		throwvel:Destroy()
+
+		local cor = coroutine.wrap(function()
+			lerp(lweld, lweld.C0, CFrame.new(-1.5, 0, 0), 0.08)
+		end)
+		local cor2 = coroutine.wrap(function()
+			lerp(rweld, rweld.C0, CFrame.new(1.5, 0, 0), 0.08)
+		end)
+		cor()
+		cor2()
+		lerp(tweld, tweld.C0, CFrame.new(0, 0, 0), 0.08)
+
+		lweld:Destroy()
+		rweld:Destroy()
+		tweld:Destroy()
+
+		-- restore limb joints
+		if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+			local clone = rightclone:Clone()
+			clone.Part0 = char.Torso
+			clone.Part1 = char["Right Arm"]
+			clone.Parent = char.Torso
+		end
+		if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+			local clone = leftclone:Clone()
+			clone.Part0 = char.Torso
+			clone.Part1 = char["Left Arm"]
+			clone.Parent = char.Torso
+		end
+		if torsoclone and char:FindFirstChild('Torso') and char:FindFirstChild('HumanoidRootPart') then
+			local clone = torsoclone:Clone()
+			clone.Part0 = char.HumanoidRootPart
+			clone.Part1 = char.Torso
+			clone.Parent = char.HumanoidRootPart
+		end
+
+		local lolgrabbed = grabbed
+		if lolgrabbed then
+			-- ragdoll immediately
+			pcall(function()
+				ragdollpart(lolgrabbed, "Head")
+			end)
+
+			-- kill after 1 second
+			task.delay(1, function()
+				pcall(function()
+					local hum = lolgrabbed:FindFirstChildOfClass("Humanoid")
+					if hum then
+						hum.Health = 0
+					end
+				end)
+			end)
+		end
+	end)
+	grabbed = nil
+	working = false
+end
+
 
 	function whoosh(vroom)
 		vroom.Parent = workspace
