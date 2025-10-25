@@ -320,8 +320,13 @@ end)
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
 local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+--// Wait for character
 local char = player.Character or player.CharacterAdded:Wait()
 local hrp = char:WaitForChild("HumanoidRootPart")
+local hum = char:WaitForChild("Humanoid")
 
 --// Create GUI
 local gui = Instance.new("ScreenGui")
@@ -340,7 +345,7 @@ frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
 frame.Active = true
 frame.Draggable = true
 
---// Title bar
+--// Title
 local title = Instance.new("TextLabel")
 title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
@@ -352,7 +357,7 @@ title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Position = UDim2.new(0, 5, 0, 0)
 
---// Minimize button
+--// Minimize
 local minimize = Instance.new("TextButton")
 minimize.Parent = frame
 minimize.Size = UDim2.new(0, 20, 0, 20)
@@ -363,7 +368,7 @@ minimize.TextSize = 14
 minimize.BackgroundTransparency = 1
 minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
 
---// Scroll Holder
+--// Scroll
 local scroll = Instance.new("ScrollingFrame")
 scroll.Parent = frame
 scroll.Position = UDim2.new(0, 0, 0, 22)
@@ -414,22 +419,20 @@ local function makeButton(name, callback)
 	return btn
 end
 
---// Fly Logic
+-------------------------------------------------
+--// FLY LOGIC (works both PC and MOBILE)
+-------------------------------------------------
 local flying = false
-local flySpeed = 50
 local bv, bg
 
 local function toggleFly()
 	flying = not flying
-	local hum = char:FindFirstChildOfClass("Humanoid")
-
 	if flying then
-		-- enable fly
 		hum.PlatformStand = true
 
 		bv = Instance.new("BodyVelocity")
-		bv.Velocity = Vector3.zero
 		bv.MaxForce = Vector3.new(400000, 400000, 400000)
+		bv.Velocity = Vector3.zero
 		bv.P = 10000
 		bv.Parent = hrp
 
@@ -438,47 +441,25 @@ local function toggleFly()
 		bg.P = 10000
 		bg.Parent = hrp
 
-		task.spawn(function()
-			while flying and task.wait() do
-				local cf = workspace.CurrentCamera.CFrame
-				bg.CFrame = cf
+		local camera = workspace.CurrentCamera
+		local speed = 60
 
-				local move = Vector3.zero
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
-					move += cf.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
-					move -= cf.LookVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
-					move -= cf.RightVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
-					move += cf.RightVector
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
-					move += Vector3.new(0, 1, 0)
-				end
-				if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftShift) then
-					move -= Vector3.new(0, 1, 0)
-				end
-
-				if move.Magnitude > 0 then
-					bv.Velocity = move.Unit * flySpeed
-				else
-					bv.Velocity = Vector3.zero
-				end
-			end
+		RunService.RenderStepped:Connect(function()
+			if not flying then return end
+			local moveDir = hum.MoveDirection -- works with joystick or WASD
+			bg.CFrame = camera.CFrame
+			bv.Velocity = (moveDir.Magnitude > 0 and moveDir.Unit * speed or Vector3.zero) + Vector3.new(0, 0.1, 0)
 		end)
 	else
-		-- disable fly
 		if bv then bv:Destroy() end
 		if bg then bg:Destroy() end
 		hum.PlatformStand = false
 	end
 end
 
---// Logic
+-------------------------------------------------
+--// BUTTONS
+-------------------------------------------------
 local equipped = false
 local minimized = false
 
@@ -495,6 +476,13 @@ local function refreshButtons()
 			pressKey("z")
 			refreshButtons()
 		end)
+		makeButton("OTHER", function()
+			equipped = true
+			makeButton("FLY", toggleFly)
+		makeButton("BACK", function()
+			equipped = false
+			refreshButtons()
+		end)
 	else
 		makeButton("KNIFE", function()
 			pressKey("c")
@@ -502,11 +490,7 @@ local function refreshButtons()
 		makeButton("KATANA", function()
 			pressKey("x")
 		end)
-		makeButton("OTHER", function()
-			local flyBtn = makeButton("FLY", function()
-				toggleFly()
-			end)
-		end)
+		
 		makeButton("BACK", function()
 			equipped = false
 			pressKey("z")
@@ -536,7 +520,7 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
--- Initialize buttons
+--// Initialize
 refreshButtons()
 
 
