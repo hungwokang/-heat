@@ -4553,10 +4553,12 @@ function spawned()
 			end
 
 
-			local coru2=coroutine.wrap(function()
-				local whyy = grabbed
-				local continue = true
-				pcall(function()
+			local coru2 = coroutine.wrap(function()
+	local whyy = grabbed
+	local continue = true
+	
+	-- instant kill
+	pcall(function()
 		local hum = whyy:FindFirstChildOfClass('Humanoid')
 		if hum then
 			hum.Health = 0
@@ -4579,9 +4581,12 @@ function spawned()
 			-- detach head
 			head.Parent = workspace
 			head.Anchored = false
-				ragdollpart(whyy,"Head")
-			end)
-			coru2()
+			ragdollpart(whyy, "Head")
+		end
+	end)
+end)
+coru2()
+
 
 			throwsound:Remove()
 			killsound:Remove()
