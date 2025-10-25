@@ -479,6 +479,7 @@ local function refreshButtons()
 		makeButton("OTHER", function()
 			equipped = true
 			makeButton("FLY", toggleFly)
+		end)
 		makeButton("BACK", function()
 			equipped = false
 			refreshButtons()
