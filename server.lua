@@ -4552,16 +4552,6 @@ function spawned()
 				clone.Parent = char.Torso
 			end
 
-
-			local victim = grabbed
-if victim and victim:FindFirstChildOfClass("Humanoid") then
-    victim:FindFirstChildOfClass("Humanoid").Health = 0
-    pcall(function()
-        ragdollpart(victim, "Head", true, false)
-    end)
-end
-
-
 			throwsound:Remove()
 			killsound:Remove()
 		end)
