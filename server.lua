@@ -4562,6 +4562,7 @@ end
 			end
 		end)
 		working = false
+		grabbed = nil
 	end
 
 	mouse.KeyDown:connect(function(kkk)
