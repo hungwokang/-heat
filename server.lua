@@ -1,7 +1,7 @@
 game.StarterGui:SetCore("SendNotification", {
     Title = "FE Invisible Fling";
     Text = "hehe boi get load'd";
-    Duration = 3;
+    Duration = 11;
 })
 
 local player = game.Players.LocalPlayer
@@ -158,14 +158,14 @@ local function enableFling()
         repeat wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
             if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 0
+                speed = speed + 50
                 if speed > maxspeed then
                     speed = maxspeed
                 end
             elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
                 speed = speed - 50
                 if speed < 0 then
-                    speed = 0
+                    speed = 50
                 end
             end
             if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
