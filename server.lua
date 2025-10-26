@@ -475,13 +475,11 @@ end)
 refreshButtons()
 
 --------------------------------------------------
---// FLIGHT SCRIPT (PC + MOBILE - CAMERA DIRECTION)
+--// FLY SCRIPT (PC + MOBILE, CAMERA-BASED, NO SPACE/CTRL)
 --------------------------------------------------
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 local flying = false
 local speed = 80
-local verticalSpeed = 50
 local bodyGyro, bodyVel
 local flyConn
 
@@ -505,26 +503,21 @@ _G.ToggleFly = function()
 		flyConn = RunService.Heartbeat:Connect(function()
 			if not flying or not hrp then return end
 
+			-- Always align rotation to camera
 			local camCF = workspace.CurrentCamera.CFrame
-			local moveDir = hum.MoveDirection
-
-			-- Align movement with camera facing
-			local forward = camCF.LookVector
-			local right = camCF.RightVector
-			local finalDir = (forward * moveDir.Z) + (right * moveDir.X)
-
-			-- Vertical controls
-			local yVel = 0
-			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-				yVel = verticalSpeed
-			elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-				yVel = -verticalSpeed
-			end
-
-			-- Apply
-			local finalVel = finalDir * speed + Vector3.new(0, yVel, 0)
 			bodyGyro.CFrame = camCF
-			bodyVel.Velocity = finalVel
+
+			-- Move in the direction player moves (joystick or keyboard)
+			local moveDir = hum.MoveDirection
+			if moveDir.Magnitude > 0 then
+				-- Use camera direction instead of flat plane
+				local camLook = camCF.LookVector
+				local flyDirection = (camLook * moveDir.Z) + (camCF.RightVector * moveDir.X)
+
+				bodyVel.Velocity = flyDirection.Unit * speed
+			else
+				bodyVel.Velocity = Vector3.zero
+			end
 		end)
 	else
 		if flyConn then flyConn:Disconnect() flyConn = nil end
