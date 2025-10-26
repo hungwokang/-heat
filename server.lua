@@ -432,15 +432,15 @@ local function refreshButtons()
 			pressKey("z")
 			refreshButtons()
 		end)
+		makeButton("FLY", function()
+			_G.ToggleFly()
+		end)
 	else
 		makeButton("KNIFE", function()
 			pressKey("c")
 		end)
 		makeButton("KATANA", function()
 			pressKey("x")
-		end)
-		makeButton("FLY", function()
-			_G.ToggleFly()
 		end)
 		makeButton("BACK", function()
 			equipped = false
@@ -475,7 +475,7 @@ end)
 refreshButtons()
 
 --------------------------------------------------
---// FLY SCRIPT (PC + MOBILE, CAMERA-BASED, NO SPACE/CTRL)
+--// FLY SCRIPT (PC + MOBILE, BODY-FACING DIRECTION)
 --------------------------------------------------
 local RunService = game:GetService("RunService")
 local flying = false
@@ -493,6 +493,7 @@ _G.ToggleFly = function()
 		bodyGyro = Instance.new("BodyGyro", hrp)
 		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
 		bodyGyro.P = 9e4
+		bodyGyro.CFrame = hrp.CFrame
 
 		bodyVel = Instance.new("BodyVelocity", hrp)
 		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
@@ -503,17 +504,13 @@ _G.ToggleFly = function()
 		flyConn = RunService.Heartbeat:Connect(function()
 			if not flying or not hrp then return end
 
-			-- Always align rotation to camera
-			local camCF = workspace.CurrentCamera.CFrame
-			bodyGyro.CFrame = camCF
+			-- Keep the Gyro aligned with your body, not camera
+			bodyGyro.CFrame = hrp.CFrame
 
-			-- Move in the direction player moves (joystick or keyboard)
+			-- Move in the direction your body is facing
 			local moveDir = hum.MoveDirection
 			if moveDir.Magnitude > 0 then
-				-- Use camera direction instead of flat plane
-				local camLook = camCF.LookVector
-				local flyDirection = (camLook * moveDir.Z) + (camCF.RightVector * moveDir.X)
-
+				local flyDirection = (hrp.CFrame.LookVector * moveDir.Z) + (hrp.CFrame.RightVector * moveDir.X)
 				bodyVel.Velocity = flyDirection.Unit * speed
 			else
 				bodyVel.Velocity = Vector3.zero
