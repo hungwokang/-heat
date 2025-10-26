@@ -4880,93 +4880,127 @@ THOT]])
 		end
 	end)
 
-	mouse.Button1Down:connect(function(jew)
-		if usable and working == false and equipped then
-			if blademode == "katana" then
-				notify()
-				katanaswing()
-			elseif blademode == "knife" then
-	notify()
-	if grabbed == nil then
-		-- Always grab first
-		grab()
-	else
-		-- Make sure grabbed isn't the player themself
-		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-	local myChar = player.Character
-	if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
-		notify("Prevented self-kill.", true)
-		grabbed = nil
-		working = false
-		return
-	end
+mouse.Button1Down:connect(function(jew)
+	if usable and working == false and equipped then
+		if blademode == "katana" then
+			notify()
+			katanaswing()
 
-	local hum = grabbed:FindFirstChildOfClass("Humanoid")
-	if hum and hum.Health > 0 then
-		-- Create and play sounds
-		local head = grabbed:FindFirstChild("Head") or grabbed
+		elseif blademode == "knife" then
+			notify()
+			if grabbed == nil then
+				-- Always grab first
+				grab()
+			else
+				-- We have someone grabbed
+				if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
+					local myChar = player.Character
+					if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
+						notify("Prevented self-kill.", true)
+						grabbed = nil
+						working = false
+						return
+					end
 
-		local killsound = Instance.new("Sound", head)
-		killsound.SoundId = "rbxassetid://150315649"
-		killsound.PlaybackSpeed = math.random(9, 12) / 10
-		killsound.Volume = 1
-		killsound:Play()
+					local hum = grabbed:FindFirstChildOfClass("Humanoid")
+					if hum and hum.Health > 0 then
+						-- Stop grab animation loop if you use that flag
+						pcall(function() _G.StopGrab = true end)
 
-		local killsoundac = Instance.new("Sound", head)
-		killsoundac.SoundId = "rbxassetid://162194585"
-		killsoundac.PlaybackSpeed = math.random(9, 13) / 10
-		killsoundac.Volume = 1
-		killsoundac:Play()
+						-- Create and play sounds
+						local head = grabbed:FindFirstChild("Head") or grabbed
 
-		local bleedsound = Instance.new("Sound", head)
-		bleedsound.SoundId = "rbxassetid://244502094"
-		bleedsound.PlaybackSpeed = 1.5
-		bleedsound.Volume = 1
-		bleedsound:Play()
+						local killsound = Instance.new("Sound", head)
+						killsound.SoundId = "rbxassetid://150315649"
+						killsound.PlaybackSpeed = math.random(9, 12) / 10
+						killsound.Volume = 1
+						killsound:Play()
 
-		-- Kill safely
-		hum.Health = 0
-		pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+						local killsoundac = Instance.new("Sound", head)
+						killsoundac.SoundId = "rbxassetid://162194585"
+						killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+						killsoundac.Volume = 1
+						killsoundac:Play()
 
-		-- Simple blood effect
-		local blood = Instance.new("Part", grabbed)
-		blood.Size = Vector3.new(0.2, 0.2, 0.2)
-		blood.BrickColor = BrickColor.new("Maroon")
-		blood.Material = Enum.Material.SmoothPlastic
-		blood.CanCollide = false
-		blood.Transparency = 0.3
-		blood.CFrame = head.CFrame
-		blood.Name = "ayybleed"
-		blood:BreakJoints()
-		spawn(function() bleed(blood) end)
+						local bleedsound = Instance.new("Sound", head)
+						bleedsound.SoundId = "rbxassetid://244502094"
+						bleedsound.PlaybackSpeed = 1.5
+						bleedsound.Volume = 1
+						bleedsound:Play()
 
-		game.Debris:AddItem(killsound, 2)
-		game.Debris:AddItem(killsoundac, 2)
-		game.Debris:AddItem(bleedsound, 2)
-	
-	elseif grabbed ~= nil then
-		-- Handle different modes (kill, throw, release)
-		if mode == "kill" then
-			kill()
-		elseif mode == "throw" then
-			throw()
-		elseif mode == "release" then
-			release()
+						-- Kill safely
+						hum.Health = 0
+						pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+
+						-- Simple blood effect
+						local blood = Instance.new("Part", grabbed)
+						blood.Size = Vector3.new(0.2, 0.2, 0.2)
+						blood.BrickColor = BrickColor.new("Maroon")
+						blood.Material = Enum.Material.SmoothPlastic
+						blood.CanCollide = false
+						blood.Transparency = 0.3
+						blood.CFrame = head.CFrame
+						blood.Name = "ayybleed"
+						blood:BreakJoints()
+						spawn(function() bleed(blood) end)
+
+						game.Debris:AddItem(killsound, 2)
+						game.Debris:AddItem(killsoundac, 2)
+						game.Debris:AddItem(bleedsound, 2)
+
+						-- reset arms like throw/release (safe call)
+						pcall(function()
+							-- destroy grab welds that reference the grabbed target
+							for _, w in pairs(char:GetDescendants()) do
+								if w:IsA("Weld") and (w.Name == "grabweld" or w.Part1 == grabbed or w.Part0 == grabbed) then
+									w:Destroy()
+								end
+							end
+
+							local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+							local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+
+							if rightArm and rightArm:FindFirstChild("Weld") then
+								lerp(rightArm.Weld, rightArm.Weld.C0, CFrame.new(1.5, 0, 0), 0.08)
+							end
+							if leftArm and leftArm:FindFirstChild("Weld") then
+								lerp(leftArm.Weld, leftArm.Weld.C0, CFrame.new(-1.5, 0, 0), 0.08)
+							end
+							if hweld then
+								lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
+							end
+
+							-- force humanoid to reset animations
+							local localHum = char:FindFirstChildOfClass("Humanoid")
+							if localHum then
+								localHum:ChangeState(Enum.HumanoidStateType.GettingUp)
+								localHum:Move(Vector3.new())
+							end
+						end)
+					else
+						-- If not alive, fallback to modes (kill/throw/release)
+						if mode == "kill" then
+							kill()
+						elseif mode == "throw" then
+							throw()
+						elseif mode == "release" then
+							release()
+						end
+					end
+
+					-- Final cleanup: ensure flags / references cleared
+					grabbed = nil
+					working = false
+					pcall(function() _G.StopGrab = false end)
+				end
+			end
+
+		elseif blademode == "reboot" then
+			raep()
 		end
 	end
+end)
 
-	-- Final cleanup
-	grabbed = nil
-	working = false
-end
-
-
-
-elseif blademode == "reboot" then
-	raep()
-end
-		end
-	end)
 
 end
 spawned()
