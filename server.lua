@@ -344,7 +344,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "77X0"
+title.Text = "L0X77"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -385,7 +385,7 @@ footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.Code
-footer.Text = "created by server"
+footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 
@@ -4944,63 +4944,6 @@ THOT]])
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
 			end
-
-			-- === CLEANUP & RESET ===
-
--- Stop any grab animation threads
-pcall(function()
-	if _G.GrabAnimLoop then
-		_G.GrabAnimLoop = false
-	end
-end)
-
--- Remove any grab welds or constraints
-pcall(function()
-	for _, v in pairs(char:GetDescendants()) do
-		if v:IsA("Weld") or v:IsA("Motor6D") then
-			if v.Name:lower():find("grab") or v.Name:lower():find("tweld") or v.Name:lower():find("hweld") then
-				v:Destroy()
-			end
-		end
-	end
-end)
-
--- Reset right arm pose smoothly
-local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-if rightArm then
-	local rw = rightArm:FindFirstChildWhichIsA("Weld") or rightArm:FindFirstChildWhichIsA("Motor6D")
-	if rw then
-		rw.C0 = CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0)
-	end
-end
-
--- Reset left arm pose
-local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
-if leftArm then
-	local lw = leftArm:FindFirstChildWhichIsA("Weld") or leftArm:FindFirstChildWhichIsA("Motor6D")
-	if lw then
-		lw.C0 = CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0)
-	end
-end
-
--- Reset torso back to idle
-local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
-if torso then
-	local tw = torso:FindFirstChildWhichIsA("Weld") or torso:FindFirstChildWhichIsA("Motor6D")
-	if tw then
-		tw.C0 = CFrame.new(0, 0, 0)
-	end
-end
-
--- Force Humanoid to re-animate (resets Roblox default animation controller)
-pcall(function()
-	local hum = char:FindFirstChildOfClass("Humanoid")
-	if hum then
-		hum:ChangeState(Enum.HumanoidStateType.GettingUp)
-		hum:Move(Vector3.new()) -- nudge animation reset
-	end
-end)
-
 grabbed = nil
 working = false
 
