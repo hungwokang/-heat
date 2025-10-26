@@ -4903,9 +4903,6 @@ THOT]])
 
 			local hum = grabbed:FindFirstChildOfClass("Humanoid")
 			if hum and hum.Health > 0 then
-				-- Stop any active grab animation
-				_G.StopGrab = true
-
 				-- Create and play sounds
 				local head = grabbed:FindFirstChild("Head") or grabbed
 
@@ -4947,7 +4944,7 @@ THOT]])
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
 
-				-- === RESET ANIMATION LIKE THROW / RELEASE ===
+-- === RESET ANIMATION LIKE THROW / RELEASE ===
 				pcall(function()
 					for _, weld in pairs(char:GetDescendants()) do
 						if weld:IsA("Weld") and (weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed) then
@@ -4992,16 +4989,15 @@ THOT]])
 						clone.Parent = char.Torso
 					end
 				end)
-			end
 
 			-- Final cleanup
 			grabbed = nil
 			working = false
 			_G.StopGrab = false
+
+			end
 		end
 	end
-end
-
 
 elseif blademode == "reboot" then
 	raep()
