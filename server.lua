@@ -350,7 +350,7 @@ title.Text = "Z7N7"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
-title.Position = UDim2.new(0, 0, 5, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
 
 --// Minimize button
 local minimize = Instance.new("TextButton")
