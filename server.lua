@@ -5009,12 +5009,16 @@ THOT]])
 		-- Always grab first
 		grab()
 	else
-		-- Instantly kill after grab
+		-- Make sure grabbed isn't the player themself
 		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-			grabbed:FindFirstChildOfClass("Humanoid").Health = 0
-			pcall(function()
-				ragdollpart(grabbed, "Head", true, false)
-			end)
+			if grabbed ~= player.Character then
+				grabbed:FindFirstChildOfClass("Humanoid").Health = 0
+				pcall(function()
+					ragdollpart(grabbed, "Head", true, false)
+				end)
+			else
+				notify("Prevented self-kill.", true)
+			end
 			grabbed = nil
 		end
 	end
