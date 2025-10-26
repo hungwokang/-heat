@@ -344,7 +344,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "77X0"
+title.Text = "Server"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -385,7 +385,7 @@ footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.Code
-footer.Text = "published by server"
+footer.Text = "created by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 
@@ -4375,71 +4375,277 @@ function spawned()
 		working = false
 	end
 
-function kill()
-	working = true
-	pcall(function()
-		if not grabbed or not grabbed:FindFirstChildOfClass("Humanoid") then
-			working = false
-			return
-		end
-		if grabbed == char then
-			notify("Prevented self-kill.", true)
-			working = false
-			return
-		end
-
-		-- Play instant kill sounds
-		local killsound = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
-		killsound.SoundId = "rbxassetid://150315649"
-		killsound.PlaybackSpeed = math.random(9, 12) / 10
-		killsound.Volume = 1
-		killsound:Play()
-
-		local killsoundac = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
-		killsoundac.SoundId = "rbxassetid://162194585"
-		killsoundac.PlaybackSpeed = math.random(9, 13) / 10
-		killsoundac.Volume = 1
-		killsoundac:Play()
-
-		local bleedsound = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
-		bleedsound.SoundId = "rbxassetid://244502094"
-		bleedsound.PlaybackSpeed = 1.5
-		bleedsound.Volume = 1
-		bleedsound:Play()
-
-		-- Instant kill
-		local hum = grabbed:FindFirstChildOfClass("Humanoid")
-		if hum then
-			hum.Health = 0
-		end
-
-		-- Ragdoll effect
+	function kill()
+		working = true
 		pcall(function()
-			ragdollpart(grabbed, "Head", true, false)
+			local rweld = char["Right Arm"]:FindFirstChild("Weld")
+			local lweld = char["Left Arm"]:FindFirstChild("Weld")
+			local tweld = Instance.new("Weld", char.HumanoidRootPart)
+			tweld.Part0 = char.HumanoidRootPart
+			tweld.Part1 = char.Torso
+			local killsound = Instance.new("Sound", grabbed.Head)
+			killsound.SoundId = "rbxassetid://150315649"
+			killsound.PlaybackSpeed = 1.2
+			local killsoundac = Instance.new("Sound", grabbed.Head)
+			killsoundac.SoundId = "rbxassetid://162194585"
+			killsoundac.PlaybackSpeed = 1
+			killsoundac.Volume = 1
+			local throwsound = Instance.new("Sound", char.Head)
+			throwsound.SoundId = "rbxassetid://711753382"
+			throwsound.PlaybackSpeed = 0.75
+			local chokesound = Instance.new("Sound", grabbed.Head)
+			chokesound.SoundId = "rbxassetid://418658161"
+			chokesound.TimePosition = 3
+			chokesound.PlaybackSpeed = 1
+			local bleedsound = Instance.new("Sound", grabbed.Head)
+			bleedsound.SoundId = "rbxassetid://244502094"
+			bleedsound.PlaybackSpeed = 1.5
+			bleedsound.Volume = 1
+
+			pitchun = math.random(9, 12)/10
+			pitchdos = math.random(9, 13)/10
+
+			killsound.PlaybackSpeed = pitchun
+			killsoundac.PlaybackSpeed = pitchdos
+			chokesound.PlaybackSpeed = pitchun
+
+			pcall(function()
+				--grabbed.HumanoidRootPart:Destroy()
+			end)
+
+			lerp(rweld,rweld.C0,CFrame.new(0.5, 0.7, -0.70) * CFrame.Angles(0, math.rad(100), math.rad(105)),0.1)
+			wait(0.2)
+			lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.04)
+
+			killsound:Play()
+			killsoundac:Play()
+			chokesound:Play()
+			bleedsound:Play()
+
+			local ayybleed = Instance.new('Part',grabbed)
+			ayybleed.Size = Vector3.new(0.2,0.2,0.2)
+			ayybleed.BrickColor = BrickColor.new('Maroon')
+			ayybleed.Material = Enum.Material.SmoothPlastic
+			ayybleed.Name = "ayybleed"
+			ayybleed.CanCollide = false
+			ayybleed.Transparency = 0.5
+			ayybleed.CFrame = grabbed.Head.CFrame
+			ayybleed:BreakJoints()
+			local attachment1 = Instance.new('Attachment',ayybleed)
+			attachment1.Position = Vector3.new(-0.55,0,0)
+			attachment1.Orientation = Vector3.new(90, 0, -90)
+			local attachment0 = Instance.new('Attachment')
+			pcall(function()
+				attachment0.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				attachment0.Parent = grabbed.UpperTorso
+			end)
+			if attachment0 and attachment1 then
+				local constraint = Instance.new("HingeConstraint")
+				constraint.Attachment0 = attachment0
+				constraint.Attachment1 = attachment1
+				constraint.LimitsEnabled = true
+				constraint.UpperAngle = 0
+				constraint.LowerAngle = 0
+				pcall(function()
+					constraint.Parent = grabbed.Torso
+				end)
+				pcall(function()
+					constraint.Parent = grabbed.UpperTorso
+				end)
+			end
+			local bleedBLEED= coroutine.wrap(function()
+				bleed(ayybleed)
+			end)
+			bleedBLEED()
+
+			wait(0.2)
+
+			local at1 = Instance.new("Attachment", handle)
+			local at2 = Instance.new("Attachment", handle)
+			at1.Visible = false
+			at1.Position = Vector3.new(2, 0, 0)
+			at2.Visible = false
+			at2.Position = Vector3.new(-0.3, 0, 0)
+
+			local trail = Instance.new("Trail", handle)
+			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
+			trail.LightEmission = 0.25
+			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
+			trail.Lifetime = 0.10
+			trail.MinLength = 0.05
+			trail.Attachment0 = at1
+			trail.Attachment1 = at2
+
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-40), math.rad(15)),0.08)
+			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.1)
+			local coru=coroutine.wrap(function()
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.09)
+			end)
+			coru()
+			local cor = coroutine.wrap(function()
+				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
+			end)
+			cor()
+			grabweld:Remove()
+			throwsound:Play()
+
+			local throwvel = Instance.new("BodyThrust")
+			throwvel.Force = Vector3.new(0, 3000, -1000)
+			pcall(function()
+				throwvel.Parent = grabbed.Torso
+			end)
+			pcall(function()
+				throwvel.Parent = grabbed.UpperTorso
+			end)
+
+			trail:Remove()
+			at1:Remove()
+			at2:Remove()
+			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
+			pcall(function()
+				ragdollpart(grabbed,"Left Arm")
+				ragdollpart(grabbed,"Left Leg")
+				ragdollpart(grabbed,"Right Arm")
+				ragdollpart(grabbed,"Right Leg")
+			end)
+			pcall(function()
+				ragdollpart(grabbed,"LeftUpperLeg")
+				ragdollpart(grabbed,"RightUpperLeg")
+				ragdollpart(grabbed,"LeftUpperArm")
+				ragdollpart(grabbed,"RightUpperArm")
+			end)
+			wait(0.15)
+			throwvel:Remove()
+			local cor = coroutine.wrap(function()
+				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			local cor2 = coroutine.wrap(function()
+				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+			end)
+			cor()
+			cor2()
+			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
+
+			lweld:Remove()
+			rweld:Remove()
+			tweld:Remove()
+
+			if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
+				local clone = torsoclone:Clone()
+				clone.Part0 = char.HumanoidRootPart
+				clone.Part1 = char.Torso
+				clone.Parent = char.HumanoidRootPart
+			end
+			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+
+
+			local coru2 = coroutine.wrap(function()
+			local whyy = grabbed
+			if not whyy then return end
+		
+			-- safety locals
+			local humanoid = whyy:FindFirstChildOfClass("Humanoid")
+		
+			-- instant-kill
+			pcall(function()
+				if humanoid then
+					humanoid.Health = 0
+				end
+			end)
+		
+			-- visual blood part (similar to your katana code)
+			pcall(function()
+				local head = whyy:FindFirstChild("Head")
+				if head and head:IsA("BasePart") then
+					local ayybleed = Instance.new("Part")
+					ayybleed.Name = "ayybleed"
+					ayybleed.Size = Vector3.new(0.2, 0.2, 0.2)
+					ayybleed.BrickColor = BrickColor.new("Maroon")
+					ayybleed.Material = Enum.Material.SmoothPlastic
+					ayybleed.CanCollide = false
+					ayybleed.Transparency = 0.5
+					ayybleed.CFrame = head.CFrame
+					ayybleed.Parent = whyy
+					ayybleed:BreakJoints()
+		
+					-- try your bleed function if available, otherwise cleanup after a few seconds
+					if type(bleed) == "function" then
+						spawn(function() pcall(function() bleed(ayybleed) end) end)
+					else
+						game:GetService("Debris"):AddItem(ayybleed, 5)
+					end
+				end
+			end)
+		
+			-- remove neck attachments and HumanoidRootPart to visually detach head like katana
+			pcall(function()
+				-- R6 Torso neck cleanup
+				local torso = whyy:FindFirstChild("Torso")
+				if torso then
+					local neck = torso:FindFirstChild("Neck")
+					if neck then neck:Destroy() end
+					local neckAtt = torso:FindFirstChild("NeckAttachment")
+					if neckAtt then neckAtt:Destroy() end
+				end
+		
+				-- R15 UpperTorso neck cleanup
+				local upper = whyy:FindFirstChild("UpperTorso")
+				if upper then
+					local na = upper:FindFirstChild("NeckAttachment")
+					if na then na:Destroy() end
+				end
+		
+				-- Destroy HumanoidRootPart so the character can't move (matches katana behavior)
+				if whyy:FindFirstChild("HumanoidRootPart") then
+					whyy.HumanoidRootPart:Destroy()
+				end
+			end)
+		
+			-- weld victim to your handle so they stick to the weapon (optional visual)
+			pcall(function()
+				local weldPart = whyy:FindFirstChild("Torso") or whyy:FindFirstChild("UpperTorso") or whyy:FindFirstChild("Head")
+				if weldPart and handle then
+					local weld = Instance.new("Weld")
+					weld.Parent = weldPart
+					weld.Part0 = weldPart
+					weld.Part1 = handle
+					-- align victim relative to handle; adjust offset if needed
+					weld.C0 = weldPart.CFrame:ToObjectSpace(handle.CFrame)
+				end
+			end)
+		
+			-- ragdoll head (use your existing ragdollpart function)
+			pcall(function()
+				if type(ragdollpart) == "function" then
+					ragdollpart(whyy, "Head")
+				end
+			end)
+		
+			-- cleanup
+			grabbed = nil
 		end)
+		coru2()
 
-		-- Simple blood effect
-		local blood = Instance.new("Part", grabbed)
-		blood.Size = Vector3.new(0.2, 0.2, 0.2)
-		blood.BrickColor = BrickColor.new("Maroon")
-		blood.Material = Enum.Material.SmoothPlastic
-		blood.CanCollide = false
-		blood.CFrame = grabbed.Head and grabbed.Head.CFrame or grabbed:GetModelCFrame()
-		blood.Transparency = 0.3
-		blood.Name = "ayybleed"
-		blood:BreakJoints()
-		spawn(function() bleed(blood) end)
-
-		wait(0.3)
-		killsound:Destroy()
-		killsoundac:Destroy()
-		bleedsound:Destroy()
-	end)
-
-	grabbed = nil
-	working = false
-end
-
+			throwsound:Remove()
+			killsound:Remove()
+		end)
+		grabbed = nil
+		working = false
+	end
 
 	function release()
 		working = true
@@ -4880,29 +5086,22 @@ THOT]])
 		end
 	end)
 
-mouse.Button1Down:connect(function(jew)
-	if usable and working == false and equipped then
-		if blademode == "katana" then
-			notify()
-			katanaswing()
-
-		elseif blademode == "knife" then
-			notify()
-			if grabbed == nil then
-				-- Always grab first
-				grab()
-			else
-				-- We have someone grabbed
-				if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-					local myChar = player.Character
-					if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
-						notify("Prevented self-kill.", true)
-						grabbed = nil
-						working = false
-						return
+	mouse.Button1Down:connect(function(jew)
+		if usable and working == false and equipped then
+			if blademode == "katana" then
+				notify()
+				katanaswing()
+			elseif blademode == "knife" then
+				notify()
+				if grabbed == nil then
+					if mode == "fling" then
+						fling()
+					else
+						grab()
 					end
-
-					local hum = grabbed:FindFirstChildOfClass("Humanoid")
+				elseif grabbed ~= nil then
+					if mode == "kill" then
+						local hum = grabbed:FindFirstChildOfClass("Humanoid")
 					if hum and hum.Health > 0 then
 						-- Stop grab animation loop if you use that flag
 						pcall(function() _G.StopGrab = true end)
@@ -4947,60 +5146,17 @@ mouse.Button1Down:connect(function(jew)
 						game.Debris:AddItem(killsound, 2)
 						game.Debris:AddItem(killsoundac, 2)
 						game.Debris:AddItem(bleedsound, 2)
-
-						-- reset arms like throw/release (safe call)
-						pcall(function()
-							-- destroy grab welds that reference the grabbed target
-							for _, w in pairs(char:GetDescendants()) do
-								if w:IsA("Weld") and (w.Name == "grabweld" or w.Part1 == grabbed or w.Part0 == grabbed) then
-									w:Destroy()
-								end
-							end
-
-							local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-							local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
-
-							if rightArm and rightArm:FindFirstChild("Weld") then
-								lerp(rightArm.Weld, rightArm.Weld.C0, CFrame.new(1.5, 0, 0), 0.08)
-							end
-							if leftArm and leftArm:FindFirstChild("Weld") then
-								lerp(leftArm.Weld, leftArm.Weld.C0, CFrame.new(-1.5, 0, 0), 0.08)
-							end
-							if hweld then
-								lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
-							end
-
-							-- force humanoid to reset animations
-							local localHum = char:FindFirstChildOfClass("Humanoid")
-							if localHum then
-								localHum:ChangeState(Enum.HumanoidStateType.GettingUp)
-								localHum:Move(Vector3.new())
-							end
-						end)
-					else
-						-- If not alive, fallback to modes (kill/throw/release)
-						if mode == "kill" then
-							kill()
-						elseif mode == "throw" then
-							throw()
-						elseif mode == "release" then
-							release()
-						end
+					elseif mode == "throw" then
+						throw()
+					elseif mode == "release" then
+						release()
 					end
-
-					-- Final cleanup: ensure flags / references cleared
-					grabbed = nil
-					working = false
-					pcall(function() _G.StopGrab = false end)
 				end
+			elseif blademode == "reboot" then
+				raep()
 			end
-
-		elseif blademode == "reboot" then
-			raep()
 		end
-	end
-end)
-
+	end)
 
 end
 spawned()
