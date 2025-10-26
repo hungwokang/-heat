@@ -4567,9 +4567,6 @@ end
 
 	end
 
-
-end
-
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
 		if usable and working == false then
@@ -4909,7 +4906,6 @@ THOT]])
 
 			local hum = grabbed:FindFirstChildOfClass("Humanoid")
 			if hum and hum.Health > 0 then
-				-- Stop any grab animation loop
 				_G.IsGrabbing = false
 
 				-- Create and play sounds
