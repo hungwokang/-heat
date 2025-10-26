@@ -5014,22 +5014,21 @@ THOT]])
 				notify()
 				katanaswing()
 			elseif blademode == "knife" then
-				notify()
-				if grabbed == nil then
-					if mode == "fling" then
-						fling()
-					else
-						grab()
-					end
-				elseif grabbed ~= nil then
-					if mode == "kill" then
-						kill()
-					elseif mode == "throw" then
-						throw()
-					elseif mode == "release" then
-						release()
-					end
-				end
+	notify()
+	if grabbed == nil then
+		-- Always grab first
+		grab()
+	else
+		-- Instantly kill after grab
+		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
+			grabbed:FindFirstChildOfClass("Humanoid").Health = 0
+			pcall(function()
+				ragdollpart(grabbed, "Head", true, false)
+			end)
+			grabbed = nil
+		end
+	end
+
 			elseif blademode == "reboot" then
 				raep()
 			end
