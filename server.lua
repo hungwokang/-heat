@@ -474,71 +474,171 @@ end)
 -- Initialize buttons
 refreshButtons()
 
---------------------------------------------------
---// PERFECT DELTA-STYLE FLY (PC + MOBILE)
---------------------------------------------------
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local flying = false
-local speed = 80
-local bodyGyro, bodyVel
-local connection
 
-_G.ToggleFly = function()
-	flying = not flying
-	local char = player.Character or player.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
-	local hum = char:WaitForChild("Humanoid")
+--// Fly Function with Mobile Support
+local function setupFly()
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not character or not humanoidRootPart then return end
 
-	if flying then
-		hum.PlatformStand = true
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local bodyVelocity = Instance.new("BodyVelocity")
+    local bodyGyro = Instance.new("BodyGyro")
 
-		bodyGyro = Instance.new("BodyGyro")
-		bodyGyro.P = 9e4
-		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-		bodyGyro.CFrame = hrp.CFrame
-		bodyGyro.Parent = hrp
+    bodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+    bodyVelocity.Parent = humanoidRootPart
 
-		bodyVel = Instance.new("BodyVelocity")
-		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-		bodyVel.Velocity = Vector3.zero
-		bodyVel.Parent = hrp
+    bodyGyro.MaxTorque = Vector3.new(40000, 40000, 40000)
+    bodyGyro.CFrame = humanoidRootPart.CFrame
+    bodyGyro.Parent = humanoidRootPart
 
-		-- Use a single connection to avoid stacking
-		if connection then
-			connection:Disconnect()
-			connection = nil
-		end
+    local speed = 50 -- Adjust fly speed
+    local flying = true
+    local ascending = false
+    local descending = false
 
-		connection = RunService.Heartbeat:Connect(function()
-			if not flying or not hrp or not hum then return end
+    --// Create mobile control buttons
+    local ascendButton = Instance.new("TextButton")
+    ascendButton.Parent = gui
+    ascendButton.Size = UDim2.new(0, 50, 0, 50)
+    ascendButton.Position = UDim2.new(0.9, -60, 0.7, -25)
+    ascendButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    ascendButton.BackgroundTransparency = 0.5
+    ascendButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    ascendButton.Text = "↑"
+    ascendButton.TextColor3 = Color3.new(1, 1, 1)
+    ascendButton.TextSize = 20
+    ascendButton.Font = Enum.Font.Code
+    ascendButton.Visible = false
 
-			local camCF = workspace.CurrentCamera.CFrame
-			local moveDir = hum.MoveDirection
+    local descendButton = Instance.new("TextButton")
+    descendButton.Parent = gui
+    descendButton.Size = UDim2.new(0, 50, 0, 50)
+    descendButton.Position = UDim2.new(0.9, -60, 0.7, 30)
+    descendButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    descendButton.BackgroundTransparency = 0.5
+    descendButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    descendButton.Text = "↓"
+    descendButton.TextColor3 = Color3.new(1, 1, 1)
+    descendButton.TextSize = 20
+    descendButton.Font = Enum.Font.Code
+    descendButton.Visible = false
 
-			-- ✅ Corrected: convert MoveDirection into camera space ONLY if nonzero
-			if moveDir.Magnitude > 0 then
-				local direction = camCF:VectorToWorldSpace(moveDir)
-				bodyVel.Velocity = direction.Unit * speed
-			else
-				bodyVel.Velocity = Vector3.zero
-			end
+    --// Handle mobile button input
+    ascendButton.MouseButton1Down:Connect(function() ascending = true end)
+    ascendButton.MouseButton1Up:Connect(function() ascending = false end)
+    descendButton.MouseButton1Down:Connect(function() descending = true end)
+    descendButton.MouseButton1Up:Connect(function() descending = false end)
 
-			-- Keep rotation aligned with camera
-			bodyGyro.CFrame = CFrame.new(hrp.Position, hrp.Position + camCF.LookVector)
-		end)
+    -- Handle movement input
+    local function updateFly()
+        local moveDirection = Vector3.new(0, 0, 0)
 
-	else
-		if connection then
-			connection:Disconnect()
-			connection = nil
-		end
-		hum.PlatformStand = false
-		if bodyGyro then bodyGyro:Destroy() end
-		if bodyVel then bodyVel:Destroy() end
-	end
+        -- Keyboard input
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            moveDirection = moveDirection + Vector3.new(0, 0, -1)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            moveDirection = moveDirection + Vector3.new(0, 0, 1)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            moveDirection = moveDirection + Vector3.new(-1, 0, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            moveDirection = moveDirection + Vector3.new(1, 0, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            moveDirection = moveDirection + Vector3.new(0, 1, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            moveDirection = moveDirection + Vector3.new(0, -1, 0)
+        end
+
+        -- Mobile joystick input (using Humanoid.MoveDirection)
+        moveDirection = moveDirection + humanoid.MoveDirection
+
+        -- Mobile button input
+        if ascending then
+            moveDirection = moveDirection + Vector3.new(0, 1, 0)
+        end
+        if descending then
+            moveDirection = moveDirection + Vector3.new(0, -1, 0)
+        end
+
+        -- Update velocity based on camera direction
+        local camera = workspace.CurrentCamera
+        local lookDirection = camera.CFrame.LookVector
+        local rightDirection = camera.CFrame.RightVector
+        local finalDirection = Vector3.new(0, 0, 0)
+
+        if moveDirection.Magnitude > 0 then
+            moveDirection = moveDirection.Unit
+            finalDirection = finalDirection + lookDirection * moveDirection.Z
+            finalDirection = finalDirection + rightDirection * moveDirection.X
+            finalDirection = finalDirection + Vector3.new(0, moveDirection.Y, 0)
+        end
+
+        bodyVelocity.Velocity = finalDirection * speed
+        bodyGyro.CFrame = camera.CFrame
+    end
+
+    -- Show mobile buttons when flying
+    ascendButton.Visible = true
+    descendButton.Visible = true
+
+    -- Connect to RunService for smooth updates
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
+        if not flying or not character or not humanoidRootPart.Parent then
+            connection:Disconnect()
+            bodyVelocity:Destroy()
+            bodyGyro:Destroy()
+            ascendButton:Destroy()
+            descendButton:Destroy()
+            return
+        end
+        updateFly()
+    end)
+
+    -- Disable gravity
+    humanoid.PlatformStand = true
+
+    return function()
+        flying = false
+        humanoid.PlatformStand = false
+        if connection then connection:Disconnect() end
+        if bodyVelocity then bodyVelocity:Destroy() end
+        if bodyGyro then bodyGyro:Destroy() end
+        ascendButton:Destroy()
+        descendButton:Destroy()
+    end
 end
 
+--// Toggle Fly Function for Global Access
+_G.ToggleFly = function()
+    if not _G.isFlying then
+        _G.isFlying = true
+        _G.stopFly = setupFly()
+    else
+        _G.isFlying = false
+        if _G.stopFly then
+            _G.stopFly()
+            _G.stopFly = nil
+        end
+    end
+end
+
+--// Ensure fly state is reset when character respawns
+player.CharacterAdded:Connect(function()
+    if _G.isFlying then
+        _G.isFlying = false
+        if _G.stopFly then
+            _G.stopFly()
+            _G.stopFly = nil
+        end
+    end
+end)
 
 
 
