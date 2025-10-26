@@ -344,7 +344,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "L0X77"
+title.Text = "77X0"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -4483,52 +4483,9 @@ end
 		end)
 		working = false
 	end
-	
-
-	function resetArms()
-	pcall(function()
-		local rweld = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-		local lweld = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
-		local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
-
-		-- Reset any grabbing state
-		_G.IsGrabbing = false
-		grabbing = false
-		working = false
-
-		-- Destroy leftover grab welds
-		for _, weld in pairs(char:GetDescendants()) do
-			if weld:IsA("Weld") and (weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed) then
-				weld:Destroy()
-			end
-		end
-
-		-- Smooth reset back to normal stance
-		local tweenSpeed = 0.1
-		if rweld and rweld:FindFirstChild("Weld") then
-			lerp(rweld.Weld, rweld.Weld.C0, CFrame.new(1.5, 0, 0), tweenSpeed)
-		end
-		if lweld and lweld:FindFirstChild("Weld") then
-			lerp(lweld.Weld, lweld.Weld.C0, CFrame.new(-1.5, 0, 0), tweenSpeed)
-		end
-		if hweld then
-			lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), tweenSpeed)
-		end
-
-		-- Force humanoid to idle animation
-		local hum = char:FindFirstChildOfClass("Humanoid")
-		if hum then
-			hum:ChangeState(Enum.HumanoidStateType.GettingUp)
-			hum:Move(Vector3.new())
-		end
-	end)
-end
-
-
 
 	function grab()
 		working = true
-		_G.IsGrabbing = true
 		pcall(function()
 			local rweld = Instance.new("Weld", char["Right Arm"])
 			local lweld = Instance.new("Weld", char["Left Arm"])
@@ -4556,13 +4513,9 @@ end
 			trail.Attachment1 = at2
 
 			local spinnyshit = coroutine.wrap(function()
-    while not _G.StopGrab do
-        lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(-90), 0), 0.07)
-        lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(90), 0), 0.07)
-        task.wait()
-    end
-end)
-
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
+				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(90), 0), 0.07)
+			end)
 			spinnyshit()
 			local cor = coroutine.wrap(function()
 				lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.08)
@@ -4609,8 +4562,6 @@ end)
 			end
 		end)
 		working = false
-		_G.IsGrabbing = false
-
 	end
 
 	mouse.KeyDown:connect(function(kkk)
@@ -4937,7 +4888,6 @@ THOT]])
 			elseif blademode == "knife" then
 	notify()
 	if grabbed == nil then
-		_G.StopGrab = false
 		-- Always grab first
 		grab()
 	else
@@ -4953,6 +4903,7 @@ THOT]])
 
 			local hum = grabbed:FindFirstChildOfClass("Humanoid")
 			if hum and hum.Health > 0 then
+				-- Stop any active grab animation
 				_G.StopGrab = true
 
 				-- Create and play sounds
@@ -4996,16 +4947,61 @@ THOT]])
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
 
-				resetArms()
-				grabbed = nil
-				working = false
+				-- === RESET ANIMATION LIKE THROW / RELEASE ===
+				pcall(function()
+					for _, weld in pairs(char:GetDescendants()) do
+						if weld:IsA("Weld") and (weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed) then
+							weld:Destroy()
+						end
+					end
 
+					local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+					local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+					local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
 
+					if rightArm and rightArm:FindFirstChild("Weld") then
+						lerp(rightArm.Weld, rightArm.Weld.C0, CFrame.new(1.5, 0, 0), 0.08)
+					end
+					if leftArm and leftArm:FindFirstChild("Weld") then
+						lerp(leftArm.Weld, leftArm.Weld.C0, CFrame.new(-1.5, 0, 0), 0.08)
+					end
+					if hweld then
+						lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
+					end
+
+					-- Force humanoid back to idle animation
+					local hum = char:FindFirstChildOfClass("Humanoid")
+					if hum then
+						hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+						hum:Move(Vector3.new())
+					end
+				end)
+
+				-- Recreate arm welds if they exist (like in throw)
+				pcall(function()
+					if leftclone and char:FindFirstChild("Left Arm") and char:FindFirstChild("Torso") then
+						local clone = leftclone:Clone()
+						clone.Part0 = char.Torso
+						clone.Part1 = char["Left Arm"]
+						clone.Parent = char.Torso
+					end
+					if rightclone and char:FindFirstChild("Right Arm") and char:FindFirstChild("Torso") then
+						local clone = rightclone:Clone()
+						clone.Part0 = char.Torso
+						clone.Part1 = char["Right Arm"]
+						clone.Parent = char.Torso
+					end
+				end)
 			end
 
-
+			-- Final cleanup
+			grabbed = nil
+			working = false
+			_G.StopGrab = false
 		end
 	end
+end
+
 
 elseif blademode == "reboot" then
 	raep()
