@@ -328,6 +328,7 @@ end)
 
 
 
+
 --// Services
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
@@ -556,9 +557,9 @@ local function refreshButtons()
 								workspace.CurrentCamera.CoordinateFrame.p)) * speed
 							lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
 						else
-							speed = math.max(speed - 50, 50)
-							bv.Velocity = Vector3.new(0, 0.1, 0)
-							lastctrl = {f = 0, b = 0, l = 0, r = 0} -- Reset lastctrl to stop lingering movement
+							speed = 50 -- Reset speed
+							bv.Velocity = Vector3.new(0, 0.1, 0) -- Slight upward velocity to prevent falling
+							lastctrl = {f = 0, b = 0, l = 0, r = 0} -- Reset lastctrl to stop movement
 						end
 						root.AssemblyLinearVelocity = bv.Velocity
 					end
@@ -569,16 +570,19 @@ local function refreshButtons()
 				end
 
 				-- Input handling
-				flingConnection = mouse.KeyDown:Connect(function(key)
-					key = key:lower()
-					if key == "w" then
-						ctrl.f = 1
-					elseif key == "s" then
-						ctrl.b = -1
-					elseif key == "a" then
-						ctrl.l = -1
-					elseif key == "d" then
-						ctrl.r = 1
+				flingConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+					if gameProcessed then return end
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						local key = input.KeyCode.Name:lower()
+						if key == "w" then
+							ctrl.f = 1
+						elseif key == "s" then
+							ctrl.b = -1
+						elseif key == "a" then
+							ctrl.l = -1
+						elseif key == "d" then
+							ctrl.r = 1
+						end
 					end
 				end)
 
@@ -717,7 +721,6 @@ refreshButtons()
 layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
 end)
-
 
 
 
