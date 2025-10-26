@@ -414,12 +414,71 @@ local function makeButton(name, callback)
 	return btn
 end
 
+--// DELTA-STYLE YIELD FLY COMMAND
+local flying = false
+local speed = 4
+local bodyGyro, bodyVel
+
+function _G.ToggleFly()
+	flying = not flying
+	local char = player.Character
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	local hrp = char.HumanoidRootPart
+	local hum = char:FindFirstChildOfClass("Humanoid")
+
+	if flying then
+		-- start fly
+		hum.PlatformStand = true
+
+		bodyGyro = Instance.new("BodyGyro")
+		bodyGyro.D = 10
+		bodyGyro.P = 20000
+		bodyGyro.MaxTorque = Vector3.new(400000, 400000, 400000)
+		bodyGyro.CFrame = hrp.CFrame
+		bodyGyro.Parent = hrp
+
+		bodyVel = Instance.new("BodyVelocity")
+		bodyVel.MaxForce = Vector3.new(400000, 400000, 400000)
+		bodyVel.Velocity = Vector3.zero
+		bodyVel.Parent = hrp
+
+		RunService.RenderStepped:Connect(function()
+			if not flying then return end
+			local cam = workspace.CurrentCamera
+			local moveDir = Vector3.zero
+
+			if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+				moveDir = moveDir + cam.CFrame.LookVector
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+				moveDir = moveDir - cam.CFrame.LookVector
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+				moveDir = moveDir - cam.CFrame.RightVector
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+				moveDir = moveDir + cam.CFrame.RightVector
+			end
+
+			bodyGyro.CFrame = cam.CFrame
+			bodyVel.Velocity = moveDir * speed
+		end)
+	else
+		-- stop fly
+		if bodyGyro then bodyGyro:Destroy() end
+		if bodyVel then bodyVel:Destroy() end
+		local char = player.Character
+		if char and char:FindFirstChildOfClass("Humanoid") then
+			char:FindFirstChildOfClass("Humanoid").PlatformStand = false
+		end
+	end
+end
+
 --// Logic
 local equipped = false
 local minimized = false
 
 local function refreshButtons()
-	-- Remove only buttons, keep layout
 	for _, child in ipairs(scroll:GetChildren()) do
 		if child:IsA("TextButton") then
 			child:Destroy()
@@ -473,56 +532,6 @@ end)
 
 -- Initialize buttons
 refreshButtons()
-
-
-
---------------------------------------------------
---// DELTA-STYLE YIELD FLY (PC + MOBILE)
---------------------------------------------------
-local RunService = game:GetService("RunService")
-local flying = false
-local speed = 70
-local bodyGyro, bodyVel
-local conn
-
-_G.ToggleFly = function()
-	flying = not flying
-	local char = player.Character or player.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
-	local hum = char:WaitForChild("Humanoid")
-
-	if flying then
-		hum.PlatformStand = true
-
-		bodyGyro = Instance.new("BodyGyro", hrp)
-		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-		bodyGyro.P = 9e4
-
-		bodyVel = Instance.new("BodyVelocity", hrp)
-		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-		bodyVel.Velocity = Vector3.zero
-
-		conn = RunService.RenderStepped:Connect(function()
-			if not flying or not hrp then return end
-
-			bodyGyro.CFrame = hrp.CFrame
-			local move = hum.MoveDirection
-
-			if move.Magnitude > 0 then
-				local dir = hrp.CFrame:VectorToWorldSpace(move)
-				bodyVel.Velocity = dir * speed
-			else
-				bodyVel.Velocity = Vector3.zero
-			end
-		end)
-	else
-		if conn then conn:Disconnect() end
-		if bodyGyro then bodyGyro:Destroy() end
-		if bodyVel then bodyVel:Destroy() end
-		hum.PlatformStand = false
-	end
-end
-
 
 
 
