@@ -4553,32 +4553,13 @@ function spawned()
 			end
 
 
-			local coru2=coroutine.wrap(function()
-				local whyy = grabbed
-				local continue = true
-				local repeats = 0
-				while continue == true do
-					local ree = pcall(function()
-						if repeats < 20 then
-							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
-							repeats = repeats+1
-							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
-								continue = false
-							end
-						else
-							continue = false
-						end
-					end)
-					if ree == false then
-						continue = false
-					end
-					if continue == true then
-						wait(0.2)
-					end
-				end
-				ragdollpart(whyy,"Head")
-			end)
-			coru2()
+			local victim = grabbed
+if victim and victim:FindFirstChildOfClass("Humanoid") then
+    victim:FindFirstChildOfClass("Humanoid").Health = 0
+    pcall(function()
+        ragdollpart(victim, "Head", true, false)
+    end)
+end
 
 
 			throwsound:Remove()
