@@ -475,8 +475,10 @@ end)
 refreshButtons()
 
 --------------------------------------------------
---// FLIGHT SCRIPT (PC + MOBILE)
+--// FLIGHT SCRIPT (PC + MOBILE - CAMERA DIRECTION)
 --------------------------------------------------
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local flying = false
 local speed = 80
 local verticalSpeed = 50
@@ -503,13 +505,15 @@ _G.ToggleFly = function()
 		flyConn = RunService.Heartbeat:Connect(function()
 			if not flying or not hrp then return end
 
-			-- Always face camera direction
-			bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-
-			-- Works for mobile joystick & PC
+			local camCF = workspace.CurrentCamera.CFrame
 			local moveDir = hum.MoveDirection
 
-			-- Vertical (Space to go up / Ctrl to go down on PC)
+			-- Align movement with camera facing
+			local forward = camCF.LookVector
+			local right = camCF.RightVector
+			local finalDir = (forward * moveDir.Z) + (right * moveDir.X)
+
+			-- Vertical controls
 			local yVel = 0
 			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
 				yVel = verticalSpeed
@@ -517,18 +521,17 @@ _G.ToggleFly = function()
 				yVel = -verticalSpeed
 			end
 
-			-- Apply velocity
-			local finalVel = moveDir * speed + Vector3.new(0, yVel, 0)
+			-- Apply
+			local finalVel = finalDir * speed + Vector3.new(0, yVel, 0)
+			bodyGyro.CFrame = camCF
 			bodyVel.Velocity = finalVel
 		end)
 	else
 		if flyConn then flyConn:Disconnect() flyConn = nil end
 		if bodyGyro then bodyGyro:Destroy() end
 		if bodyVel then bodyVel:Destroy() end
-
-		local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-		if hum then
-			hum.PlatformStand = false
+		if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
+			player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
 		end
 	end
 end
