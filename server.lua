@@ -4893,68 +4893,84 @@ THOT]])
 	else
 		-- Make sure grabbed isn't the player themself
 		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-			if grabbed ~= player.Character then
-				local hum = grabbed:FindFirstChildOfClass("Humanoid")
-				if hum then
-					-- Create sounds
-					local head = grabbed:FindFirstChild("Head") or grabbed
-					
-					local killsound = Instance.new("Sound", head)
-					killsound.SoundId = "rbxassetid://150315649"
-					killsound.PlaybackSpeed = math.random(9, 12) / 10
-					killsound.Volume = 1
-					
-					local killsoundac = Instance.new("Sound", head)
-					killsoundac.SoundId = "rbxassetid://162194585"
-					killsoundac.PlaybackSpeed = math.random(9, 13) / 10
-					killsoundac.Volume = 1
-					
-					local chokesound = Instance.new("Sound", head)
-					chokesound.SoundId = "rbxassetid://418658161"
-					chokesound.TimePosition = 3
-					chokesound.PlaybackSpeed = 1
-					chokesound.Volume = 1
-					
-					local bleedsound = Instance.new("Sound", head)
-					bleedsound.SoundId = "rbxassetid://244502094"
-					bleedsound.PlaybackSpeed = 1.5
-					bleedsound.Volume = 1
-					
-					-- Play sounds
-					killsound:Play()
-					killsoundac:Play()
-					chokesound:Play()
-					bleedsound:Play()
-
-					-- Instant kill
-					hum.Health = 0
-
-					-- Ragdoll and blood
-					pcall(function()
-						ragdollpart(grabbed, "Head", true, false)
-						local blood = Instance.new("Part", grabbed)
-						blood.Size = Vector3.new(0.2, 0.2, 0.2)
-						blood.BrickColor = BrickColor.new("Maroon")
-						blood.Material = Enum.Material.SmoothPlastic
-						blood.CanCollide = false
-						blood.Transparency = 0.3
-						blood.CFrame = head.CFrame
-						blood.Name = "ayybleed"
-						blood:BreakJoints()
-						spawn(function() bleed(blood) end)
-					end)
-
-					game.Debris:AddItem(killsound, 2)
-					game.Debris:AddItem(killsoundac, 2)
-					game.Debris:AddItem(chokesound, 2)
-					game.Debris:AddItem(bleedsound, 2)
-				end
-			else
-				notify("Prevented self-kill.", true)
-			end
-			grabbed = nil
-		end
+			if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
+	-- Make sure the grabbed model is not your own character
+	local myChar = player.Character
+	if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
+		notify("Prevented self-kill.", true)
+		grabbed = nil
+		working = false
+		return
 	end
+
+	local hum = grabbed:FindFirstChildOfClass("Humanoid")
+	if hum and hum.Health > 0 then
+		-- Create and play sounds
+		local head = grabbed:FindFirstChild("Head") or grabbed
+		local killsound = Instance.new("Sound", head)
+		killsound.SoundId = "rbxassetid://150315649"
+		killsound.PlaybackSpeed = math.random(9, 12) / 10
+		killsound.Volume = 1
+		killsound:Play()
+
+		local killsoundac = Instance.new("Sound", head)
+		killsoundac.SoundId = "rbxassetid://162194585"
+		killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+		killsoundac.Volume = 1
+		killsoundac:Play()
+
+		local bleedsound = Instance.new("Sound", head)
+		bleedsound.SoundId = "rbxassetid://244502094"
+		bleedsound.PlaybackSpeed = 1.5
+		bleedsound.Volume = 1
+		bleedsound:Play()
+
+		-- Kill safely
+		hum.Health = 0
+		pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+
+		-- Simple blood effect
+		local blood = Instance.new("Part", grabbed)
+		blood.Size = Vector3.new(0.2, 0.2, 0.2)
+		blood.BrickColor = BrickColor.new("Maroon")
+		blood.Material = Enum.Material.SmoothPlastic
+		blood.CanCollide = false
+		blood.Transparency = 0.3
+		blood.CFrame = head.CFrame
+		blood.Name = "ayybleed"
+		blood:BreakJoints()
+		spawn(function() bleed(blood) end)
+
+		game.Debris:AddItem(killsound, 2)
+		game.Debris:AddItem(killsoundac, 2)
+		game.Debris:AddItem(bleedsound, 2)
+	end
+
+	-- Reset animation and welds after kill
+	pcall(function()
+		for _, weld in pairs(char:GetDescendants()) do
+			if weld:IsA("Weld") then
+				if weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed then
+					weld:Destroy()
+				end
+			end
+		end
+	end)
+
+	local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+	if rightArm and rightArm:FindFirstChild("Weld") then
+		rightArm.Weld.C0 = CFrame.new(1.5, 0, 0)
+	end
+
+	local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+	if torso and torso:FindFirstChild("Weld") then
+		torso.Weld.C0 = CFrame.new(0, 0, 0)
+	end
+
+	grabbed = nil
+	working = false
+end
+
 
 
 			elseif blademode == "reboot" then
