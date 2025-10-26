@@ -474,7 +474,6 @@ end)
 -- Initialize buttons
 refreshButtons()
 
---// Fly Function with WASD support
 _G.ToggleFly = function()
 	local player = game.Players.LocalPlayer
 	local character = player.Character
@@ -482,86 +481,56 @@ _G.ToggleFly = function()
 	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid then return end
 
+	local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+	if not torso then return end
+
 	local flying = false
+	local maxspeed = 50
+	local speed = 0
+
+	local bg, bv
 
 	local function startFly()
 		flying = true
 		humanoid.PlatformStand = true
 
-		local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
-		local bg = Instance.new("BodyGyro", torso)
+		bg = Instance.new("BodyGyro", torso)
 		bg.P = 9e4
-		bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-		bg.cframe = torso.CFrame
+		bg.MaxTorque = Vector3.new(9e9,9e9,9e9)
+		bg.CFrame = torso.CFrame
 
-		local bv = Instance.new("BodyVelocity", torso)
-		bv.velocity = Vector3.new(0,0.1,0)
-		bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+		bv = Instance.new("BodyVelocity", torso)
+		bv.Velocity = Vector3.new(0,0,0)
+		bv.MaxForce = Vector3.new(9e9,9e9,9e9)
 
-		local ctrl = {f=0, b=0, l=0, r=0}
-		local lastctrl = {f=0, b=0, l=0, r=0}
-		local speed = 0
-		local maxspeed = 50
-
-		local UserInputService = game:GetService("UserInputService")
 		local RunService = game:GetService("RunService")
 
-		-- Listen to WASD input
-		local inputBegan
-		local inputEnded
-		inputBegan = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-			if gameProcessed then return end
-			if input.KeyCode == Enum.KeyCode.W then ctrl.f = 1 end
-			if input.KeyCode == Enum.KeyCode.S then ctrl.b = -1 end
-			if input.KeyCode == Enum.KeyCode.A then ctrl.l = -1 end
-			if input.KeyCode == Enum.KeyCode.D then ctrl.r = 1 end
-		end)
-		inputEnded = UserInputService.InputEnded:Connect(function(input, gameProcessed)
-			if input.KeyCode == Enum.KeyCode.W then ctrl.f = 0 end
-			if input.KeyCode == Enum.KeyCode.S then ctrl.b = 0 end
-			if input.KeyCode == Enum.KeyCode.A then ctrl.l = 0 end
-			if input.KeyCode == Enum.KeyCode.D then ctrl.r = 0 end
-		end)
-
+		-- Main fly loop
 		spawn(function()
 			while flying and humanoid.Health > 0 do
 				RunService.RenderStepped:Wait()
 
-				-- Acceleration & deceleration
-				if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-					speed = speed + 0.5 + (speed / maxspeed)
+				local moveDir = humanoid.MoveDirection -- supports WASD and mobile joystick
+				if moveDir.Magnitude > 0 then
+					speed = speed + 0.5 + (speed/maxspeed)
 					if speed > maxspeed then speed = maxspeed end
-				elseif speed ~= 0 then
+				elseif speed > 0 then
 					speed = speed - 1
 					if speed < 0 then speed = 0 end
 				end
 
-				-- Calculate velocity
-				if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-					bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
-						((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r,(ctrl.f + ctrl.b)*0.2,0).p) - workspace.CurrentCamera.CFrame.p)) * speed
-					lastctrl = {f=ctrl.f, b=ctrl.b, l=ctrl.l, r=ctrl.r}
-				elseif speed ~= 0 then
-					bv.velocity = ((workspace.CurrentCamera.CFrame.LookVector * (lastctrl.f + lastctrl.b)) +
-						((workspace.CurrentCamera.CFrame * CFrame.new(lastctrl.l + lastctrl.r,(lastctrl.f + lastctrl.b)*0.2,0).p) - workspace.CurrentCamera.CFrame.p)) * speed
-				else
-					bv.velocity = Vector3.new(0,0,0)
-				end
+				bv.Velocity = moveDir * speed
 
-				bg.CFrame = workspace.CurrentCamera.CFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+				-- Keep character upright relative to camera
+				local cam = workspace.CurrentCamera
+				bg.CFrame = CFrame.new(torso.Position, torso.Position + cam.CFrame.LookVector)
 			end
 
-			-- Cleanup when fly is turned off
-			ctrl = {f=0,b=0,l=0,r=0}
-			lastctrl = {f=0,b=0,l=0,r=0}
-			speed = 0
-			bg:Destroy()
-			bv:Destroy()
+			-- Cleanup
+			if bg then bg:Destroy() end
+			if bv then bv:Destroy() end
 			humanoid.PlatformStand = false
-
-			-- Disconnect input listeners
-			if inputBegan then inputBegan:Disconnect() end
-			if inputEnded then inputEnded:Disconnect() end
+			speed = 0
 		end)
 	end
 
