@@ -4483,6 +4483,48 @@ end
 		end)
 		working = false
 	end
+	
+
+	function resetArms()
+	pcall(function()
+		local rweld = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+		local lweld = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+		local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+
+		-- Reset any grabbing state
+		_G.IsGrabbing = false
+		grabbing = false
+		working = false
+
+		-- Destroy leftover grab welds
+		for _, weld in pairs(char:GetDescendants()) do
+			if weld:IsA("Weld") and (weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed) then
+				weld:Destroy()
+			end
+		end
+
+		-- Smooth reset back to normal stance
+		local tweenSpeed = 0.1
+		if rweld and rweld:FindFirstChild("Weld") then
+			lerp(rweld.Weld, rweld.Weld.C0, CFrame.new(1.5, 0, 0), tweenSpeed)
+		end
+		if lweld and lweld:FindFirstChild("Weld") then
+			lerp(lweld.Weld, lweld.Weld.C0, CFrame.new(-1.5, 0, 0), tweenSpeed)
+		end
+		if hweld then
+			lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), tweenSpeed)
+		end
+
+		-- Force humanoid to idle animation
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+			hum:Move(Vector3.new())
+		end
+	end)
+end
+
+
 
 	function grab()
 		working = true
@@ -4949,6 +4991,7 @@ THOT]])
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
 			end
+resetArms()
 grabbed = nil
 working = false
 
