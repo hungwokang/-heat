@@ -85,7 +85,7 @@ local function enableFling()
     local ch = player.Character
     local hrp = ch:WaitForChild("HumanoidRootPart")
 
-    -- Create a separate invisible fling object in front of the player
+    -- Create invisible fling object
     local prt = Instance.new("Model", workspace)
     prt.Name = "FlingPartModel"
 
@@ -95,6 +95,7 @@ local function enableFling()
     z1.Anchored = false
     z1.Transparency = 1
     z1.Size = Vector3.new(2, 2, 1)
+    z1.Massless = false
 
     local z2 = Instance.new("Part", prt)
     z2.Name = "Head"
@@ -108,11 +109,11 @@ local function enableFling()
 
     prt.Parent = workspace
 
-    -- Spawn it slightly in front of the player
+    -- spawn fling part in front of character
     local frontPos = hrp.CFrame * CFrame.new(0, 0, -5)
     z1.CFrame = frontPos
 
-    -- make it fling capable
+    -- fling physics setup
     local root = z1
     root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)
     local se = Instance.new("SelectionBox", root)
@@ -131,7 +132,26 @@ local function enableFling()
     hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
     hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
 
-    -- Simple fly handler using fling part
+    -- Make fling follow character smoothly
+    local followGyro = Instance.new("BodyGyro", root)
+    followGyro.P = 9e4
+    followGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+
+    local followVelocity = Instance.new("BodyVelocity", root)
+    followVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+
+    -- smooth follow loop
+    task.spawn(function()
+        while task.wait(0.03) do
+            if not root or not root.Parent or not hrp or not hrp.Parent then break end
+            -- position stays 5 studs ahead of player direction
+            local targetCFrame = hrp.CFrame * CFrame.new(0, 0, -5)
+            followGyro.CFrame = hrp.CFrame
+            followVelocity.Velocity = (targetCFrame.Position - root.Position) * 5
+        end
+    end)
+
+    -- flight control (same as your original)
     local ctrl = {f = 0, b = 0, l = 0, r = 0}
     local lastctrl = {f = 0, b = 0, l = 0, r = 0}
     local maxspeed = 50
@@ -141,13 +161,14 @@ local function enableFling()
     local function Fly()
         local bg = Instance.new("BodyGyro", root)
         bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
         bg.CFrame = root.CFrame
+
         local bv = Instance.new("BodyVelocity", root)
         bv.Velocity = Vector3.new(0, 0, 0)
         bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
 
-        repeat wait()
+        repeat task.wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
             if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
                 speed = math.clamp(speed + 5, 0, maxspeed)
@@ -158,6 +179,7 @@ local function enableFling()
                 ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CFrame.p)) * speed
             root.AssemblyLinearVelocity = bv.Velocity
         until not flying
+
         bg:Destroy()
         bv:Destroy()
     end
@@ -192,6 +214,7 @@ local function enableFling()
 
     Fly()
 end
+
 
 
 -- Connect buttons
