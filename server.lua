@@ -5014,6 +5014,10 @@ THOT]])
 			if grabbed ~= player.Character then
 				grabbed:FindFirstChildOfClass("Humanoid").Health = 0
 				pcall(function()
+killsound:Play()
+			killsoundac:Play()
+			chokesound:Play()
+			bleedsound:Play()
 					ragdollpart(grabbed, "Head", true, false)
 				end)
 			else
