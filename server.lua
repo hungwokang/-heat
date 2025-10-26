@@ -1,7 +1,7 @@
 game.StarterGui:SetCore("SendNotification", {
     Title = "FE Invisible Fling";
     Text = "hehe boi get load'd";
-    Duration = 11;
+    Duration = 3;
 })
 
 local player = game.Players.LocalPlayer
@@ -78,7 +78,7 @@ local function enableFling()
     spawn(function()
         local message = Instance.new("Message", workspace)
         message.Text = "FE Invisible Fling By Diemiers#4209 Loaded (wait 11 seconds to load)"
-        wait(3)
+        wait(11)
         message:Destroy()
     end)
     
@@ -110,19 +110,22 @@ local function enableFling()
     hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
     hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
     
-    -- Destroy unnecessary parts for true invisibility and to reduce physics interactions
-    for _, v in pairs(player.Character:GetChildren()) do
+    -- Make character visible, but disable collisions on visible parts
+    for _, v in pairs(player.Character:GetDescendants()) do
         if v:IsA("BasePart") and v ~= root then
-            v:Destroy()
-        elseif v:IsA("Decal") and v.Name == "face" then
-            v:Destroy()
+            v.Transparency = 0
+            v.CanCollide = false
         elseif v:IsA("Accessory") then
-            v:Destroy()
+            local handle = v:FindFirstChild("Handle")
+            if handle then
+                handle.Transparency = 0
+                handle.CanCollide = false
+            end
         end
     end
     
-    -- Set root properties
-    root.Transparency = 100
+    -- Set root properties (flinging object invisible)
+    root.Transparency = 1
     root.CanCollide = true  -- Enable collision for flinging
     root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)  -- High density for high mass, low friction/elasticity to prevent backlash
     
@@ -158,7 +161,7 @@ local function enableFling()
         repeat wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
             if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 50
+                speed = speed + 0
                 if speed > maxspeed then
                     speed = maxspeed
                 end
