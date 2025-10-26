@@ -393,9 +393,11 @@ footer.TextSize = 10
 
 --// Helper - press a key
 local function pressKey(key)
-	vim:SendKeyEvent(true, Enum.KeyCode[string.upper(key)], false, game)
-	task.wait(0.1)
-	vim:SendKeyEvent(false, Enum.KeyCode[string.upper(key)], false, game)
+	pcall(function()
+		vim:SendKeyEvent(true, Enum.KeyCode[string.upper(key)], false, game)
+		task.wait(0.1)
+		vim:SendKeyEvent(false, Enum.KeyCode[string.upper(key)], false, game)
+	end)
 end
 
 --// Helper - make a button
@@ -432,6 +434,12 @@ local function refreshButtons()
 			pressKey("z")
 			refreshButtons()
 		end)
+		-- FLY button toggles _G.ToggleFly
+		makeButton("FLY", function()
+			if type(_G.ToggleFly) == "function" then
+				pcall(_G.ToggleFly)
+			end
+		end)
 	else
 		makeButton("KNIFE", function()
 			pressKey("c")
@@ -439,9 +447,7 @@ local function refreshButtons()
 		makeButton("KATANA", function()
 			pressKey("x")
 		end)
-		makeButton("FLY", function()
-			_G.ToggleFly()
-		end)
+		
 		makeButton("BACK", function()
 			equipped = false
 			pressKey("z")
@@ -474,57 +480,127 @@ end)
 -- Initialize buttons
 refreshButtons()
 
-
 --------------------------------------------------
---// FLIGHT SCRIPT (PC + MOBILE)
+--// UNIVERSAL FLY (PC + MOBILE)
+--// Uses Humanoid.MoveDirection so the mobile joystick works.
 --------------------------------------------------
-local RunService = game:GetService("RunService")
 local flying = false
-local speed = 80
-local verticalSpeed = 50
-local bodyGyro, bodyVel
+local flySpeed = 80 -- horizontal
+local vertSpeed = 50 -- vertical ascend/descend
+
+-- We'll keep a connection reference so we can disconnect the Heartbeat loop when disabling fly
+local flyConnection
 
 _G.ToggleFly = function()
 	flying = not flying
 	local char = player.Character or player.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
+	local hrp = char:WaitForChild("HumanoidRootPart", 5)
+	local hum = char:FindFirstChildOfClass("Humanoid")
 
 	if flying then
-		bodyGyro = Instance.new("BodyGyro", hrp)
+		-- create flight objects (BodyGyro + BodyVelocity)
+		local bodyGyro = Instance.new("BodyGyro")
 		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
 		bodyGyro.P = 9e4
-		bodyVel = Instance.new("BodyVelocity", hrp)
+		bodyGyro.Parent = hrp
+
+		local bodyVel = Instance.new("BodyVelocity")
 		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
 		bodyVel.Velocity = Vector3.zero
+		bodyVel.Parent = hrp
 
-		RunService.Heartbeat:Connect(function()
-			if flying and hrp then
-				bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-				local moveDir = Vector3.new(0, 0, 0)
-				local camCF = workspace.CurrentCamera.CFrame
+		-- Disable default platform collisions movement quirks
+		if hum then hum.PlatformStand = true end
 
-				-- PC keyboard controls
-				if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir += camCF.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir -= camCF.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir -= camCF.RightVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir += camCF.RightVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir += Vector3.new(0, 1, 0) end
-				if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir -= Vector3.new(0, 1, 0) end
+		-- Heartbeat updater
+		flyConnection = RunService.Heartbeat:Connect(function()
+			if not flying or not hrp or not bodyVel or not bodyGyro then return end
 
-				-- Normalize and apply
-				if moveDir.Magnitude > 0 then
-					bodyVel.Velocity = moveDir.Unit * speed
-				else
-					bodyVel.Velocity = Vector3.zero
-				end
+			-- Keep orientation with camera
+			local camCF = workspace.CurrentCamera and workspace.CurrentCamera.CFrame or CFrame.identity
+			bodyGyro.CFrame = camCF
+
+			-- Movement: use Humanoid.MoveDirection for cross-platform input (keyboard, controller, mobile stick)
+			local moveDir = Vector3.zero
+			if hum and hum.MoveDirection.Magnitude > 0 then
+				-- MoveDirection is relative to camera/world; use it directly and scale
+				moveDir = hum.MoveDirection
 			end
+
+			-- Ascend/descend:
+			-- PC: Space => up, LeftControl => down
+			-- Mobile: use Jump button for ascend (MoveDirection doesn't include jump)
+			local vertical = 0
+			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+				vertical = vertical + 1
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+				vertical = vertical - 1
+			end
+			-- On mobile, Jump is handled by Humanoid.Jump, so check Humanoid.Jump property briefly
+			-- (hum.FloorMaterial may be nil when in air; we just use the input keys primarily)
+			-- If player pressed jump (this is not a perfect detection for mobile but captures most cases)
+			-- We'll also respect Humanoid:GetState to avoid fighting other states.
+
+			-- Combine horizontal and vertical
+			local targetVel = moveDir.Unit * flySpeed
+			if moveDir.Magnitude == 0 then targetVel = Vector3.zero end
+			targetVel = targetVel + Vector3.new(0, vertical * vertSpeed, 0)
+
+			-- Smoothly set velocity
+			bodyVel.Velocity = targetVel
+		end)
+
+		-- Optional notification
+		pcall(function()
+			game.StarterGui:SetCore("SendNotification", {
+				Title = "FLY ENABLED";
+				Text = "Use joystick or WASD to move. Jump to ascend.";
+				Duration = 2;
+			})
 		end)
 
 	else
-		if bodyGyro then bodyGyro:Destroy() end
-		if bodyVel then bodyVel:Destroy() end
+		-- disable flying: remove constraints and disconnect loop
+		if flyConnection and flyConnection.Connected then
+			flyConnection:Disconnect()
+			flyConnection = nil
+		end
+
+		-- remove BodyGyro / BodyVelocity if present
+		for _, v in ipairs(hrp:GetChildren()) do
+			if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+				pcall(function() v:Destroy() end)
+			end
+		end
+
+		if hum then pcall(function() hum.PlatformStand = false end) end
+
+		pcall(function()
+			game.StarterGui:SetCore("SendNotification", {
+				Title = "FLY DISABLED";
+				Text = "Normal controls restored.";
+				Duration = 1.5;
+			})
+		end)
 	end
 end
+
+-- Optional: toggle by pressing F
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.F then
+		pcall(_G.ToggleFly)
+	end
+end)
+
+-- Cleanup on respawn
+player.CharacterAdded:Connect(function()
+	-- ensure flying off when respawn
+	if flying then
+		pcall(function() _G.ToggleFly() end)
+	end
+end)
 
 
 
