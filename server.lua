@@ -4485,85 +4485,102 @@ end
 	end
 
 	function grab()
-		working = true
-		pcall(function()
-			local rweld = Instance.new("Weld", char["Right Arm"])
-			local lweld = Instance.new("Weld", char["Left Arm"])
-			rweld.Part0 = char["Torso"]
-			rweld.Part1 = char["Right Arm"]
-			rweld.C0 = CFrame.new(1.5, 0, 0)
-			lweld.Part0 = char.Torso
-			lweld.Part1 = char["Left Arm"]
-			lweld.C0 = CFrame.new(-1.5, 0, 0)
+	working = true
+	_G.IsGrabbing = true -- flag to tell kill() to stop animation
 
-			local at1 = Instance.new("Attachment", handle)
-			local at2 = Instance.new("Attachment", handle)
-			at1.Visible = false
-			at1.Position = Vector3.new(2, 0, 0)
-			at2.Visible = false
-			at2.Position = Vector3.new(-0.3, 0, 0)
+	pcall(function()
+		local rweld = Instance.new("Weld", char["Right Arm"])
+		local lweld = Instance.new("Weld", char["Left Arm"])
+		rweld.Part0 = char["Torso"]
+		rweld.Part1 = char["Right Arm"]
+		rweld.C0 = CFrame.new(1.5, 0, 0)
+		lweld.Part0 = char.Torso
+		lweld.Part1 = char["Left Arm"]
+		lweld.C0 = CFrame.new(-1.5, 0, 0)
 
-			local trail = Instance.new("Trail", handle)
-			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
-			trail.LightEmission = 0.25
-			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
-			trail.Lifetime = 0.10
-			trail.MinLength = 0.05
-			trail.Attachment0 = at1
-			trail.Attachment1 = at2
+		local at1 = Instance.new("Attachment", handle)
+		local at2 = Instance.new("Attachment", handle)
+		at1.Visible = false
+		at1.Position = Vector3.new(2, 0, 0)
+		at2.Visible = false
+		at2.Position = Vector3.new(-0.3, 0, 0)
 
-			local spinnyshit = coroutine.wrap(function()
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(90), 0), 0.07)
-			end)
-			spinnyshit()
-			local cor = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.08)
-			end)
-			cor()
-			lerp(lweld,lweld.C0,CFrame.new(-2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(-90)),0.08)
-			wait(0.15)
-			grabbing = true
-			local cor = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1, 0.7, -0.75) * CFrame.Angles(0, math.rad(95), math.rad(105)),0.08)
-			end)
-			cor()
-			lerp(lweld,lweld.C0,CFrame.new(-1.25, 0.7, -0.75) * CFrame.Angles(0, math.rad(-140), math.rad(-105)),0.08)
-			at1:Remove()
-			at2:Remove()
-			trail:Remove()
-			wait(0.3)
-			grabbing = false
+		local trail = Instance.new("Trail", handle)
+		trail.Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+		})
+		trail.LightEmission = 0.25
+		trail.Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0.75),
+			NumberSequenceKeypoint.new(1, 1)
+		})
+		trail.Lifetime = 0.10
+		trail.MinLength = 0.05
+		trail.Attachment0 = at1
+		trail.Attachment1 = at2
 
-			if grabbed == nil then
-				local cor = coroutine.wrap(function()
-					lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
-				end)
-				local cor2 = coroutine.wrap(function()
-					lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0),0.08)
-				end)
-				cor()
-				cor2()
-				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, math.rad(0), math.rad(0)),0.08)
-				lweld:Remove()
-				rweld:Remove()
-				if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
-					local clone = leftclone:Clone()
-					clone.Part0 = char.Torso
-					clone.Part1 = char["Left Arm"]
-					clone.Parent = char.Torso
-				end
-				if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
-					local clone = rightclone:Clone()
-					clone.Part0 = char.Torso
-					clone.Part1 = char["Right Arm"]
-					clone.Parent = char.Torso
-				end
+		-- Animated swing / grab motion
+		local spinny = coroutine.wrap(function()
+			while _G.IsGrabbing do
+				lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(-90), 0), 0.07)
+				lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(0, math.rad(90), 0), 0.07)
+				task.wait()
 			end
 		end)
-		working = false
-		grabbed = nil
-	end
+		spinny()
+
+		lerp(rweld, rweld.C0, CFrame.new(2, 0.5, 0) * CFrame.Angles(0, 0, math.rad(90)), 0.08)
+		lerp(lweld, lweld.C0, CFrame.new(-2, 0.5, 0) * CFrame.Angles(0, 0, math.rad(-90)), 0.08)
+		task.wait(0.15)
+		grabbing = true
+
+		lerp(rweld, rweld.C0, CFrame.new(1, 0.7, -0.75) * CFrame.Angles(0, math.rad(95), math.rad(105)), 0.08)
+		lerp(lweld, lweld.C0, CFrame.new(-1.25, 0.7, -0.75) * CFrame.Angles(0, math.rad(-140), math.rad(-105)), 0.08)
+
+		at1:Destroy()
+		at2:Destroy()
+		trail:Destroy()
+
+		task.wait(0.3)
+		grabbing = false
+
+		-- This always runs when grab ends or target dies
+		_G.IsGrabbing = false
+		task.wait(0.05)
+
+		-- Reset arms and welds (always)
+		pcall(function()
+			lerp(rweld, rweld.C0, CFrame.new(1.5, 0, 0), 0.08)
+			lerp(lweld, lweld.C0, CFrame.new(-1.5, 0, 0), 0.08)
+			lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
+		end)
+
+		task.wait(0.05)
+		pcall(function()
+			rweld:Destroy()
+			lweld:Destroy()
+		end)
+
+		pcall(function()
+			if leftclone and char:FindFirstChild("Left Arm") and char:FindFirstChild("Torso") then
+				local clone = leftclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Left Arm"]
+				clone.Parent = char.Torso
+			end
+			if rightclone and char:FindFirstChild("Right Arm") and char:FindFirstChild("Torso") then
+				local clone = rightclone:Clone()
+				clone.Part0 = char.Torso
+				clone.Part1 = char["Right Arm"]
+				clone.Parent = char.Torso
+			end
+		end)
+	end)
+
+	working = false
+	grabbed = nil
+end
 
 	mouse.KeyDown:connect(function(kkk)
 		local key = kkk:lower()
@@ -4904,6 +4921,9 @@ THOT]])
 
 			local hum = grabbed:FindFirstChildOfClass("Humanoid")
 			if hum and hum.Health > 0 then
+				-- Stop any grab animation loop
+				_G.IsGrabbing = false
+
 				-- Create and play sounds
 				local head = grabbed:FindFirstChild("Head") or grabbed
 
