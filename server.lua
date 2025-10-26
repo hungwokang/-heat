@@ -4893,69 +4893,73 @@ THOT]])
 	else
 		-- Make sure grabbed isn't the player themself
 		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-			local myChar = player.Character
-			if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
-				notify("Prevented self-kill.", true)
-				grabbed = nil
-				working = false
-				return
-			end
+	local myChar = player.Character
+	if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
+		notify("Prevented self-kill.", true)
+		grabbed = nil
+		working = false
+		return
+	end
 
-			local hum = grabbed:FindFirstChildOfClass("Humanoid")
-			if hum and hum.Health > 0 then
-				-- Create and play sounds
-				local head = grabbed:FindFirstChild("Head") or grabbed
+	local hum = grabbed:FindFirstChildOfClass("Humanoid")
+	if hum and hum.Health > 0 then
+		-- Create and play sounds
+		local head = grabbed:FindFirstChild("Head") or grabbed
 
-				local killsound = Instance.new("Sound", head)
-				killsound.SoundId = "rbxassetid://150315649"
-				killsound.PlaybackSpeed = math.random(9, 12) / 10
-				killsound.Volume = 1
-				killsound:Play()
+		local killsound = Instance.new("Sound", head)
+		killsound.SoundId = "rbxassetid://150315649"
+		killsound.PlaybackSpeed = math.random(9, 12) / 10
+		killsound.Volume = 1
+		killsound:Play()
 
-				local killsoundac = Instance.new("Sound", head)
-				killsoundac.SoundId = "rbxassetid://162194585"
-				killsoundac.PlaybackSpeed = math.random(9, 13) / 10
-				killsoundac.Volume = 1
-				killsoundac:Play()
+		local killsoundac = Instance.new("Sound", head)
+		killsoundac.SoundId = "rbxassetid://162194585"
+		killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+		killsoundac.Volume = 1
+		killsoundac:Play()
 
-				local bleedsound = Instance.new("Sound", head)
-				bleedsound.SoundId = "rbxassetid://244502094"
-				bleedsound.PlaybackSpeed = 1.5
-				bleedsound.Volume = 1
-				bleedsound:Play()
+		local bleedsound = Instance.new("Sound", head)
+		bleedsound.SoundId = "rbxassetid://244502094"
+		bleedsound.PlaybackSpeed = 1.5
+		bleedsound.Volume = 1
+		bleedsound:Play()
 
-				-- Kill safely
-				hum.Health = 0
-				pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+		-- Kill safely
+		hum.Health = 0
+		pcall(function() ragdollpart(grabbed, "Head", true, false) end)
 
-				-- Simple blood effect
-				local blood = Instance.new("Part", grabbed)
-				blood.Size = Vector3.new(0.2, 0.2, 0.2)
-				blood.BrickColor = BrickColor.new("Maroon")
-				blood.Material = Enum.Material.SmoothPlastic
-				blood.CanCollide = false
-				blood.Transparency = 0.3
-				blood.CFrame = head.CFrame
-				blood.Name = "ayybleed"
-				blood:BreakJoints()
-				spawn(function() bleed(blood) end)
+		-- Simple blood effect
+		local blood = Instance.new("Part", grabbed)
+		blood.Size = Vector3.new(0.2, 0.2, 0.2)
+		blood.BrickColor = BrickColor.new("Maroon")
+		blood.Material = Enum.Material.SmoothPlastic
+		blood.CanCollide = false
+		blood.Transparency = 0.3
+		blood.CFrame = head.CFrame
+		blood.Name = "ayybleed"
+		blood:BreakJoints()
+		spawn(function() bleed(blood) end)
 
-				game.Debris:AddItem(killsound, 2)
-				game.Debris:AddItem(killsoundac, 2)
-				game.Debris:AddItem(bleedsound, 2)
-			elseif grabbed ~= nil then
-				if mode == "kill" then
-					kill()
-				elseif mode == "throw" then
-					throw()
-				elseif mode == "release" then
-					release()
-grabbed = nil
-working = false
-
-			end
+		game.Debris:AddItem(killsound, 2)
+		game.Debris:AddItem(killsoundac, 2)
+		game.Debris:AddItem(bleedsound, 2)
+	
+	elseif grabbed ~= nil then
+		-- Handle different modes (kill, throw, release)
+		if mode == "kill" then
+			kill()
+		elseif mode == "throw" then
+			throw()
+		elseif mode == "release" then
+			release()
 		end
 	end
+
+	-- Final cleanup
+	grabbed = nil
+	working = false
+end
+
 
 
 elseif blademode == "reboot" then
