@@ -4375,189 +4375,71 @@ function spawned()
 		working = false
 	end
 
-	function kill()
-		working = true
+function kill()
+	working = true
+	pcall(function()
+		if not grabbed or not grabbed:FindFirstChildOfClass("Humanoid") then
+			working = false
+			return
+		end
+		if grabbed == char then
+			notify("Prevented self-kill.", true)
+			working = false
+			return
+		end
+
+		-- Play instant kill sounds
+		local killsound = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
+		killsound.SoundId = "rbxassetid://150315649"
+		killsound.PlaybackSpeed = math.random(9, 12) / 10
+		killsound.Volume = 1
+		killsound:Play()
+
+		local killsoundac = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
+		killsoundac.SoundId = "rbxassetid://162194585"
+		killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+		killsoundac.Volume = 1
+		killsoundac:Play()
+
+		local bleedsound = Instance.new("Sound", grabbed:FindFirstChild("Head") or grabbed)
+		bleedsound.SoundId = "rbxassetid://244502094"
+		bleedsound.PlaybackSpeed = 1.5
+		bleedsound.Volume = 1
+		bleedsound:Play()
+
+		-- Instant kill
+		local hum = grabbed:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum.Health = 0
+		end
+
+		-- Ragdoll effect
 		pcall(function()
-			local rweld = char["Right Arm"]:FindFirstChild("Weld")
-			local lweld = char["Left Arm"]:FindFirstChild("Weld")
-			local tweld = Instance.new("Weld", char.HumanoidRootPart)
-			tweld.Part0 = char.HumanoidRootPart
-			tweld.Part1 = char.Torso
-			local killsound = Instance.new("Sound", grabbed.Head)
-			killsound.SoundId = "rbxassetid://150315649"
-			killsound.PlaybackSpeed = 1.2
-			local killsoundac = Instance.new("Sound", grabbed.Head)
-			killsoundac.SoundId = "rbxassetid://162194585"
-			killsoundac.PlaybackSpeed = 1
-			killsoundac.Volume = 1
-			local throwsound = Instance.new("Sound", char.Head)
-			throwsound.SoundId = "rbxassetid://711753382"
-			throwsound.PlaybackSpeed = 0.75
-			local chokesound = Instance.new("Sound", grabbed.Head)
-			chokesound.SoundId = "rbxassetid://418658161"
-			chokesound.TimePosition = 3
-			chokesound.PlaybackSpeed = 1
-			local bleedsound = Instance.new("Sound", grabbed.Head)
-			bleedsound.SoundId = "rbxassetid://244502094"
-			bleedsound.PlaybackSpeed = 1.5
-			bleedsound.Volume = 1
-
-			pitchun = math.random(9, 12)/10
-			pitchdos = math.random(9, 13)/10
-
-			killsound.PlaybackSpeed = pitchun
-			killsoundac.PlaybackSpeed = pitchdos
-			chokesound.PlaybackSpeed = pitchun
-
-			pcall(function()
-				--grabbed.HumanoidRootPart:Destroy()
-			end)
-
-			lerp(rweld,rweld.C0,CFrame.new(0.5, 0.7, -0.70) * CFrame.Angles(0, math.rad(100), math.rad(105)),0.1)
-			wait(0.2)
-			lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.04)
-
-			killsound:Play()
-			killsoundac:Play()
-			chokesound:Play()
-			bleedsound:Play()
-
-			local ayybleed = Instance.new('Part',grabbed)
-			ayybleed.Size = Vector3.new(0.2,0.2,0.2)
-			ayybleed.BrickColor = BrickColor.new('Maroon')
-			ayybleed.Material = Enum.Material.SmoothPlastic
-			ayybleed.Name = "ayybleed"
-			ayybleed.CanCollide = false
-			ayybleed.Transparency = 0.5
-			ayybleed.CFrame = grabbed.Head.CFrame
-			ayybleed:BreakJoints()
-			local attachment1 = Instance.new('Attachment',ayybleed)
-			attachment1.Position = Vector3.new(-0.55,0,0)
-			attachment1.Orientation = Vector3.new(90, 0, -90)
-			local attachment0 = Instance.new('Attachment')
-			pcall(function()
-				attachment0.Parent = grabbed.Torso
-			end)
-			pcall(function()
-				attachment0.Parent = grabbed.UpperTorso
-			end)
-			if attachment0 and attachment1 then
-				local constraint = Instance.new("HingeConstraint")
-				constraint.Attachment0 = attachment0
-				constraint.Attachment1 = attachment1
-				constraint.LimitsEnabled = true
-				constraint.UpperAngle = 0
-				constraint.LowerAngle = 0
-				pcall(function()
-					constraint.Parent = grabbed.Torso
-				end)
-				pcall(function()
-					constraint.Parent = grabbed.UpperTorso
-				end)
-			end
-			local bleedBLEED= coroutine.wrap(function()
-				bleed(ayybleed)
-			end)
-			bleedBLEED()
-
-			wait(0.2)
-
-			local at1 = Instance.new("Attachment", handle)
-			local at2 = Instance.new("Attachment", handle)
-			at1.Visible = false
-			at1.Position = Vector3.new(2, 0, 0)
-			at2.Visible = false
-			at2.Position = Vector3.new(-0.3, 0, 0)
-
-			local trail = Instance.new("Trail", handle)
-			trail.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))})
-			trail.LightEmission = 0.25
-			trail.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.75), NumberSequenceKeypoint.new(1, 1)})
-			trail.Lifetime = 0.10
-			trail.MinLength = 0.05
-			trail.Attachment0 = at1
-			trail.Attachment1 = at2
-
-			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-40), math.rad(15)),0.08)
-			lerp(rweld,rweld.C0,CFrame.new(1.5, 0.15, 0.4) * CFrame.Angles(0, math.rad(-30), math.rad(15)),0.1)
-			local coru=coroutine.wrap(function()
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180),math.rad(-90), 0), 0.09)
-			end)
-			coru()
-			local cor = coroutine.wrap(function()
-				lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(-30), 0),0.04)
-			end)
-			cor()
-			grabweld:Remove()
-			throwsound:Play()
-
-			local throwvel = Instance.new("BodyThrust")
-			throwvel.Force = Vector3.new(0, 3000, -1000)
-			pcall(function()
-				throwvel.Parent = grabbed.Torso
-			end)
-			pcall(function()
-				throwvel.Parent = grabbed.UpperTorso
-			end)
-
-			trail:Remove()
-			at1:Remove()
-			at2:Remove()
-			lerp(lweld,lweld.C0,CFrame.new(-1.3, 0.7, -1) * CFrame.Angles(0, math.rad(-70), math.rad(-105)),0.04)
-			pcall(function()
-				ragdollpart(grabbed,"Left Arm")
-				ragdollpart(grabbed,"Left Leg")
-				ragdollpart(grabbed,"Right Arm")
-				ragdollpart(grabbed,"Right Leg")
-			end)
-			pcall(function()
-				ragdollpart(grabbed,"LeftUpperLeg")
-				ragdollpart(grabbed,"RightUpperLeg")
-				ragdollpart(grabbed,"LeftUpperArm")
-				ragdollpart(grabbed,"RightUpperArm")
-			end)
-			wait(0.15)
-			throwvel:Remove()
-			local cor = coroutine.wrap(function()
-				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			local cor2 = coroutine.wrap(function()
-				lerp(rweld,rweld.C0,CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-			end)
-			cor()
-			cor2()
-			lerp(tweld,tweld.C0,CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
-
-			lweld:Remove()
-			rweld:Remove()
-			tweld:Remove()
-
-			if torsoclone and char:FindFirstChild("Torso") and char:FindFirstChild("HumanoidRootPart") then
-				local clone = torsoclone:Clone()
-				clone.Part0 = char.HumanoidRootPart
-				clone.Part1 = char.Torso
-				clone.Parent = char.HumanoidRootPart
-			end
-			if leftclone and char:FindFirstChild('Left Arm') and char:FindFirstChild('Torso') then
-				local clone = leftclone:Clone()
-				clone.Part0 = char.Torso
-				clone.Part1 = char["Left Arm"]
-				clone.Parent = char.Torso
-			end
-			if rightclone and char:FindFirstChild('Right Arm') and char:FindFirstChild('Torso') then
-				local clone = rightclone:Clone()
-				clone.Part0 = char.Torso
-				clone.Part1 = char["Right Arm"]
-				clone.Parent = char.Torso
-			end
-
-			throwsound:Remove()
-			killsound:Remove()
+			ragdollpart(grabbed, "Head", true, false)
 		end)
-		grabbed = nil
-		working = false
-	end
+
+		-- Simple blood effect
+		local blood = Instance.new("Part", grabbed)
+		blood.Size = Vector3.new(0.2, 0.2, 0.2)
+		blood.BrickColor = BrickColor.new("Maroon")
+		blood.Material = Enum.Material.SmoothPlastic
+		blood.CanCollide = false
+		blood.CFrame = grabbed.Head and grabbed.Head.CFrame or grabbed:GetModelCFrame()
+		blood.Transparency = 0.3
+		blood.Name = "ayybleed"
+		blood:BreakJoints()
+		spawn(function() bleed(blood) end)
+
+		wait(0.3)
+		killsound:Destroy()
+		killsoundac:Destroy()
+		bleedsound:Destroy()
+	end)
+
+	grabbed = nil
+	working = false
+end
+
 
 	function release()
 		working = true
@@ -5012,20 +4894,68 @@ THOT]])
 		-- Make sure grabbed isn't the player themself
 		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
 			if grabbed ~= player.Character then
-				grabbed:FindFirstChildOfClass("Humanoid").Health = 0
-				pcall(function()
-killsound:Play()
-			killsoundac:Play()
-			chokesound:Play()
-			bleedsound:Play()
-					ragdollpart(grabbed, "Head", true, false)
-				end)
+				local hum = grabbed:FindFirstChildOfClass("Humanoid")
+				if hum then
+					-- Create sounds
+					local head = grabbed:FindFirstChild("Head") or grabbed
+					
+					local killsound = Instance.new("Sound", head)
+					killsound.SoundId = "rbxassetid://150315649"
+					killsound.PlaybackSpeed = math.random(9, 12) / 10
+					killsound.Volume = 1
+					
+					local killsoundac = Instance.new("Sound", head)
+					killsoundac.SoundId = "rbxassetid://162194585"
+					killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+					killsoundac.Volume = 1
+					
+					local chokesound = Instance.new("Sound", head)
+					chokesound.SoundId = "rbxassetid://418658161"
+					chokesound.TimePosition = 3
+					chokesound.PlaybackSpeed = 1
+					chokesound.Volume = 1
+					
+					local bleedsound = Instance.new("Sound", head)
+					bleedsound.SoundId = "rbxassetid://244502094"
+					bleedsound.PlaybackSpeed = 1.5
+					bleedsound.Volume = 1
+					
+					-- Play sounds
+					killsound:Play()
+					killsoundac:Play()
+					chokesound:Play()
+					bleedsound:Play()
+
+					-- Instant kill
+					hum.Health = 0
+
+					-- Ragdoll and blood
+					pcall(function()
+						ragdollpart(grabbed, "Head", true, false)
+						local blood = Instance.new("Part", grabbed)
+						blood.Size = Vector3.new(0.2, 0.2, 0.2)
+						blood.BrickColor = BrickColor.new("Maroon")
+						blood.Material = Enum.Material.SmoothPlastic
+						blood.CanCollide = false
+						blood.Transparency = 0.3
+						blood.CFrame = head.CFrame
+						blood.Name = "ayybleed"
+						blood:BreakJoints()
+						spawn(function() bleed(blood) end)
+					end)
+
+					game.Debris:AddItem(killsound, 2)
+					game.Debris:AddItem(killsoundac, 2)
+					game.Debris:AddItem(chokesound, 2)
+					game.Debris:AddItem(bleedsound, 2)
+				end
 			else
 				notify("Prevented self-kill.", true)
 			end
 			grabbed = nil
 		end
 	end
+
 
 			elseif blademode == "reboot" then
 				raep()
