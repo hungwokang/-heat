@@ -83,139 +83,94 @@ local function enableFling()
     end)
     
     local ch = player.Character
-    local hrp = ch:WaitForChild("HumanoidRootPart")
-
-    -- Create invisible fling object
     local prt = Instance.new("Model", workspace)
-    prt.Name = "FlingPartModel"
-
     local z1 = Instance.new("Part", prt)
     z1.Name = "Torso"
-    z1.CanCollide = true
-    z1.Anchored = false
-    z1.Transparency = 1
-    z1.Size = Vector3.new(2, 2, 1)
-    z1.Massless = false
-
+    z1.CanCollide = false
+    z1.Anchored = true
     local z2 = Instance.new("Part", prt)
     z2.Name = "Head"
     z2.Anchored = true
     z2.CanCollide = false
-    z2.Transparency = 1
-    z2.Position = Vector3.new(0, -9999, 0)
-
     local z3 = Instance.new("Humanoid", prt)
     z3.Name = "Humanoid"
-
-    prt.Parent = workspace
-
-    -- spawn fling part in front of character
-    local frontPos = hrp.CFrame * CFrame.new(0, 0, -5)
-    z1.CFrame = frontPos
-
-    -- fling physics setup
-    local root = z1
-    root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)
-    local se = Instance.new("SelectionBox", root)
-    se.Adornee = root
-    se.Color3 = Color3.fromRGB(0, 255, 255)
-    se.LineThickness = 0.05
-    se.Transparency = 0.8
-
-    local power = 999999
-    local bav = Instance.new("BodyAngularVelocity")
-    bav.Parent = root
-    bav.MaxTorque = Vector3.new(0, math.huge, 0)
-    bav.AngularVelocity = Vector3.new(0, power, 0)
-
-    local hum = ch:FindFirstChildOfClass("Humanoid")
+    z1.Position = Vector3.new(0, 9999, 0)
+    z2.Position = Vector3.new(0, 9991, 0)
+    player.Character = prt
+    wait(5)
+    player.Character = ch
+    wait(6)
+    
+    local root = player.Character.HumanoidRootPart
+    local hum = player.Character.Humanoid
+    hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    
+    -- Prevent certain states to avoid damage/death
+    hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
     hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
     hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-
-    -- Make fling follow character smoothly
-    local followGyro = Instance.new("BodyGyro", root)
-    followGyro.P = 9e4
-    followGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-
-    local followVelocity = Instance.new("BodyVelocity", root)
-    followVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-
-    -- smooth follow loop
-    task.spawn(function()
-        while task.wait(0.03) do
-            if not root or not root.Parent or not hrp or not hrp.Parent then break end
-            -- position stays 5 studs ahead of player direction
-            local targetCFrame = hrp.CFrame * CFrame.new(0, 0, -5)
-            followGyro.CFrame = hrp.CFrame
-            followVelocity.Velocity = (targetCFrame.Position - root.Position) * 5
-        end
-    end)
-
-    -- flight control (same as your original)
-    local ctrl = {f = 0, b = 0, l = 0, r = 0}
-    local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-    local maxspeed = 50
-    local speed = 50
-    local flying = true
-
-    local function Fly()
-        local bg = Instance.new("BodyGyro", root)
-        bg.P = 9e4
-        bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.CFrame = root.CFrame
-
-        local bv = Instance.new("BodyVelocity", root)
-        bv.Velocity = Vector3.new(0, 0, 0)
-        bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-
-        repeat task.wait()
-            bg.CFrame = workspace.CurrentCamera.CFrame
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = math.clamp(speed + 5, 0, maxspeed)
-            else
-                speed = math.clamp(speed - 5, 0, maxspeed)
-            end
-            bv.Velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) + 
-                ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CFrame.p)) * speed
-            root.AssemblyLinearVelocity = bv.Velocity
-        until not flying
-
-        bg:Destroy()
-        bv:Destroy()
+    
+    local physicsService = game:GetService("PhysicsService")
+    
+    local selfGroup = "SelfCharacter"
+    local flingerGroup = "Flinger"
+    
+    if not physicsService:CollisionGroupNameToId(selfGroup) then
+        physicsService:CreateCollisionGroup(selfGroup)
     end
-
-    mouse.KeyDown:Connect(function(key)
-        if key:lower() == "e" then
-            if flying then flying = false else
-                flying = true
-                Fly()
-            end
-        elseif key:lower() == "w" then
-            ctrl.f = 1
-        elseif key:lower() == "s" then
-            ctrl.b = -1
-        elseif key:lower() == "a" then
-            ctrl.l = -1
-        elseif key:lower() == "d" then
-            ctrl.r = 1
+    if not physicsService:CollisionGroupNameToId(flingerGroup) then
+        physicsService:CreateCollisionGroup(flingerGroup)
+    end
+    
+    physicsService:CollisionGroupSetCollidable(selfGroup, flingerGroup, false)
+    
+    -- Set character parts to self group
+    for _, v in pairs(player.Character:GetDescendants()) do
+        if v:IsA("BasePart") then
+            physicsService:SetPartCollisionGroup(v, selfGroup)
         end
-    end)
-    mouse.KeyUp:Connect(function(key)
-        if key:lower() == "w" then
-            ctrl.f = 0
-        elseif key:lower() == "s" then
-            ctrl.b = 0
-        elseif key:lower() == "a" then
-            ctrl.l = 0
-        elseif key:lower() == "d" then
-            ctrl.r = 0
-        end
-    end)
-
-    Fly()
+    end
+    
+    -- Create invisible flinging object in front of the player
+    local flinger = Instance.new("Part")
+    flinger.Name = "Flinger"
+    flinger.Transparency = 1
+    flinger.CanCollide = true
+    flinger.Size = Vector3.new(2, 2, 2)
+    flinger.Anchored = false
+    flinger.Position = root.Position + root.CFrame.LookVector * 3
+    flinger.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)
+    flinger.Parent = workspace
+    
+    physicsService:SetPartCollisionGroup(flinger, flingerGroup)
+    
+    local se = Instance.new("SelectionBox", flinger)
+    se.Adornee = flinger
+    
+    power = 999999 -- change this to make it more or less powerful
+    
+    -- Replace BodyThrust with BodyAngularVelocity for spinning fling
+    local bav = Instance.new("BodyAngularVelocity")
+    bav.Parent = flinger
+    bav.MaxTorque = Vector3.new(0, math.huge, 0)
+    bav.AngularVelocity = Vector3.new(0, power, 0)
+    
+    -- Attachment on character root for front position
+    local frontAttach = Instance.new("Attachment")
+    frontAttach.Parent = root
+    frontAttach.Position = Vector3.new(0, 0, -3) -- Adjust offset as needed
+    
+    local flingerAttach = Instance.new("Attachment")
+    flingerAttach.Parent = flinger
+    
+    -- AlignPosition to follow
+    local alignPos = Instance.new("AlignPosition")
+    alignPos.Parent = flinger
+    alignPos.Attachment0 = flingerAttach
+    alignPos.Attachment1 = frontAttach
+    alignPos.MaxForce = math.huge
+    alignPos.Responsiveness = 200 -- Fast following
 end
-
-
 
 -- Connect buttons
 enableButton.MouseButton1Click:Connect(enableFling)
