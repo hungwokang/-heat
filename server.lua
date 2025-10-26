@@ -1,7 +1,7 @@
 game.StarterGui:SetCore("SendNotification", {
     Title = "FE Invisible Fling";
     Text = "hehe boi get load'd";
-    Duration = 3;
+    Duration = 11;
 })
 
 local player = game.Players.LocalPlayer
@@ -83,100 +83,88 @@ local function enableFling()
     end)
     
     local ch = player.Character
+    local hrp = ch:WaitForChild("HumanoidRootPart")
+
+    -- Create a separate invisible fling object in front of the player
     local prt = Instance.new("Model", workspace)
+    prt.Name = "FlingPartModel"
+
     local z1 = Instance.new("Part", prt)
     z1.Name = "Torso"
-    z1.CanCollide = false
-    z1.Anchored = true
+    z1.CanCollide = true
+    z1.Anchored = false
+    z1.Transparency = 1
+    z1.Size = Vector3.new(2, 2, 1)
+
     local z2 = Instance.new("Part", prt)
     z2.Name = "Head"
     z2.Anchored = true
     z2.CanCollide = false
+    z2.Transparency = 1
+    z2.Position = Vector3.new(0, -9999, 0)
+
     local z3 = Instance.new("Humanoid", prt)
     z3.Name = "Humanoid"
-    z1.Position = Vector3.new(0, 9999, 0)
-    z2.Position = Vector3.new(0, 9991, 0)
-    player.Character = prt
-    wait(5)
-    player.Character = ch
-    wait(6)
-    
-    local root = player.Character.HumanoidRootPart
-    local hum = player.Character.Humanoid
-    hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-    
-    -- Prevent certain states to avoid damage/death
-    hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-    hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-    hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-    
-    -- Create invisible flinging object in front of the player
-    local flinger = Instance.new("Part", workspace)
-    flinger.Name = "Flinger"
-    flinger.Transparency = 1
-    flinger.CanCollide = true
-    flinger.Size = Vector3.new(2, 2, 2)  -- Adjustable size for better collision
-    flinger.Position = root.Position + root.CFrame.LookVector * 3  -- Spawn in front
-    flinger.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)  -- High density, low friction
-    
-    workspace.CurrentCamera.CameraSubject = flinger
-    
-    local se = Instance.new("SelectionBox", flinger)
-    se.Adornee = flinger
-    
-    power = 999999 -- change this to make it more or less powerful
-    
-    -- Apply spinning to flinger
+
+    prt.Parent = workspace
+
+    -- Spawn it slightly in front of the player
+    local frontPos = hrp.CFrame * CFrame.new(0, 0, -5)
+    z1.CFrame = frontPos
+
+    -- make it fling capable
+    local root = z1
+    root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)
+    local se = Instance.new("SelectionBox", root)
+    se.Adornee = root
+    se.Color3 = Color3.fromRGB(0, 255, 255)
+    se.LineThickness = 0.05
+    se.Transparency = 0.8
+
+    local power = 999999
     local bav = Instance.new("BodyAngularVelocity")
-    bav.Parent = flinger
+    bav.Parent = root
     bav.MaxTorque = Vector3.new(0, math.huge, 0)
     bav.AngularVelocity = Vector3.new(0, power, 0)
-    
-    local torso = flinger
-    local flying = true
+
+    local hum = ch:FindFirstChildOfClass("Humanoid")
+    hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+
+    -- Simple fly handler using fling part
     local ctrl = {f = 0, b = 0, l = 0, r = 0}
     local lastctrl = {f = 0, b = 0, l = 0, r = 0}
     local maxspeed = 50
     local speed = 50
-    
+    local flying = true
+
     local function Fly()
-        hum.PlatformStand = true  -- Prevent character movement while flinging
-        local bg = Instance.new("BodyGyro", torso)
+        local bg = Instance.new("BodyGyro", root)
         bg.P = 9e4
         bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.CFrame = torso.CFrame
-        local bv = Instance.new("BodyVelocity", torso)
+        bg.CFrame = root.CFrame
+        local bv = Instance.new("BodyVelocity", root)
         bv.Velocity = Vector3.new(0, 0, 0)
         bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+
         repeat wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                speed = maxspeed
+            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                speed = math.clamp(speed + 5, 0, maxspeed)
             else
-                speed = 50
+                speed = math.clamp(speed - 5, 0, maxspeed)
             end
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.Velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * speed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
-                bv.Velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f + lastctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l + lastctrl.r, (lastctrl.f + lastctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * speed
-            else
-                bv.Velocity = Vector3.new(0, 0.1, 0)
-            end
-            torso.AssemblyLinearVelocity = bv.Velocity
+            bv.Velocity = ((workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) + 
+                ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CFrame.p)) * speed
+            root.AssemblyLinearVelocity = bv.Velocity
         until not flying
-        ctrl = {f = 0, b = 0, l = 0, r = 0}
-        lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        speed = 50
-        hum.PlatformStand = false
         bg:Destroy()
         bv:Destroy()
     end
-    
+
     mouse.KeyDown:Connect(function(key)
         if key:lower() == "e" then
-            if flying then flying = false
-            else
+            if flying then flying = false else
                 flying = true
                 Fly()
             end
@@ -190,7 +178,6 @@ local function enableFling()
             ctrl.r = 1
         end
     end)
-    
     mouse.KeyUp:Connect(function(key)
         if key:lower() == "w" then
             ctrl.f = 0
@@ -202,9 +189,10 @@ local function enableFling()
             ctrl.r = 0
         end
     end)
-    
-    Fly()  -- Start flying automatically
+
+    Fly()
 end
+
 
 -- Connect buttons
 enableButton.MouseButton1Click:Connect(enableFling)
