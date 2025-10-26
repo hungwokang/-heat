@@ -4943,61 +4943,20 @@ THOT]])
 				game.Debris:AddItem(killsound, 2)
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
-
--- === RESET ANIMATION LIKE THROW / RELEASE ===
-				pcall(function()
-					for _, weld in pairs(char:GetDescendants()) do
-						if weld:IsA("Weld") and (weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed) then
-							weld:Destroy()
-						end
-					end
-
-					local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-					local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
-					local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
-
-					if rightArm and rightArm:FindFirstChild("Weld") then
-						lerp(rightArm.Weld, rightArm.Weld.C0, CFrame.new(1.5, 0, 0), 0.08)
-					end
-					if leftArm and leftArm:FindFirstChild("Weld") then
-						lerp(leftArm.Weld, leftArm.Weld.C0, CFrame.new(-1.5, 0, 0), 0.08)
-					end
-					if hweld then
-						lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
-					end
-
-					-- Force humanoid back to idle animation
-					local hum = char:FindFirstChildOfClass("Humanoid")
-					if hum then
-						hum:ChangeState(Enum.HumanoidStateType.GettingUp)
-						hum:Move(Vector3.new())
-					end
-				end)
-
-				-- Recreate arm welds if they exist (like in throw)
-				pcall(function()
-					if leftclone and char:FindFirstChild("Left Arm") and char:FindFirstChild("Torso") then
-						local clone = leftclone:Clone()
-						clone.Part0 = char.Torso
-						clone.Part1 = char["Left Arm"]
-						clone.Parent = char.Torso
-					end
-					if rightclone and char:FindFirstChild("Right Arm") and char:FindFirstChild("Torso") then
-						local clone = rightclone:Clone()
-						clone.Part0 = char.Torso
-						clone.Part1 = char["Right Arm"]
-						clone.Parent = char.Torso
-					end
-				end)
-
-			-- Final cleanup
-			grabbed = nil
-			working = false
-			_G.StopGrab = false
+			elseif grabbed ~= nil then
+				if mode == "kill" then
+					kill()
+				elseif mode == "throw" then
+					throw()
+				elseif mode == "release" then
+					release()
+grabbed = nil
+working = false
 
 			end
 		end
 	end
+
 
 elseif blademode == "reboot" then
 	raep()
