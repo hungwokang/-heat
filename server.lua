@@ -484,11 +484,12 @@ refreshButtons()
 --// UNIVERSAL FLY (PC + MOBILE)
 --// Uses Humanoid.MoveDirection so the mobile joystick works.
 --------------------------------------------------
+--------------------------------------------------
+--// UNIVERSAL FLY (PC + MOBILE FIXED UP/DOWN)
+--------------------------------------------------
 local flying = false
-local flySpeed = 80 -- horizontal
-local vertSpeed = 50 -- vertical ascend/descend
-
--- We'll keep a connection reference so we can disconnect the Heartbeat loop when disabling fly
+local flySpeed = 80
+local vertSpeed = 60
 local flyConnection
 
 _G.ToggleFly = function()
@@ -498,109 +499,102 @@ _G.ToggleFly = function()
 	local hum = char:FindFirstChildOfClass("Humanoid")
 
 	if flying then
-		-- create flight objects (BodyGyro + BodyVelocity)
-		local bodyGyro = Instance.new("BodyGyro")
-		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-		bodyGyro.P = 9e4
-		bodyGyro.Parent = hrp
+		local bg = Instance.new("BodyGyro")
+		bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bg.P = 9e4
+		bg.Parent = hrp
 
-		local bodyVel = Instance.new("BodyVelocity")
-		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-		bodyVel.Velocity = Vector3.zero
-		bodyVel.Parent = hrp
+		local bv = Instance.new("BodyVelocity")
+		bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+		bv.Velocity = Vector3.zero
+		bv.Parent = hrp
 
-		-- Disable default platform collisions movement quirks
 		if hum then hum.PlatformStand = true end
 
-		-- Heartbeat updater
+		local ascending = false
+		local descending = false
+
+		-- Detect jump (mobile and PC)
+		local jumpConn = hum:GetPropertyChangedSignal("Jump"):Connect(function()
+			if hum.Jump then
+				ascending = true
+				task.delay(0.2, function() ascending = false end)
+			end
+		end)
+
+		-- Detect key input for PC
+		local inputBeganConn, inputEndedConn
+
+		inputBeganConn = UserInputService.InputBegan:Connect(function(input, gpe)
+			if gpe then return end
+			if input.KeyCode == Enum.KeyCode.Space then
+				ascending = true
+			elseif input.KeyCode == Enum.KeyCode.LeftControl then
+				descending = true
+			end
+		end)
+
+		inputEndedConn = UserInputService.InputEnded:Connect(function(input)
+			if input.KeyCode == Enum.KeyCode.Space then
+				ascending = false
+			elseif input.KeyCode == Enum.KeyCode.LeftControl then
+				descending = false
+			end
+		end)
+
+		-- Movement loop
 		flyConnection = RunService.Heartbeat:Connect(function()
-			if not flying or not hrp or not bodyVel or not bodyGyro then return end
+			if not flying or not hrp or not bv or not bg then return end
 
-			-- Keep orientation with camera
 			local camCF = workspace.CurrentCamera and workspace.CurrentCamera.CFrame or CFrame.identity
-			bodyGyro.CFrame = camCF
+			bg.CFrame = camCF
 
-			-- Movement: use Humanoid.MoveDirection for cross-platform input (keyboard, controller, mobile stick)
 			local moveDir = Vector3.zero
 			if hum and hum.MoveDirection.Magnitude > 0 then
-				-- MoveDirection is relative to camera/world; use it directly and scale
 				moveDir = hum.MoveDirection
 			end
 
-			-- Ascend/descend:
-			-- PC: Space => up, LeftControl => down
-			-- Mobile: use Jump button for ascend (MoveDirection doesn't include jump)
-			local vertical = 0
-			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-				vertical = vertical + 1
+			local y = 0
+			if ascending then
+				y = vertSpeed
+			elseif descending then
+				y = -vertSpeed
 			end
-			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-				vertical = vertical - 1
-			end
-			-- On mobile, Jump is handled by Humanoid.Jump, so check Humanoid.Jump property briefly
-			-- (hum.FloorMaterial may be nil when in air; we just use the input keys primarily)
-			-- If player pressed jump (this is not a perfect detection for mobile but captures most cases)
-			-- We'll also respect Humanoid:GetState to avoid fighting other states.
 
-			-- Combine horizontal and vertical
-			local targetVel = moveDir.Unit * flySpeed
-			if moveDir.Magnitude == 0 then targetVel = Vector3.zero end
-			targetVel = targetVel + Vector3.new(0, vertical * vertSpeed, 0)
-
-			-- Smoothly set velocity
-			bodyVel.Velocity = targetVel
+			bv.Velocity = (moveDir.Unit * flySpeed) + Vector3.new(0, y, 0)
 		end)
 
-		-- Optional notification
 		pcall(function()
 			game.StarterGui:SetCore("SendNotification", {
 				Title = "FLY ENABLED";
-				Text = "Use joystick or WASD to move. Jump to ascend.";
+				Text = "Joystick + Jump to ascend, Ctrl to descend";
 				Duration = 2;
 			})
 		end)
 
-	else
-		-- disable flying: remove constraints and disconnect loop
-		if flyConnection and flyConnection.Connected then
-			flyConnection:Disconnect()
-			flyConnection = nil
-		end
-
-		-- remove BodyGyro / BodyVelocity if present
-		for _, v in ipairs(hrp:GetChildren()) do
-			if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
-				pcall(function() v:Destroy() end)
-			end
-		end
-
-		if hum then pcall(function() hum.PlatformStand = false end) end
-
-		pcall(function()
+		-- cleanup when disabling
+		_G.StopFly = function()
+			flying = false
+			jumpConn:Disconnect()
+			inputBeganConn:Disconnect()
+			inputEndedConn:Disconnect()
+			if flyConnection then flyConnection:Disconnect() end
+			bg:Destroy()
+			bv:Destroy()
+			if hum then hum.PlatformStand = false end
 			game.StarterGui:SetCore("SendNotification", {
 				Title = "FLY DISABLED";
 				Text = "Normal controls restored.";
 				Duration = 1.5;
 			})
-		end)
+		end
+
+	else
+		if _G.StopFly then
+			_G.StopFly()
+		end
 	end
 end
-
--- Optional: toggle by pressing F
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.F then
-		pcall(_G.ToggleFly)
-	end
-end)
-
--- Cleanup on respawn
-player.CharacterAdded:Connect(function()
-	-- ensure flying off when respawn
-	if flying then
-		pcall(function() _G.ToggleFly() end)
-	end
-end)
 
 
 
