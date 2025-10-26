@@ -483,7 +483,7 @@ _G.ToggleFly = function()
 	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid then return end
 
-	local speeds = 1
+	local speeds = 50
 	local flying = false
 	local tpwalking = false
 
