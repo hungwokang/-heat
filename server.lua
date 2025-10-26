@@ -475,13 +475,13 @@ end)
 refreshButtons()
 
 --------------------------------------------------
---// DELTA-STYLE YIELD FLY (PC + MOBILE)
+--// DELTA-STYLE FLY SCRIPT (PC + MOBILE)
 --------------------------------------------------
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local flying = false
-local speed = 70
+local speed = 80
 local bodyGyro, bodyVel
-local conn
 
 _G.ToggleFly = function()
 	flying = not flying
@@ -492,32 +492,41 @@ _G.ToggleFly = function()
 	if flying then
 		hum.PlatformStand = true
 
-		bodyGyro = Instance.new("BodyGyro", hrp)
-		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bodyGyro = Instance.new("BodyGyro")
 		bodyGyro.P = 9e4
+		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bodyGyro.CFrame = hrp.CFrame
+		bodyGyro.Parent = hrp
 
-		bodyVel = Instance.new("BodyVelocity", hrp)
+		bodyVel = Instance.new("BodyVelocity")
 		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
 		bodyVel.Velocity = Vector3.zero
+		bodyVel.Parent = hrp
 
-		conn = RunService.RenderStepped:Connect(function()
-			if not flying or not hrp then return end
+		RunService.Heartbeat:Connect(function()
+			if not flying or not hrp or not hum then return end
 
-			bodyGyro.CFrame = hrp.CFrame
-			local move = hum.MoveDirection
+			local camCF = workspace.CurrentCamera.CFrame
+			local moveDir = hum.MoveDirection -- works for PC + joystick
 
-			if move.Magnitude > 0 then
-				local dir = hrp.CFrame:VectorToWorldSpace(move)
-				bodyVel.Velocity = dir * speed
+			-- Camera-based movement (like Delta’s fly)
+			if moveDir.Magnitude > 0 then
+				local direction = (
+					(camCF.RightVector * moveDir.X)
+					+ (camCF.LookVector * moveDir.Z)
+				)
+				bodyVel.Velocity = direction.Unit * speed
 			else
 				bodyVel.Velocity = Vector3.zero
 			end
+
+			bodyGyro.CFrame = camCF
 		end)
+
 	else
-		if conn then conn:Disconnect() end
+		hum.PlatformStand = false
 		if bodyGyro then bodyGyro:Destroy() end
 		if bodyVel then bodyVel:Destroy() end
-		hum.PlatformStand = false
 	end
 end
 
