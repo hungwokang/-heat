@@ -344,7 +344,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "Server"
+title.Text = "77X0"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -4893,73 +4893,123 @@ THOT]])
 	else
 		-- Make sure grabbed isn't the player themself
 		if grabbed and grabbed:FindFirstChildOfClass("Humanoid") then
-			if grabbed ~= player.Character then
-				local hum = grabbed:FindFirstChildOfClass("Humanoid")
-				if hum then
-					-- Create sounds
-					local head = grabbed:FindFirstChild("Head") or grabbed
-					
-					local killsound = Instance.new("Sound", head)
-					killsound.SoundId = "rbxassetid://150315649"
-					killsound.PlaybackSpeed = math.random(9, 12) / 10
-					killsound.Volume = 1
-					
-					local killsoundac = Instance.new("Sound", head)
-					killsoundac.SoundId = "rbxassetid://162194585"
-					killsoundac.PlaybackSpeed = math.random(9, 13) / 10
-					killsoundac.Volume = 1
-					
-					local chokesound = Instance.new("Sound", head)
-					chokesound.SoundId = "rbxassetid://418658161"
-					chokesound.TimePosition = 3
-					chokesound.PlaybackSpeed = 1
-					chokesound.Volume = 1
-					
-					local bleedsound = Instance.new("Sound", head)
-					bleedsound.SoundId = "rbxassetid://244502094"
-					bleedsound.PlaybackSpeed = 1.5
-					bleedsound.Volume = 1
-					
-					-- Play sounds
-					killsound:Play()
-					killsoundac:Play()
-					chokesound:Play()
-					bleedsound:Play()
-
-					-- Instant kill
-					hum.Health = 0
-
-					-- Ragdoll and blood
-					pcall(function()
-						ragdollpart(grabbed, "Head", true, false)
-						local blood = Instance.new("Part", grabbed)
-						blood.Size = Vector3.new(0.2, 0.2, 0.2)
-						blood.BrickColor = BrickColor.new("Maroon")
-						blood.Material = Enum.Material.SmoothPlastic
-						blood.CanCollide = false
-						blood.Transparency = 0.3
-						blood.CFrame = head.CFrame
-						blood.Name = "ayybleed"
-						blood:BreakJoints()
-						spawn(function() bleed(blood) end)
-					end)
-
-					game.Debris:AddItem(killsound, 2)
-					game.Debris:AddItem(killsoundac, 2)
-					game.Debris:AddItem(chokesound, 2)
-					game.Debris:AddItem(bleedsound, 2)
-				end
-			else
+			local myChar = player.Character
+			if not myChar or grabbed == myChar or grabbed:IsDescendantOf(myChar) then
 				notify("Prevented self-kill.", true)
+				grabbed = nil
+				working = false
+				return
 			end
-			grabbed = nil
+
+			local hum = grabbed:FindFirstChildOfClass("Humanoid")
+			if hum and hum.Health > 0 then
+				-- Create and play sounds
+				local head = grabbed:FindFirstChild("Head") or grabbed
+
+				local killsound = Instance.new("Sound", head)
+				killsound.SoundId = "rbxassetid://150315649"
+				killsound.PlaybackSpeed = math.random(9, 12) / 10
+				killsound.Volume = 1
+				killsound:Play()
+
+				local killsoundac = Instance.new("Sound", head)
+				killsoundac.SoundId = "rbxassetid://162194585"
+				killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+				killsoundac.Volume = 1
+				killsoundac:Play()
+
+				local bleedsound = Instance.new("Sound", head)
+				bleedsound.SoundId = "rbxassetid://244502094"
+				bleedsound.PlaybackSpeed = 1.5
+				bleedsound.Volume = 1
+				bleedsound:Play()
+
+				-- Kill safely
+				hum.Health = 0
+				pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+
+				-- Simple blood effect
+				local blood = Instance.new("Part", grabbed)
+				blood.Size = Vector3.new(0.2, 0.2, 0.2)
+				blood.BrickColor = BrickColor.new("Maroon")
+				blood.Material = Enum.Material.SmoothPlastic
+				blood.CanCollide = false
+				blood.Transparency = 0.3
+				blood.CFrame = head.CFrame
+				blood.Name = "ayybleed"
+				blood:BreakJoints()
+				spawn(function() bleed(blood) end)
+
+				game.Debris:AddItem(killsound, 2)
+				game.Debris:AddItem(killsoundac, 2)
+				game.Debris:AddItem(bleedsound, 2)
+			end
+
+			-- === CLEANUP & RESET ===
+
+-- Stop any grab animation threads
+pcall(function()
+	if _G.GrabAnimLoop then
+		_G.GrabAnimLoop = false
+	end
+end)
+
+-- Remove any grab welds or constraints
+pcall(function()
+	for _, v in pairs(char:GetDescendants()) do
+		if v:IsA("Weld") or v:IsA("Motor6D") then
+			if v.Name:lower():find("grab") or v.Name:lower():find("tweld") or v.Name:lower():find("hweld") then
+				v:Destroy()
+			end
+		end
+	end
+end)
+
+-- Reset right arm pose smoothly
+local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+if rightArm then
+	local rw = rightArm:FindFirstChildWhichIsA("Weld") or rightArm:FindFirstChildWhichIsA("Motor6D")
+	if rw then
+		rw.C0 = CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+	end
+end
+
+-- Reset left arm pose
+local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+if leftArm then
+	local lw = leftArm:FindFirstChildWhichIsA("Weld") or leftArm:FindFirstChildWhichIsA("Motor6D")
+	if lw then
+		lw.C0 = CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+	end
+end
+
+-- Reset torso back to idle
+local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+if torso then
+	local tw = torso:FindFirstChildWhichIsA("Weld") or torso:FindFirstChildWhichIsA("Motor6D")
+	if tw then
+		tw.C0 = CFrame.new(0, 0, 0)
+	end
+end
+
+-- Force Humanoid to re-animate (resets Roblox default animation controller)
+pcall(function()
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+		hum:Move(Vector3.new()) -- nudge animation reset
+	end
+end)
+
+grabbed = nil
+working = false
+
 		end
 	end
 
-
-			elseif blademode == "reboot" then
-				raep()
-			end
+elseif blademode == "reboot" then
+	raep()
+end
 		end
 	end)
 
