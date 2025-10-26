@@ -346,7 +346,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "0X7"
+title.Text = "N0X7"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -474,57 +474,65 @@ end)
 -- Initialize buttons
 refreshButtons()
 
-
 --------------------------------------------------
 --// FLIGHT SCRIPT (PC + MOBILE)
 --------------------------------------------------
-local RunService = game:GetService("RunService")
 local flying = false
 local speed = 80
 local verticalSpeed = 50
 local bodyGyro, bodyVel
+local flyConn
 
 _G.ToggleFly = function()
 	flying = not flying
 	local char = player.Character or player.CharacterAdded:Wait()
 	local hrp = char:WaitForChild("HumanoidRootPart")
+	local hum = char:WaitForChild("Humanoid")
 
 	if flying then
 		bodyGyro = Instance.new("BodyGyro", hrp)
 		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
 		bodyGyro.P = 9e4
+
 		bodyVel = Instance.new("BodyVelocity", hrp)
 		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
 		bodyVel.Velocity = Vector3.zero
 
-		RunService.Heartbeat:Connect(function()
-			if flying and hrp then
-				bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-				local moveDir = Vector3.new(0, 0, 0)
-				local camCF = workspace.CurrentCamera.CFrame
+		hum.PlatformStand = true
 
-				-- PC keyboard controls
-				if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir += camCF.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir -= camCF.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir -= camCF.RightVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir += camCF.RightVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir += Vector3.new(0, 1, 0) end
-				if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir -= Vector3.new(0, 1, 0) end
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not flying or not hrp then return end
 
-				-- Normalize and apply
-				if moveDir.Magnitude > 0 then
-					bodyVel.Velocity = moveDir.Unit * speed
-				else
-					bodyVel.Velocity = Vector3.zero
-				end
+			-- Always face camera direction
+			bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+
+			-- Works for mobile joystick & PC
+			local moveDir = hum.MoveDirection
+
+			-- Vertical (Space to go up / Ctrl to go down on PC)
+			local yVel = 0
+			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+				yVel = verticalSpeed
+			elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+				yVel = -verticalSpeed
 			end
-		end)
 
+			-- Apply velocity
+			local finalVel = moveDir * speed + Vector3.new(0, yVel, 0)
+			bodyVel.Velocity = finalVel
+		end)
 	else
+		if flyConn then flyConn:Disconnect() flyConn = nil end
 		if bodyGyro then bodyGyro:Destroy() end
 		if bodyVel then bodyVel:Destroy() end
+
+		local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum.PlatformStand = false
+		end
 	end
 end
+
 
 
 
