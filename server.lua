@@ -462,7 +462,7 @@ local function refreshButtons()
 				-- Start fling
 				local message = Instance.new("Message", workspace)
 				message.Text = "FE Invisible Fling Loaded"
-				task.wait(3)
+				task.wait(10)
 				message:Destroy()
 
 				local ch = player.Character
