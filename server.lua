@@ -474,14 +474,16 @@ end)
 -- Initialize buttons
 refreshButtons()
 
+
+
 --------------------------------------------------
---// FLY SCRIPT (PC + MOBILE, BODY-FACING DIRECTION)
+--// DELTA-STYLE YIELD FLY (PC + MOBILE)
 --------------------------------------------------
 local RunService = game:GetService("RunService")
 local flying = false
-local speed = 80
+local speed = 70
 local bodyGyro, bodyVel
-local flyConn
+local conn
 
 _G.ToggleFly = function()
 	flying = not flying
@@ -490,41 +492,37 @@ _G.ToggleFly = function()
 	local hum = char:WaitForChild("Humanoid")
 
 	if flying then
+		hum.PlatformStand = true
+
 		bodyGyro = Instance.new("BodyGyro", hrp)
 		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
 		bodyGyro.P = 9e4
-		bodyGyro.CFrame = hrp.CFrame
 
 		bodyVel = Instance.new("BodyVelocity", hrp)
 		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
 		bodyVel.Velocity = Vector3.zero
 
-		hum.PlatformStand = true
-
-		flyConn = RunService.Heartbeat:Connect(function()
+		conn = RunService.RenderStepped:Connect(function()
 			if not flying or not hrp then return end
 
-			-- Keep the Gyro aligned with your body, not camera
 			bodyGyro.CFrame = hrp.CFrame
+			local move = hum.MoveDirection
 
-			-- Move in the direction your body is facing
-			local moveDir = hum.MoveDirection
-			if moveDir.Magnitude > 0 then
-				local flyDirection = (hrp.CFrame.LookVector * moveDir.Z) + (hrp.CFrame.RightVector * moveDir.X)
-				bodyVel.Velocity = flyDirection.Unit * speed
+			if move.Magnitude > 0 then
+				local dir = hrp.CFrame:VectorToWorldSpace(move)
+				bodyVel.Velocity = dir * speed
 			else
 				bodyVel.Velocity = Vector3.zero
 			end
 		end)
 	else
-		if flyConn then flyConn:Disconnect() flyConn = nil end
+		if conn then conn:Disconnect() end
 		if bodyGyro then bodyGyro:Destroy() end
 		if bodyVel then bodyVel:Destroy() end
-		if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
-			player.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
-		end
+		hum.PlatformStand = false
 	end
 end
+
 
 
 
