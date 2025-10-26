@@ -78,7 +78,7 @@ local function enableFling()
     spawn(function()
         local message = Instance.new("Message", workspace)
         message.Text = "FE Invisible Fling By Diemiers#4209 Loaded (wait 11 seconds to load)"
-        wait(11)
+        wait(3)
         message:Destroy()
     end)
     
@@ -110,39 +110,29 @@ local function enableFling()
     hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
     hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
     
-    -- Make character visible, but disable collisions on visible parts
-    for _, v in pairs(player.Character:GetDescendants()) do
-        if v:IsA("BasePart") and v ~= root then
-            v.Transparency = 0
-            v.CanCollide = false
-        elseif v:IsA("Accessory") then
-            local handle = v:FindFirstChild("Handle")
-            if handle then
-                handle.Transparency = 0
-                handle.CanCollide = false
-            end
-        end
-    end
+    -- Create invisible flinging object in front of the player
+    local flinger = Instance.new("Part", workspace)
+    flinger.Name = "Flinger"
+    flinger.Transparency = 1
+    flinger.CanCollide = true
+    flinger.Size = Vector3.new(2, 2, 2)  -- Adjustable size for better collision
+    flinger.Position = root.Position + root.CFrame.LookVector * 3  -- Spawn in front
+    flinger.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)  -- High density, low friction
     
-    -- Set root properties (flinging object invisible)
-    root.Transparency = 1
-    root.CanCollide = true  -- Enable collision for flinging
-    root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)  -- High density for high mass, low friction/elasticity to prevent backlash
+    workspace.CurrentCamera.CameraSubject = flinger
     
-    workspace.CurrentCamera.CameraSubject = root
-    
-    local se = Instance.new("SelectionBox", root)
-    se.Adornee = root
+    local se = Instance.new("SelectionBox", flinger)
+    se.Adornee = flinger
     
     power = 999999 -- change this to make it more or less powerful
     
-    -- Replace BodyThrust with BodyAngularVelocity for spinning fling
+    -- Apply spinning to flinger
     local bav = Instance.new("BodyAngularVelocity")
-    bav.Parent = root
+    bav.Parent = flinger
     bav.MaxTorque = Vector3.new(0, math.huge, 0)
     bav.AngularVelocity = Vector3.new(0, power, 0)
     
-    local torso = root
+    local torso = flinger
     local flying = true
     local ctrl = {f = 0, b = 0, l = 0, r = 0}
     local lastctrl = {f = 0, b = 0, l = 0, r = 0}
@@ -150,7 +140,7 @@ local function enableFling()
     local speed = 50
     
     local function Fly()
-        hum.PlatformStand = true  -- Set to platform stand to prevent walking and potential damage
+        hum.PlatformStand = true  -- Prevent character movement while flinging
         local bg = Instance.new("BodyGyro", torso)
         bg.P = 9e4
         bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
@@ -160,16 +150,10 @@ local function enableFling()
         bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
         repeat wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 0
-                if speed > maxspeed then
-                    speed = maxspeed
-                end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                speed = speed - 50
-                if speed < 0 then
-                    speed = 50
-                end
+            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                speed = maxspeed
+            else
+                speed = 50
             end
             if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
                 bv.Velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * speed
@@ -179,12 +163,11 @@ local function enableFling()
             else
                 bv.Velocity = Vector3.new(0, 0.1, 0)
             end
-            -- Robust velocity clamping to prevent unexpected flings
             torso.AssemblyLinearVelocity = bv.Velocity
         until not flying
         ctrl = {f = 0, b = 0, l = 0, r = 0}
         lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        speed = 0
+        speed = 50
         hum.PlatformStand = false
         bg:Destroy()
         bv:Destroy()
