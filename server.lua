@@ -4556,9 +4556,13 @@ end
 			trail.Attachment1 = at2
 
 			local spinnyshit = coroutine.wrap(function()
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(-90), 0), 0.07)
-				lerp(hweld,hweld.C0,CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0),math.rad(90), 0), 0.07)
-			end)
+    while not _G.StopGrab do
+        lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(-90), 0), 0.07)
+        lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(0), math.rad(90), 0), 0.07)
+        task.wait()
+    end
+end)
+
 			spinnyshit()
 			local cor = coroutine.wrap(function()
 				lerp(rweld,rweld.C0,CFrame.new(2, 0.5, 0) * CFrame.Angles(0, math.rad(0), math.rad(90)),0.08)
@@ -4933,6 +4937,7 @@ THOT]])
 			elseif blademode == "knife" then
 	notify()
 	if grabbed == nil then
+		_G.StopGrab = false
 		-- Always grab first
 		grab()
 	else
@@ -4948,7 +4953,7 @@ THOT]])
 
 			local hum = grabbed:FindFirstChildOfClass("Humanoid")
 			if hum and hum.Health > 0 then
-				_G.IsGrabbing = false
+				_G.StopGrab = true
 
 				-- Create and play sounds
 				local head = grabbed:FindFirstChild("Head") or grabbed
@@ -4990,10 +4995,14 @@ THOT]])
 				game.Debris:AddItem(killsound, 2)
 				game.Debris:AddItem(killsoundac, 2)
 				game.Debris:AddItem(bleedsound, 2)
+
+				resetArms()
+				grabbed = nil
+				working = false
+
+
 			end
-resetArms()
-grabbed = nil
-working = false
+
 
 		end
 	end
