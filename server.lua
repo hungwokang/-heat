@@ -320,6 +320,8 @@ end)
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
 local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 --// Create GUI
 local gui = Instance.new("ScreenGui")
@@ -344,7 +346,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "00X7🥀"
+title.Text = "😈00X7😈"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -437,6 +439,9 @@ local function refreshButtons()
 		makeButton("KATANA", function()
 			pressKey("x")
 		end)
+		makeButton("FLY", function()
+			_G.ToggleFly()
+		end)
 		makeButton("BACK", function()
 			equipped = false
 			pressKey("z")
@@ -468,6 +473,58 @@ end)
 
 -- Initialize buttons
 refreshButtons()
+
+
+--------------------------------------------------
+--// FLIGHT SCRIPT (PC + MOBILE)
+--------------------------------------------------
+local RunService = game:GetService("RunService")
+local flying = false
+local speed = 80
+local verticalSpeed = 50
+local bodyGyro, bodyVel
+
+_G.ToggleFly = function()
+	flying = not flying
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+
+	if flying then
+		bodyGyro = Instance.new("BodyGyro", hrp)
+		bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bodyGyro.P = 9e4
+		bodyVel = Instance.new("BodyVelocity", hrp)
+		bodyVel.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+		bodyVel.Velocity = Vector3.zero
+
+		RunService.Heartbeat:Connect(function()
+			if flying and hrp then
+				bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+				local moveDir = Vector3.new(0, 0, 0)
+				local camCF = workspace.CurrentCamera.CFrame
+
+				-- PC keyboard controls
+				if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir += camCF.LookVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir -= camCF.LookVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir -= camCF.RightVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir += camCF.RightVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir += Vector3.new(0, 1, 0) end
+				if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir -= Vector3.new(0, 1, 0) end
+
+				-- Normalize and apply
+				if moveDir.Magnitude > 0 then
+					bodyVel.Velocity = moveDir.Unit * speed
+				else
+					bodyVel.Velocity = Vector3.zero
+				end
+			end
+		end)
+
+	else
+		if bodyGyro then bodyGyro:Destroy() end
+		if bodyVel then bodyVel:Destroy() end
+	end
+end
 
 
 
