@@ -511,11 +511,6 @@ _G.ToggleFly = function()
 				if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir += Vector3.new(0, 1, 0) end
 				if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir -= Vector3.new(0, 1, 0) end
 
-local moveDir = Vector3.new(0,0,0)
-            if hum and hum.MoveDirection.Magnitude > 0 then
-                moveDir = hum.MoveDirection
-            end
-
 				-- Normalize and apply
 				if moveDir.Magnitude > 0 then
 					bodyVel.Velocity = moveDir.Unit * speed
