@@ -475,13 +475,14 @@ end)
 refreshButtons()
 
 --------------------------------------------------
---// DELTA-STYLE FLY SCRIPT (PC + MOBILE)
+--// PERFECT DELTA-STYLE FLY (PC + MOBILE)
 --------------------------------------------------
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local flying = false
 local speed = 80
 local bodyGyro, bodyVel
+local connection
 
 _G.ToggleFly = function()
 	flying = not flying
@@ -503,27 +504,35 @@ _G.ToggleFly = function()
 		bodyVel.Velocity = Vector3.zero
 		bodyVel.Parent = hrp
 
-		RunService.Heartbeat:Connect(function()
+		-- Use a single connection to avoid stacking
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
+
+		connection = RunService.Heartbeat:Connect(function()
 			if not flying or not hrp or not hum then return end
 
 			local camCF = workspace.CurrentCamera.CFrame
-			local moveDir = hum.MoveDirection -- works for PC + joystick
+			local moveDir = hum.MoveDirection
 
-			-- Camera-based movement (like Delta’s fly)
+			-- ✅ Corrected: convert MoveDirection into camera space ONLY if nonzero
 			if moveDir.Magnitude > 0 then
-				local direction = (
-					(camCF.RightVector * moveDir.X)
-					+ (camCF.LookVector * moveDir.Z)
-				)
+				local direction = camCF:VectorToWorldSpace(moveDir)
 				bodyVel.Velocity = direction.Unit * speed
 			else
 				bodyVel.Velocity = Vector3.zero
 			end
 
-			bodyGyro.CFrame = camCF
+			-- Keep rotation aligned with camera
+			bodyGyro.CFrame = CFrame.new(hrp.Position, hrp.Position + camCF.LookVector)
 		end)
 
 	else
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
 		hum.PlatformStand = false
 		if bodyGyro then bodyGyro:Destroy() end
 		if bodyVel then bodyVel:Destroy() end
