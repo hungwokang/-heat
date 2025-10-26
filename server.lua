@@ -475,75 +475,73 @@ end)
 refreshButtons()
 
 _G.ToggleFly = function()
+	local player = game.Players.LocalPlayer
+	local character = player.Character
+	if not character then return end
+	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+	if not humanoid then return end
+	local rootPart = character:FindFirstChild("HumanoidRootPart")
+	if not rootPart then return end
 
-local speaker = game:GetService("Players").LocalPlayer
-local chr = speaker.Character
-local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-local nowe = false
-local speeds = 1
-local tpwalking = false
-toggleFly()
+	local flying = false
+	local maxSpeed = 50
+	local speed = 0
+	local bg, bv
 
--- Fly toggle function
-local function toggleFly()
-	if nowe == true then
-		-- Turn off fly
-		nowe = false
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
-		speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-	else 
-		-- Turn on fly
-		nowe = true
-		for i = 1, speeds do
-			spawn(function()
-				local hb = game:GetService("RunService").Heartbeat	
-				tpwalking = true
-				local chr = speaker.Character
-				local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-				while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-					if hum.MoveDirection.Magnitude > 0 then
-						chr:TranslateBy(hum.MoveDirection)
-					end
+	local RunService = game:GetService("RunService")
+
+	local function startFly()
+		flying = true
+		humanoid.PlatformStand = true
+
+		bg = Instance.new("BodyGyro", rootPart)
+		bg.P = 9e4
+		bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bg.CFrame = rootPart.CFrame
+
+		bv = Instance.new("BodyVelocity", rootPart)
+		bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+		bv.Velocity = Vector3.new(0, 0, 0)
+
+		-- Main fly loop
+		spawn(function()
+			while flying and humanoid.Health > 0 do
+				RunService.RenderStepped:Wait()
+				local moveDir = humanoid.MoveDirection -- works for PC & mobile joystick
+
+				-- Acceleration / deceleration
+				if moveDir.Magnitude > 0 then
+					speed = speed + 0.5 + (speed / maxSpeed)
+					if speed > maxSpeed then speed = maxSpeed end
+				elseif speed > 0 then
+					speed = speed - 1
+					if speed < 0 then speed = 0 end
 				end
-			end)
-		end
-		game.Players.LocalPlayer.Character.Animate.Disabled = true
-		local Hum = speaker.Character:FindFirstChildOfClass("Humanoid") or speaker.Character:FindFirstChildOfClass("AnimationController")
-		for i,v in next, Hum:GetPlayingAnimationTracks() do
-			v:AdjustSpeed(0)
-		end
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
-		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
-		speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+
+				bv.Velocity = moveDir * speed
+
+				-- Keep character upright facing camera
+				local cam = workspace.CurrentCamera
+				bg.CFrame = CFrame.new(rootPart.Position, rootPart.Position + cam.CFrame.LookVector)
+			end
+
+			-- Cleanup after flying ends
+			if bg then bg:Destroy() end
+			if bv then bv:Destroy() end
+			humanoid.PlatformStand = false
+			speed = 0
+		end)
+	end
+
+	if flying then
+		-- Stop flying
+		flying = false
+	else
+		-- Start flying
+		startFly()
 	end
 end
+
 
 
 
