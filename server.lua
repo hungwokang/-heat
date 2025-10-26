@@ -557,9 +557,9 @@ local function refreshButtons()
 								workspace.CurrentCamera.CoordinateFrame.p)) * speed
 							lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
 						else
-							speed = 50 -- Reset speed
-							bv.Velocity = Vector3.new(0, 0.1, 0) -- Slight upward velocity to prevent falling
-							lastctrl = {f = 0, b = 0, l = 0, r = 0} -- Reset lastctrl to stop movement
+							speed = 50
+							bv.Velocity = Vector3.new(0, 0.1, 0)
+							lastctrl = {f = 0, b = 0, l = 0, r = 0}
 						end
 						root.AssemblyLinearVelocity = bv.Velocity
 					end
@@ -602,8 +602,12 @@ local function refreshButtons()
 				end)
 
 				-- W button press simulation
-				wButton.MouseButton1Click:Connect(function()
-					pressKey("w")
+				wButton.MouseButton1Down:Connect(function()
+					ctrl.f = 1
+					task.spawn(function()
+						task.wait(0.1)
+						ctrl.f = 0
+					end)
 				end)
 
 				Fly() -- Start flying
@@ -613,7 +617,7 @@ local function refreshButtons()
 				if flingConnection then
 					flingConnection:Disconnect()
 					flingConnection = nil
-				end
+				}
 				if wButton then
 					wButton:Destroy()
 					wButton = nil
