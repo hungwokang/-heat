@@ -4460,7 +4460,7 @@ function spawned()
 			end)
 			bleedBLEED()
 
-			wait(0)
+			wait(0.2)
 
 			local at1 = Instance.new("Attachment", handle)
 			local at2 = Instance.new("Attachment", handle)
@@ -4517,7 +4517,7 @@ function spawned()
 				ragdollpart(grabbed,"LeftUpperArm")
 				ragdollpart(grabbed,"RightUpperArm")
 			end)
-			wait(0)
+			wait(0.15)
 			throwvel:Remove()
 			local cor = coroutine.wrap(function()
 				lerp(lweld,lweld.C0,CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0),0.08)
@@ -4554,50 +4554,31 @@ function spawned()
 
 
 			local coru2=coroutine.wrap(function()
-    local whyy = grabbed
-    
-    -- *** INSTANT KILL IMPLEMENTATION ***
-    
-    -- 1. Apply maximum damage immediately.
-    -- This sets the target's health to 0, ensuring they are ready for the death effect.
-    whyy:FindFirstChildOfClass('Humanoid').Health = 0
-    
-    -- 2. Execute the immediate death/dismemberment effect (Katana style).
-    ragdollpart(whyy,"Head") 
-    
-    -- 3. (Optional but recommended for full physics effect) Remove welds, similar to the Katana.
-    -- You will need to make sure the 'removewelds' function is defined elsewhere in your script.
-    removewelds(whyy) 
-
-
-    --[[ 
-    -- ORIGINAL DAMAGE-OVER-TIME LOGIC (REMOVED)
-    local continue = true
-    local repeats = 0
-    while continue == true do
-        local ree = pcall(function()
-            if repeats < 20 then
-                whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
-                repeats = repeats+1
-                if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
-                    continue = false
-                end
-            else
-                continue = false
-            end
-        end)
-        if ree == false then
-            continue = false
-        end
-        if continue == true then
-            wait(0.2)
-        end
-    end
-    ragdollpart(whyy,"Head") -- This line only executes *after* the DOT loop finishes.
-    --]]
-end)
-coru2()
-				
+				local whyy = grabbed
+				local continue = true
+				local repeats = 0
+				while continue == true do
+					local ree = pcall(function()
+						if repeats < 20 then
+							whyy:FindFirstChildOfClass('Humanoid').Health = whyy:FindFirstChildOfClass('Humanoid').Health-100
+							repeats = repeats+1
+							if whyy:FindFirstChildOfClass('Humanoid').Health <= 0 then
+								continue = false
+							end
+						else
+							continue = false
+						end
+					end)
+					if ree == false then
+						continue = false
+					end
+					if continue == true then
+						wait(0.2)
+					end
+				end
+				ragdollpart(whyy,"Head")
+			end)
+			coru2()
 
 
 			throwsound:Remove()
