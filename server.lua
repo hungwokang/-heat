@@ -462,7 +462,7 @@ local function refreshButtons()
 				-- Start fling
 				local message = Instance.new("Message", workspace)
 				message.Text = "FE Invisible Fling Loaded"
-				task.wait(10)
+				task.wait(3)
 				message:Destroy()
 
 				local ch = player.Character
@@ -551,21 +551,14 @@ local function refreshButtons()
 						bg.CFrame = workspace.CurrentCamera.CFrame
 						if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
 							speed = math.min(speed + 50, maxspeed)
-						elseif speed > 0 then
-							speed = math.max(speed - 50, 50)
-						end
-
-						if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
 							bv.Velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + 
 								((workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) - 
 								workspace.CurrentCamera.CoordinateFrame.p)) * speed
 							lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-						elseif speed ~= 0 then
-							bv.Velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f + lastctrl.b)) + 
-								((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l + lastctrl.r, (lastctrl.f + lastctrl.b) * 0.2, 0).p) - 
-								workspace.CurrentCamera.CoordinateFrame.p)) * speed
 						else
+							speed = math.max(speed - 50, 50)
 							bv.Velocity = Vector3.new(0, 0.1, 0)
+							lastctrl = {f = 0, b = 0, l = 0, r = 0} -- Reset lastctrl to stop lingering movement
 						end
 						root.AssemblyLinearVelocity = bv.Velocity
 					end
