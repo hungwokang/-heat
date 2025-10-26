@@ -4945,29 +4945,65 @@ THOT]])
 				game.Debris:AddItem(bleedsound, 2)
 			end
 
-			-- Reset animation and welds after kill
-			pcall(function()
-				for _, weld in pairs(char:GetDescendants()) do
-					if weld:IsA("Weld") then
-						if weld.Name == "grabweld" or weld.Part1 == grabbed or weld.Part0 == grabbed then
-							weld:Destroy()
-						end
-					end
-				end
-			end)
+			-- === CLEANUP & RESET ===
 
-			local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
-			if rightArm and rightArm:FindFirstChild("Weld") then
-				rightArm.Weld.C0 = CFrame.new(1.5, 0, 0)
+-- Stop any grab animation threads
+pcall(function()
+	if _G.GrabAnimLoop then
+		_G.GrabAnimLoop = false
+	end
+end)
+
+-- Remove any grab welds or constraints
+pcall(function()
+	for _, v in pairs(char:GetDescendants()) do
+		if v:IsA("Weld") or v:IsA("Motor6D") then
+			if v.Name:lower():find("grab") or v.Name:lower():find("tweld") or v.Name:lower():find("hweld") then
+				v:Destroy()
 			end
+		end
+	end
+end)
 
-			local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
-			if torso and torso:FindFirstChild("Weld") then
-				torso.Weld.C0 = CFrame.new(0, 0, 0)
-			end
+-- Reset right arm pose smoothly
+local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightHand")
+if rightArm then
+	local rw = rightArm:FindFirstChildWhichIsA("Weld") or rightArm:FindFirstChildWhichIsA("Motor6D")
+	if rw then
+		rw.C0 = CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+	end
+end
 
-			grabbed = nil
-			working = false
+-- Reset left arm pose
+local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftHand")
+if leftArm then
+	local lw = leftArm:FindFirstChildWhichIsA("Weld") or leftArm:FindFirstChildWhichIsA("Motor6D")
+	if lw then
+		lw.C0 = CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0)
+	end
+end
+
+-- Reset torso back to idle
+local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+if torso then
+	local tw = torso:FindFirstChildWhichIsA("Weld") or torso:FindFirstChildWhichIsA("Motor6D")
+	if tw then
+		tw.C0 = CFrame.new(0, 0, 0)
+	end
+end
+
+-- Force Humanoid to re-animate (resets Roblox default animation controller)
+pcall(function()
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+		hum:Move(Vector3.new()) -- nudge animation reset
+	end
+end)
+
+grabbed = nil
+working = false
+
 		end
 	end
 
