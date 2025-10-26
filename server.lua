@@ -385,7 +385,7 @@ footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.Code
-footer.Text = "created by server"
+footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 
@@ -5092,24 +5092,120 @@ THOT]])
 				notify()
 				katanaswing()
 			elseif blademode == "knife" then
-				notify()
-				if grabbed == nil then
-					if mode == "fling" then
-						fling()
-					else
-						grab()
-					end
-				elseif grabbed ~= nil then
-					if mode == "kill" then
-local hum = grabbed:FindFirstChildOfClass("Humanoid")
-hum.Health = 0
-						kill()
-					elseif mode == "throw" then
-						throw()
-					elseif mode == "release" then
-						release()
-					end
+	notify()
+	if grabbed == nil then
+		if mode == "fling" then
+			fling()
+		else
+			grab()
+		end
+	elseif grabbed ~= nil then
+		if mode == "kill" then
+			-- Instant head kill with sounds and animation reset
+			working = true
+			pcall(function()
+				local hum = grabbed:FindFirstChildOfClass("Humanoid")
+				if not hum or hum.Health <= 0 then return end
+
+				-- Stop grab animation
+				_G.StopGrab = true
+
+				local head = grabbed:FindFirstChild("Head") or grabbed
+				local killsound = Instance.new("Sound", head)
+				killsound.SoundId = "rbxassetid://150315649"
+				killsound.PlaybackSpeed = math.random(9, 12) / 10
+				killsound.Volume = 1
+				killsound:Play()
+
+				local killsoundac = Instance.new("Sound", head)
+				killsoundac.SoundId = "rbxassetid://162194585"
+				killsoundac.PlaybackSpeed = math.random(9, 13) / 10
+				killsoundac.Volume = 1
+				killsoundac:Play()
+
+				local bleedsound = Instance.new("Sound", head)
+				bleedsound.SoundId = "rbxassetid://244502094"
+				bleedsound.PlaybackSpeed = 1.5
+				bleedsound.Volume = 1
+				bleedsound:Play()
+
+				-- Kill safely
+				hum.Health = 0
+				pcall(function() ragdollpart(grabbed, "Head", true, false) end)
+
+				-- Blood effect
+				local blood = Instance.new("Part", grabbed)
+				blood.Size = Vector3.new(0.2, 0.2, 0.2)
+				blood.BrickColor = BrickColor.new("Maroon")
+				blood.Material = Enum.Material.SmoothPlastic
+				blood.CanCollide = false
+				blood.Transparency = 0.3
+				blood.CFrame = head.CFrame
+				blood.Name = "ayybleed"
+				blood:BreakJoints()
+				spawn(function() bleed(blood) end)
+
+				game.Debris:AddItem(killsound, 2)
+				game.Debris:AddItem(killsoundac, 2)
+				game.Debris:AddItem(bleedsound, 2)
+
+				-- === Reset animation like release() ===
+				removewelds(char["Right Arm"])
+				removewelds(char["Left Arm"])
+				local rweld = Instance.new("Weld", char["Right Arm"])
+				local lweld = Instance.new("Weld", char["Left Arm"])
+				rweld.Part0 = char["Torso"]
+				rweld.Part1 = char["Right Arm"]
+				rweld.C0 = CFrame.new(1, 0.7, -0.75) * CFrame.Angles(0, math.rad(95), math.rad(105))
+				lweld.Part0 = char.Torso
+				lweld.Part1 = char["Left Arm"]
+				lweld.C0 = CFrame.new(-1.25, 0.7, -0.75) * CFrame.Angles(0, math.rad(-140), math.rad(-105))
+
+				local cor = coroutine.wrap(function()
+					lerp(rweld, rweld.C0, CFrame.new(1.5, 0, 0) * CFrame.Angles(0, 0, 0), 0.08)
+				end)
+				local cor2 = coroutine.wrap(function()
+					lerp(hweld, hweld.C0, CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(-180), math.rad(-90), 0), 0.08)
+				end)
+				cor()
+				cor2()
+				lerp(lweld, lweld.C0, CFrame.new(-1.5, 0, 0) * CFrame.Angles(0, 0, 0), 0.08)
+
+				task.wait(0.1)
+				lweld:Destroy()
+				rweld:Destroy()
+
+				-- Recreate cloned arm welds like throw()
+				if leftclone and char:FindFirstChild("Left Arm") and char:FindFirstChild("Torso") then
+					local clone = leftclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Left Arm"]
+					clone.Parent = char.Torso
 				end
+				if rightclone and char:FindFirstChild("Right Arm") and char:FindFirstChild("Torso") then
+					local clone = rightclone:Clone()
+					clone.Part0 = char.Torso
+					clone.Part1 = char["Right Arm"]
+					clone.Parent = char.Torso
+				end
+
+				local hum2 = char:FindFirstChildOfClass("Humanoid")
+				if hum2 then
+					hum2:ChangeState(Enum.HumanoidStateType.GettingUp)
+					hum2:Move(Vector3.new())
+				end
+			end)
+
+			grabbed = nil
+			working = false
+
+		elseif mode == "throw" then
+			throw()
+		elseif mode == "release" then
+			release()
+		end
+	end
+
 			elseif blademode == "reboot" then
 				raep()
 			end
