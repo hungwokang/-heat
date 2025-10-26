@@ -78,7 +78,7 @@ local function enableFling()
     spawn(function()
         local message = Instance.new("Message", workspace)
         message.Text = "FE Invisible Fling By Diemiers#4209 Loaded (wait 11 seconds to load)"
-        wait(11)
+        wait(3)
         message:Destroy()
     end)
     
@@ -105,32 +105,31 @@ local function enableFling()
     local hum = player.Character.Humanoid
     hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
     
-    -- Make invisible without destroying vital parts
-    for _, v in pairs(player.Character:GetDescendants()) do
+    -- Prevent certain states to avoid damage/death
+    hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+    hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+    
+    -- Destroy unnecessary parts for true invisibility and to reduce physics interactions
+    for _, v in pairs(player.Character:GetChildren()) do
         if v:IsA("BasePart") and v ~= root then
-            v.Transparency = 1
-            v.CanCollide = false
+            v:Destroy()
         elseif v:IsA("Decal") and v.Name == "face" then
             v:Destroy()
         elseif v:IsA("Accessory") then
-            local handle = v:FindFirstChild("Handle")
-            if handle then
-                handle.Transparency = 1
-                handle.CanCollide = false
-            end
+            v:Destroy()
         end
     end
     
-    -- Keep root visible for selection if needed, but it's inherently transparent; set to 1 explicitly
-    root.Transparency = 1
+    -- Set root properties
+    root.Transparency = 100
     root.CanCollide = true  -- Enable collision for flinging
+    root.CustomPhysicalProperties = PhysicalProperties.new(1000, 0, 0, 0, 0)  -- High density for high mass, low friction/elasticity to prevent backlash
     
     workspace.CurrentCamera.CameraSubject = root
     
     local se = Instance.new("SelectionBox", root)
     se.Adornee = root
-    
-    -- Remove CanCollide false loop, as we want collision
     
     power = 999999 -- change this to make it more or less powerful
     
@@ -142,13 +141,13 @@ local function enableFling()
     
     local torso = root
     local flying = true
-    local deb = true
     local ctrl = {f = 0, b = 0, l = 0, r = 0}
     local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-    local maxspeed = 80
-    local speed = 80
+    local maxspeed = 50
+    local speed = 50
     
     local function Fly()
+        hum.PlatformStand = true  -- Set to platform stand to prevent walking and potential damage
         local bg = Instance.new("BodyGyro", torso)
         bg.P = 9e4
         bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
@@ -159,12 +158,12 @@ local function enableFling()
         repeat wait()
             bg.CFrame = workspace.CurrentCamera.CFrame
             if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed + 0.2
+                speed = speed + 0
                 if speed > maxspeed then
                     speed = maxspeed
                 end
             elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                speed = speed - 1
+                speed = speed - 50
                 if speed < 0 then
                     speed = 0
                 end
@@ -177,10 +176,13 @@ local function enableFling()
             else
                 bv.Velocity = Vector3.new(0, 0.1, 0)
             end
+            -- Robust velocity clamping to prevent unexpected flings
+            torso.AssemblyLinearVelocity = bv.Velocity
         until not flying
         ctrl = {f = 0, b = 0, l = 0, r = 0}
         lastctrl = {f = 0, b = 0, l = 0, r = 0}
         speed = 0
+        hum.PlatformStand = false
         bg:Destroy()
         bv:Destroy()
     end
