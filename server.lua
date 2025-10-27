@@ -31,7 +31,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "X0N7"
+title.Text = "X0N777"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -107,31 +107,52 @@ local rotationSpeed = 1 -- Degrees per frame
 local throwSpeed = 200  -- Velocity for throwing
 local currentAngle = 0
 
+local TargetFolder = Instance.new("Folder")
+TargetFolder.Name = "OrbitTargets"
+TargetFolder.Parent = Workspace
+
 --// Collect unanchored BaseParts
 local function collectParts()
 	parts = {}
 	for _, part in pairs(Workspace:GetDescendants()) do
 		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= player.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
-			table.insert(parts, part)
-			-- Make collidable
+			local targetPart = Instance.new("Part")
+			targetPart.Anchored = true
+			targetPart.CanCollide = false
+			targetPart.Transparency = 1
+			targetPart.Name = "Target"
+			targetPart.Parent = TargetFolder
+			local att1 = Instance.new("Attachment", targetPart)
+			local att2 = Instance.new("Attachment", part)
+			local alignPos = Instance.new("AlignPosition", part)
+			alignPos.Attachment0 = att2
+			alignPos.Attachment1 = att1
+			alignPos.MaxForce = math.huge
+			alignPos.MaxVelocity = math.huge
+			alignPos.Responsiveness = 200
+			local torque = Instance.new("Torque", part)
+			torque.Attachment0 = att2
+			torque.Torque = Vector3.new(100000, 100000, 100000)
 			part.CanCollide = true
+			table.insert(parts, {Part = part, Target = targetPart})
 		end
 	end
 end
 
 --// Orbit Logic
 RunService.Heartbeat:Connect(function(deltaTime)
+	sethiddenproperty(player, "SimulationRadius", math.huge)
 	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 	if not hrp then return end
 	
 	if orbitingEnabled then
 		currentAngle = currentAngle + rotationSpeed * deltaTime
 		local numParts = #parts
-		for i, part in ipairs(parts) do
-			if part and part.Parent then
+		for i, entry in ipairs(parts) do
+			if entry.Part and entry.Part.Parent and entry.Target then
 				local angle = currentAngle + (i / numParts) * 2 * math.pi
 				local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
-				part.Position = targetPos  -- Direct position for simplicity; use AlignPosition for physics
+				entry.Target.Position = targetPos
 			end
 		end
 	end
@@ -328,7 +349,13 @@ end)
 throwButton.MouseButton1Click:Connect(function()
 	if #selectedTargets > 0 and #parts > 0 then
 		-- Pick one part and remove it from the orbiting list
-		local part = table.remove(parts, 1)
+		local entry = table.remove(parts, 1)
+		local part = entry.Part
+		-- Destroy movers
+		if part:FindFirstChild("AlignPosition") then part:FindFirstChild("AlignPosition"):Destroy() end
+		if part:FindFirstChild("Torque") then part:FindFirstChild("Torque"):Destroy() end
+		if part:FindFirstChild("Attachment") then part:FindFirstChild("Attachment"):Destroy() end
+		if entry.Target then entry.Target:Destroy() end
 		-- Pick a random target if multiple
 		local target = selectedTargets[math.random(1, #selectedTargets)]
 		local targetHrp = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
