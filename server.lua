@@ -84,14 +84,14 @@ frame.Draggable = true
 --// Title bar
 local title = Instance.new("TextLabel")
 title.Parent = frame
-title.Size = UDim2.new(1, 0, 0, 20)
-title.Position = UDim2.new(0, 0, 0, 0)
+title.Size = UDim2.new(1, -20, 0, 20)
+title.Position = UDim2.new(0, 50, 0, 0)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
 title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
-title.TextXAlignment = Enum.TextXAlignment.Center
+title.TextXAlignment = Enum.TextXAlignment.Left
 
 --// Minimize button
 local minimize = Instance.new("TextButton")
@@ -137,7 +137,6 @@ footer.Font = Enum.Font.Code
 footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
-footer.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Functions
 local function findNearestLooseParts(num)
@@ -157,6 +156,11 @@ local function findNearestLooseParts(num)
         pcall(function() p:SetNetworkOwner(LocalPlayer) end)
         p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
         p.Transparency = 0  -- Ensure visible
+        for _, v in pairs(p:GetChildren()) do
+            if v:IsA("Constraint") then
+                v:Destroy()
+            end
+        end
         table.insert(selected, p)
     end
     return selected
@@ -295,8 +299,6 @@ local function enterWitchMode()
     startBtn.TextSize = 12
     
     startBtn.MouseButton1Click:Connect(function()
-        local count = 0
-        for _ in pairs(selectedTargets) do count = count + 1 end
         if #levitatingParts > 0 then
             game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Already grabbing parts!", Duration = 3})
             return
@@ -355,7 +357,7 @@ end
 
 --// Create initial WITCH button
 witchBtn = Instance.new("TextButton")
-witchBtn.Name = "OPEN"
+witchBtn.Name = "WITCH"
 witchBtn.Parent = scroll
 witchBtn.Size = UDim2.new(1, 0, 0, 25)
 witchBtn.BackgroundTransparency = 1
@@ -383,7 +385,7 @@ end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-    Title = "hung";
-    Text = "WITCH loaded! (Orbit)";
-    Duration = 5;
+    Title = "FE HAX";
+    Text = "hehe boi get load'd";
+    Duration = 11;
 })
