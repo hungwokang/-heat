@@ -17,8 +17,8 @@ gui.Parent = game.CoreGui
 --// Main Frame
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0, 120, 0, 130)
-frame.Position = UDim2.new(0.5, -60, 0.5, -65)
+frame.Size = UDim2.new(0, 150, 0, 200)
+frame.Position = UDim2.new(0.5, -75, 0.5, -100)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BackgroundTransparency = 0.4
 frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -31,7 +31,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "X0N777"
+title.Text = "X0N7"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -80,7 +80,7 @@ footer.TextSize = 10
 local minimized = false
 minimize.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
+	local targetSize = minimized and UDim2.new(0, 150, 0, 25) or UDim2.new(0, 150, 0, 200)
 	local targetText = minimized and "+" or "-"
 	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
 		Size = targetSize
@@ -102,9 +102,9 @@ local selectedTargets = {}
 local parts = {}
 local orbitingEnabled = false
 local orbitHeight = 40  -- Height above HRP
-local orbitRadius = 5   -- Radius of circle
+local orbitRadius = 20   -- Radius of circle
 local rotationSpeed = 1 -- Degrees per frame
-local throwSpeed = 1000  -- Velocity for throwing
+local throwSpeed = 200  -- Velocity for throwing
 local currentAngle = 0
 
 --// Collect unanchored BaseParts
@@ -113,18 +113,8 @@ local function collectParts()
 	for _, part in pairs(Workspace:GetDescendants()) do
 		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= player.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
 			table.insert(parts, part)
-			-- Make non-collidable and add kill touch
-			part.CanCollide = false
-			local touchConn = part.Touched:Connect(function(hit)
-				local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-				if humanoid then
-					humanoid.Health = 0
-				end
-			end)
-			-- Optional: Destroy conn when part destroyed
-			part.Destroying:Connect(function()
-				touchConn:Disconnect()
-			end)
+			-- Make collidable
+			part.CanCollide = true
 		end
 	end
 end
@@ -166,15 +156,16 @@ targetFrame.Size = UDim2.new(1, 0, 1, 0)
 targetFrame.BackgroundTransparency = 1
 targetFrame.Visible = false
 
--- Select target label
-local selectLabel = Instance.new("TextLabel")
-selectLabel.Parent = targetFrame
-selectLabel.Size = UDim2.new(1, -10, 0, 20)
-selectLabel.Text = "Select Target:"
-selectLabel.Font = Enum.Font.Code
-selectLabel.TextSize = 12
-selectLabel.BackgroundTransparency = 1
-selectLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+-- Player toggle button
+local playerToggle = Instance.new("TextButton")
+playerToggle.Parent = targetFrame
+playerToggle.Position = UDim2.new(0, 0, 0, 0)
+playerToggle.Size = UDim2.new(1, -10, 0, 20)
+playerToggle.Text = "Show Targets"
+playerToggle.Font = Enum.Font.Code
+playerToggle.TextSize = 12
+playerToggle.BackgroundTransparency = 1
+playerToggle.TextColor3 = Color3.fromRGB(255, 0, 0)
 
 -- Player list scroll
 local playerScroll = Instance.new("ScrollingFrame")
@@ -184,6 +175,7 @@ playerScroll.Size = UDim2.new(1, 0, 0, 50)
 playerScroll.BackgroundTransparency = 1
 playerScroll.ScrollBarThickness = 2
 playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+playerScroll.Visible = false
 
 local playerLayout = Instance.new("UIListLayout")
 playerLayout.Parent = playerScroll
@@ -193,7 +185,7 @@ playerLayout.Padding = UDim.new(0, 2)
 -- Target All button
 local targetAllButton = Instance.new("TextButton")
 targetAllButton.Parent = targetFrame
-targetAllButton.Position = UDim2.new(0, 0, 0, 80)
+targetAllButton.Position = UDim2.new(0, 0, 0, 25)
 targetAllButton.Size = UDim2.new(1, -10, 0, 20)
 targetAllButton.Text = "Target All: Off"
 targetAllButton.Font = Enum.Font.Code
@@ -204,7 +196,7 @@ targetAllButton.TextColor3 = Color3.new(0, 0, 0)
 -- Orbit button
 local orbitButton = Instance.new("TextButton")
 orbitButton.Parent = targetFrame
-orbitButton.Position = UDim2.new(0, 0, 0, 105)
+orbitButton.Position = UDim2.new(0, 0, 0, 50)
 orbitButton.Size = UDim2.new(0.5, -5, 0, 20)
 orbitButton.Text = "Orbit Off"
 orbitButton.Font = Enum.Font.Code
@@ -215,7 +207,7 @@ orbitButton.TextColor3 = Color3.new(0, 0, 0)
 -- Throw button
 local throwButton = Instance.new("TextButton")
 throwButton.Parent = targetFrame
-throwButton.Position = UDim2.new(0.5, 5, 0, 105)
+throwButton.Position = UDim2.new(0.5, 5, 0, 50)
 throwButton.Size = UDim2.new(0.5, -5, 0, 20)
 throwButton.Text = "Throw"
 throwButton.Font = Enum.Font.Code
@@ -226,13 +218,36 @@ throwButton.TextColor3 = Color3.new(0, 0, 0)
 -- Back button
 local backButton = Instance.new("TextButton")
 backButton.Parent = targetFrame
-backButton.Position = UDim2.new(0, 0, 0, 130)
+backButton.Position = UDim2.new(0, 0, 0, 75)
 backButton.Size = UDim2.new(1, -10, 0, 20)
 backButton.Text = "Back"
 backButton.Font = Enum.Font.Code
 backButton.TextSize = 12
 backButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 backButton.TextColor3 = Color3.new(0, 0, 0)
+
+-- Function to update positions based on player list visibility
+local function updatePositions(showList)
+    playerScroll.Visible = showList
+    local listOffset = showList and 80 or 25
+    targetAllButton.Position = UDim2.new(0, 0, 0, listOffset)
+    local buttonOffset = listOffset + 25
+    orbitButton.Position = UDim2.new(0, 0, 0, buttonOffset)
+    throwButton.Position = UDim2.new(0.5, 5, 0, buttonOffset)
+    local backOffset = buttonOffset + 25
+    backButton.Position = UDim2.new(0, 0, 0, backOffset)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, showList and 170 or 115)
+end
+
+-- Initial setup
+updatePositions(false)
+
+-- Player toggle click
+playerToggle.MouseButton1Click:Connect(function()
+    local newVisible = not playerScroll.Visible
+    updatePositions(newVisible)
+    playerToggle.Text = newVisible and "Hide Targets" or "Show Targets"
+end)
 
 -- Function to populate player list
 local function populatePlayers()
@@ -272,7 +287,7 @@ enableButton.MouseButton1Click:Connect(function()
 	enableButton.Visible = false
 	targetFrame.Visible = true
 	populatePlayers()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 170)  -- Adjust for content
+	updatePositions(playerScroll.Visible)  -- Update based on current visibility
 end)
 
 -- Target All click
