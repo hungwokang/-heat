@@ -1,3 +1,4 @@
+-- PART 1: Main GUI (unchanged) + GG opener
 --// Services
 local TweenService = game:GetService("TweenService")
 local vim = game:GetService("VirtualInputManager")
@@ -343,6 +344,26 @@ end
 --// Logic
 local minimized = false
 
+-- Super Ring overlay handler forward-declare
+local SuperRingOverlay = nil
+
+-- Open overlay function (shows the overlay frame; creates it once)
+local function openSuperRingOverlay()
+    if SuperRingOverlay and SuperRingOverlay.Parent then
+        SuperRingOverlay.Visible = true
+        return
+    end
+    -- We'll create the overlay in Part 2 (script continues there).
+    -- This placeholder exists so refreshButtons can reference the function.
+    -- Actual overlay creation code is appended in Part 2.
+    if _G.CreateSuperRingOverlay then
+        _G.CreateSuperRingOverlay(gui, frame) -- call Part2 function to create overlay
+    end
+    if SuperRingOverlay and SuperRingOverlay.Parent then
+        SuperRingOverlay.Visible = true
+    end
+end
+
 local function refreshButtons()
 	-- Remove only buttons, keep layout
 	for _, child in ipairs(scroll:GetChildren()) do
@@ -352,6 +373,11 @@ local function refreshButtons()
 	end
 
 	makeButton("KILL ALL", killAll)
+
+	-- ADD GG BUTTON (matches your GUI style)
+	makeButton("GG", function()
+		openSuperRingOverlay()
+	end)
 
 	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
 end
@@ -416,3 +442,500 @@ refreshButtons()
 layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
 end)
+
+
+-- PART 2: Super Ring Overlay (restyled, uses original Super Ring logic)
+-- This code expects to be run in the same environment as Part 1.
+-- We expose a creation function to be called from Part 1.
+
+-- Wrap in a function so Part1 can call it
+_G.CreateSuperRingOverlay = function(parentGui, mainFrame)
+    -- if already created, don't duplicate
+    if parentGui:FindFirstChild("SuperRingOverlay") then
+        SuperRingOverlay = parentGui:FindFirstChild("SuperRingOverlay")
+        SuperRingOverlay.Visible = true
+        return
+    end
+
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
+    local SoundService = game:GetService("SoundService")
+    local StarterGui = game:GetService("StarterGui")
+    local HttpService = game:GetService("HttpService")
+    local LocalPlayer = Players.LocalPlayer
+
+    -- Sound Effects (kept identical)
+    local function playSound(soundId)
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://" .. soundId
+        sound.Parent = SoundService
+        sound:Play()
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+    end
+
+    playSound("2865227271")
+
+    -- Overlay ScreenGui/Frame (overlay style matches main GUI)
+    local overlayFrame = Instance.new("Frame")
+    overlayFrame.Name = "SuperRingOverlay"
+    overlayFrame.Size = UDim2.new(0, 300, 0, 500)
+    -- position overlay centered over mainFrame (overlay)
+    overlayFrame.Position = UDim2.new(mainFrame.Position.X.Scale, mainFrame.Position.X.Offset - 90, mainFrame.Position.Y.Scale, mainFrame.Position.Y.Offset - 200)
+    overlayFrame.BorderSizePixel = 0
+    overlayFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- black
+    overlayFrame.BackgroundTransparency = 0.2
+    overlayFrame.BorderColor3 = Color3.fromRGB(255, 0, 0) -- red border color
+    overlayFrame.Parent = parentGui
+
+    -- Blocky red border: create an Outline Frame (thin)
+    local outline = Instance.new("Frame")
+    outline.Size = UDim2.new(1, 2, 1, 2)
+    outline.Position = UDim2.new(0, -1, 0, -1)
+    outline.BorderSizePixel = 0
+    outline.BackgroundTransparency = 1
+    outline.Parent = overlayFrame
+    local outlineStroke = Instance.new("UIStroke")
+    outlineStroke.Color = Color3.fromRGB(255,0,0)
+    outlineStroke.Thickness = 2
+    outlineStroke.Parent = outline
+
+    -- Title (styled)
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, 0, 0, 28)
+    Title.Position = UDim2.new(0, 0, 0, 0)
+    Title.Text = "Super Ring Parts V6 by lukas"
+    Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Font = Enum.Font.Code
+    Title.TextSize = 14
+    Title.Parent = overlayFrame
+
+    -- Minimize/Close for overlay
+    local CloseBtn = Instance.new("TextButton")
+    CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+    CloseBtn.Position = UDim2.new(1, -26, 0, 2)
+    CloseBtn.Text = "x"
+    CloseBtn.Font = Enum.Font.Code
+    CloseBtn.TextSize = 14
+    CloseBtn.BackgroundTransparency = 1
+    CloseBtn.TextColor3 = Color3.fromRGB(255,0,0)
+    CloseBtn.Parent = overlayFrame
+
+    CloseBtn.MouseButton1Click:Connect(function()
+        overlayFrame.Visible = false
+    end)
+
+    -- Make overlay draggable (blocky style)
+    overlayFrame.Active = true
+    overlayFrame.Draggable = true
+
+    -- Main content container (scroll-like)
+    local content = Instance.new("Frame")
+    content.Size = UDim2.new(1, -10, 1, -40)
+    content.Position = UDim2.new(0, 5, 0, 30)
+    content.BackgroundTransparency = 1
+    content.Parent = overlayFrame
+
+    -- Config table (kept identical with load/save)
+    local config = {
+        radius = 50,
+        height = 100,
+        rotationSpeed = 10,
+        attractionStrength = 1000,
+    }
+
+    local function saveConfig()
+        local ok, err = pcall(function()
+            local configStr = HttpService:JSONEncode(config)
+            if writefile then writefile("SuperRingPartsConfig.txt", configStr) end
+        end)
+        -- ignore errors silently
+    end
+
+    local function loadConfig()
+        if isfile and isfile("SuperRingPartsConfig.txt") then
+            local ok, data = pcall(function() return readfile("SuperRingPartsConfig.txt") end)
+            if ok and data then
+                local success, t = pcall(function() return HttpService:JSONDecode(data) end)
+                if success and t then
+                    config = t
+                end
+            end
+        end
+    end
+
+    loadConfig()
+
+    -- Create controls (restyled to match)
+    local function createControl(name, posY, color, labelText, defaultValue, callback)
+        -- Label
+        local Display = Instance.new("TextLabel")
+        Display.Size = UDim2.new(0.8, 0, 0, 22)
+        Display.Position = UDim2.new(0.1, 0, 0, posY)
+        Display.Text = labelText .. ": " .. defaultValue
+        Display.BackgroundColor3 = Color3.fromRGB(20,20,20)
+        Display.BorderSizePixel = 1
+        Display.BorderColor3 = Color3.fromRGB(255,0,0)
+        Display.TextColor3 = Color3.fromRGB(255,255,255)
+        Display.Font = Enum.Font.Code
+        Display.TextSize = 13
+        Display.Parent = content
+
+        -- Decrease
+        local DecreaseButton = Instance.new("TextButton")
+        DecreaseButton.Size = UDim2.new(0.15, 0, 0, 22)
+        DecreaseButton.Position = UDim2.new(0.01, 0, 0, posY)
+        DecreaseButton.Text = "-"
+        DecreaseButton.BackgroundColor3 = Color3.new(0,0,0)
+        DecreaseButton.BorderColor3 = Color3.fromRGB(255,0,0)
+        DecreaseButton.TextColor3 = Color3.fromRGB(255,255,255)
+        DecreaseButton.Font = Enum.Font.Code
+        DecreaseButton.TextSize = 14
+        DecreaseButton.Parent = content
+
+        -- Increase
+        local IncreaseButton = Instance.new("TextButton")
+        IncreaseButton.Size = UDim2.new(0.15, 0, 0, 22)
+        IncreaseButton.Position = UDim2.new(0.84, 0, 0, posY)
+        IncreaseButton.Text = "+"
+        IncreaseButton.BackgroundColor3 = Color3.new(0,0,0)
+        IncreaseButton.BorderColor3 = Color3.fromRGB(255,0,0)
+        IncreaseButton.TextColor3 = Color3.fromRGB(255,255,255)
+        IncreaseButton.Font = Enum.Font.Code
+        IncreaseButton.TextSize = 14
+        IncreaseButton.Parent = content
+
+        -- TextBox (input)
+        local TextBox = Instance.new("TextBox")
+        TextBox.Size = UDim2.new(0.98, 0, 0, 22)
+        TextBox.Position = UDim2.new(0.01, 0, 0, posY + 24)
+        TextBox.PlaceholderText = "Enter " .. labelText
+        TextBox.BackgroundColor3 = Color3.fromRGB(15,15,15)
+        TextBox.BorderColor3 = Color3.fromRGB(255,0,0)
+        TextBox.TextColor3 = Color3.fromRGB(255,255,255)
+        TextBox.Font = Enum.Font.Code
+        TextBox.TextSize = 13
+        TextBox.Parent = content
+
+        -- Button callbacks
+        DecreaseButton.MouseButton1Click:Connect(function()
+            local value = tonumber(Display.Text:match("%d+")) or defaultValue
+            value = math.max(0, value - 10)
+            Display.Text = labelText .. ": " .. value
+            callback(value)
+            playSound("12221967")
+            saveConfig()
+        end)
+
+        IncreaseButton.MouseButton1Click:Connect(function()
+            local value = tonumber(Display.Text:match("%d+")) or defaultValue
+            value = math.min(10000, value + 10)
+            Display.Text = labelText .. ": " .. value
+            callback(value)
+            playSound("12221967")
+            saveConfig()
+        end)
+
+        TextBox.FocusLost:Connect(function(enterPressed)
+            if enterPressed then
+                local newValue = tonumber(TextBox.Text)
+                if newValue then
+                    newValue = math.clamp(newValue, 0, 10000)
+                    Display.Text = labelText .. ": " .. newValue
+                    TextBox.Text = ""
+                    callback(newValue)
+                    playSound("12221967")
+                    saveConfig()
+                else
+                    TextBox.Text = ""
+                end
+            end
+        end)
+    end
+
+    -- Track vertical position for controls
+    local curY = 0
+
+    -- Create controls exactly like original but restyled
+    createControl("Radius", curY + 0, Color3.fromRGB(153,153,0), "Radius", config.radius, function(value)
+        config.radius = value
+        saveConfig()
+    end)
+    curY = curY + 60
+
+    createControl("Height", curY + 0, Color3.fromRGB(153,0,153), "Height", config.height, function(value)
+        config.height = value
+        saveConfig()
+    end)
+    curY = curY + 60
+
+    createControl("RotationSpeed", curY + 0, Color3.fromRGB(0,153,153), "Rotation Speed", config.rotationSpeed, function(value)
+        config.rotationSpeed = value
+        saveConfig()
+    end)
+    curY = curY + 60
+
+    createControl("AttractionStrength", curY + 0, Color3.fromRGB(153,0,0), "Attraction Strength", config.attractionStrength, function(value)
+        config.attractionStrength = value
+        saveConfig()
+    end)
+    curY = curY + 60
+
+    -- Minimize button (overlay)
+    local MinimizeButton = Instance.new("TextButton")
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.Position = UDim2.new(1, -35, 0, 5)
+    MinimizeButton.Text = "-"
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    MinimizeButton.BorderColor3 = Color3.fromRGB(255,0,0)
+    MinimizeButton.TextColor3 = Color3.fromRGB(255,0,0)
+    MinimizeButton.Font = Enum.Font.Code
+    MinimizeButton.TextSize = 14
+    MinimizeButton.Parent = overlayFrame
+
+    local minimizedOverlay = false
+    MinimizeButton.MouseButton1Click:Connect(function()
+        minimizedOverlay = not minimizedOverlay
+        if minimizedOverlay then
+            overlayFrame.Size = UDim2.new(0, 300, 0, 36)
+            MinimizeButton.Text = "+"
+            for _, child in ipairs(overlayFrame:GetChildren()) do
+                if child:IsA("GuiObject") and child ~= Title and child ~= MinimizeButton and child ~= CloseBtn then
+                    child.Visible = false
+                end
+            end
+        else
+            overlayFrame.Size = UDim2.new(0, 300, 0, 500)
+            MinimizeButton.Text = "-"
+            for _, child in ipairs(overlayFrame:GetChildren()) do
+                if child:IsA("GuiObject") then
+                    child.Visible = true
+                end
+            end
+        end
+        playSound("12221967")
+    end)
+
+    -- Dragging overlay (already set as Draggable)
+
+    -- Ring Parts logic (kept identical behavior)
+    local Workspace = game:GetService("Workspace")
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    local Folder = Instance.new("Folder", Workspace)
+    local Part = Instance.new("Part", Folder)
+    local Attachment1 = Instance.new("Attachment", Part)
+    Part.Anchored = true
+    Part.CanCollide = false
+    Part.Transparency = 1
+
+    if not getgenv().Network then
+        getgenv().Network = {
+            BaseParts = {},
+            Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+        }
+
+        Network.RetainPart = function(Part)
+            if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
+                table.insert(Network.BaseParts, Part)
+                Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+                Part.CanCollide = false
+            end
+        end
+
+        local function EnablePartControl()
+            LocalPlayer.ReplicationFocus = Workspace
+            RunService.Heartbeat:Connect(function()
+                pcall(function()
+                    sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+                end)
+                for _, Part in pairs(Network.BaseParts) do
+                    if Part:IsDescendantOf(Workspace) then
+                        Part.Velocity = Network.Velocity
+                    end
+                end
+            end)
+        end
+
+        EnablePartControl()
+    end
+
+    local function ForcePart(v)
+        if v:IsA("Part") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
+            for _, x in next, v:GetChildren() do
+                if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
+                    x:Destroy()
+                end
+            end
+            if v:FindFirstChild("Attachment") then
+                v:FindFirstChild("Attachment"):Destroy()
+            end
+            if v:FindFirstChild("AlignPosition") then
+                v:FindFirstChild("AlignPosition"):Destroy()
+            end
+            if v:FindFirstChild("Torque") then
+                v:FindFirstChild("Torque"):Destroy()
+            end
+            v.CanCollide = false
+            local Torque = Instance.new("Torque", v)
+            Torque.Torque = Vector3.new(100000, 100000, 100000)
+            local AlignPosition = Instance.new("AlignPosition", v)
+            local Attachment2 = Instance.new("Attachment", v)
+            Torque.Attachment0 = Attachment2
+            AlignPosition.MaxForce = 9999999999999999999999999999999
+            AlignPosition.MaxVelocity = math.huge
+            AlignPosition.Responsiveness = 200
+            AlignPosition.Attachment0 = Attachment2
+            AlignPosition.Attachment1 = Attachment1
+        end
+    end
+
+    local ringPartsEnabled = false
+
+    local function RetainPart(Part)
+        if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
+            if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
+                return false
+            end
+
+            Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+            Part.CanCollide = false
+            return true
+        end
+        return false
+    end
+
+    local parts = {}
+    local function addPart(part)
+        if RetainPart(part) then
+            if not table.find(parts, part) then
+                table.insert(parts, part)
+            end
+        end
+    end
+
+    local function removePart(part)
+        local index = table.find(parts, part)
+        if index then
+            table.remove(parts, index)
+        end
+    end
+
+    for _, part in pairs(workspace:GetDescendants()) do
+        addPart(part)
+    end
+
+    workspace.DescendantAdded:Connect(addPart)
+    workspace.DescendantRemoving:Connect(removePart)
+
+    RunService.Heartbeat:Connect(function()
+        if not ringPartsEnabled then return end
+
+        local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local tornadoCenter = humanoidRootPart.Position
+            for _, part in pairs(parts) do
+                if part.Parent and not part.Anchored then
+                    local pos = part.Position
+                    local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+                    local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
+                    local newAngle = angle + math.rad(config.rotationSpeed)
+                    local targetPos = Vector3.new(
+                        tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
+                        tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
+                        tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
+                    )
+                    local ok, dir = pcall(function() return (targetPos - part.Position).unit end)
+                    if ok and dir then
+                        part.Velocity = dir * config.attractionStrength
+                    end
+                end
+            end
+        end
+    end)
+
+    -- Toggle button (restyled)
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Size = UDim2.new(0.8, 0, 0, 28)
+    ToggleButton.Position = UDim2.new(0.1, 0, 0, curY + 10)
+    ToggleButton.Text = "Ring Off"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    ToggleButton.BorderColor3 = Color3.fromRGB(255,0,0)
+    ToggleButton.TextColor3 = Color3.fromRGB(255,0,0)
+    ToggleButton.Font = Enum.Font.Code
+    ToggleButton.TextSize = 14
+    ToggleButton.Parent = content
+
+    ToggleButton.MouseButton1Click:Connect(function()
+        ringPartsEnabled = not ringPartsEnabled
+        ToggleButton.Text = ringPartsEnabled and "Tornado On" or "Tornado Off"
+        if ringPartsEnabled then
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
+            ToggleButton.TextColor3 = Color3.fromRGB(0,255,0)
+        else
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
+            ToggleButton.TextColor3 = Color3.fromRGB(255,0,0)
+        end
+        playSound("12221967")
+    end)
+
+    -- Thumbnail + notices (kept)
+    local ok, userId = pcall(function() return Players:GetUserIdFromNameAsync("Robloxlukasgames") end)
+    if ok and userId then
+        local thumbType = Enum.ThumbnailType.HeadShot
+        local thumbSize = Enum.ThumbnailSize.Size420x420
+        local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+        StarterGui:SetCore("SendNotification", {
+            Title = "Hey",
+            Text = "Enjoy the Script!",
+            Icon = content,
+            Duration = 5
+        })
+        StarterGui:SetCore("SendNotification", {
+            Title = "TIPS",
+            Text = "Click Textbox To edit Any of them",
+            Icon = content,
+            Duration = 5
+        })
+        StarterGui:SetCore("SendNotification", {
+            Title = "Credits",
+            Text = "On scriptblox!",
+            Icon = content,
+            Duration = 5
+        })
+    end
+
+    -- Rainbow background & title text (kept behavior but subtle)
+    local hue = 0
+    local textHue = 0
+    local bgConn = RunService.Heartbeat:Connect(function()
+        hue = (hue + 0.005) % 1
+        -- subtle HSV on black -> keep very dim saturation
+        overlayFrame.BackgroundColor3 = Color3.fromHSV(hue, 0.2, 0.06)
+        textHue = (textHue + 0.01) % 1
+        Title.TextColor3 = Color3.fromHSV(textHue, 0.6, 1)
+    end)
+
+    -- Add Back button (closes overlay)
+    local BackBtn = Instance.new("TextButton")
+    BackBtn.Size = UDim2.new(0.8, 0, 0, 24)
+    BackBtn.Position = UDim2.new(0.1, 0, 0, 440)
+    BackBtn.Text = "Back"
+    BackBtn.BackgroundColor3 = Color3.new(0,0,0)
+    BackBtn.BorderColor3 = Color3.fromRGB(255,0,0)
+    BackBtn.TextColor3 = Color3.fromRGB(255,0,0)
+    BackBtn.Font = Enum.Font.Code
+    BackBtn.TextSize = 14
+    BackBtn.Parent = overlayFrame
+
+    BackBtn.MouseButton1Click:Connect(function()
+        overlayFrame.Visible = false
+    end)
+
+    -- Save SuperRingOverlay ref globally so Part1 can toggle it
+    SuperRingOverlay = overlayFrame
+end
