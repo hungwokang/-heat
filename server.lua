@@ -31,7 +31,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "X0N77"
+title.Text = "X0N7"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -102,8 +102,8 @@ local selectedTargets = {}
 local parts = {}
 local orbitingEnabled = false
 local throwingEnabled = false
-local orbitHeight = 100  -- Height above HRP
-local orbitRadius = 10   -- Radius of circle
+local orbitHeight = 50  -- Height above HRP
+local orbitRadius = 20   -- Radius of circle
 local rotationSpeed = 1 -- Degrees per frame
 local throwSpeed = 200  -- Velocity for throwing
 local currentAngle = 0
@@ -145,7 +145,9 @@ RunService.Heartbeat:Connect(function(deltaTime)
 				part.Position = targetPos  -- Direct position for simplicity; use AlignPosition for physics
 			end
 		end
-	elseif throwingEnabled and #selectedTargets > 0 then
+	end
+	
+	if throwingEnabled then
 		local numParts = #parts
 		for i, part in ipairs(parts) do
 			if part and part.Parent then
@@ -157,6 +159,8 @@ RunService.Heartbeat:Connect(function(deltaTime)
 				end
 			end
 		end
+		-- Optionally disable throwing after one throw to make it one-shot
+		-- throwingEnabled = false
 	end
 end)
 
@@ -214,22 +218,33 @@ targetAllButton.TextSize = 12
 targetAllButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 targetAllButton.TextColor3 = Color3.new(0, 0, 0)
 
--- Start/Stop button
-local startStopButton = Instance.new("TextButton")
-startStopButton.Parent = targetFrame
-startStopButton.Position = UDim2.new(0, 0, 0, 105)
-startStopButton.Size = UDim2.new(0.5, -5, 0, 20)
-startStopButton.Text = "Start"
-startStopButton.Font = Enum.Font.Code
-startStopButton.TextSize = 12
-startStopButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-startStopButton.TextColor3 = Color3.new(0, 0, 0)
+-- Orbit button
+local orbitButton = Instance.new("TextButton")
+orbitButton.Parent = targetFrame
+orbitButton.Position = UDim2.new(0, 0, 0, 105)
+orbitButton.Size = UDim2.new(0.5, -5, 0, 20)
+orbitButton.Text = "Orbit Off"
+orbitButton.Font = Enum.Font.Code
+orbitButton.TextSize = 12
+orbitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+orbitButton.TextColor3 = Color3.new(0, 0, 0)
+
+-- Throw button
+local throwButton = Instance.new("TextButton")
+throwButton.Parent = targetFrame
+throwButton.Position = UDim2.new(0.5, 5, 0, 105)
+throwButton.Size = UDim2.new(0.5, -5, 0, 20)
+throwButton.Text = "Throw"
+throwButton.Font = Enum.Font.Code
+throwButton.TextSize = 12
+throwButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+throwButton.TextColor3 = Color3.new(0, 0, 0)
 
 -- Back button
 local backButton = Instance.new("TextButton")
 backButton.Parent = targetFrame
-backButton.Position = UDim2.new(0.5, 5, 0, 105)
-backButton.Size = UDim2.new(0.5, -5, 0, 20)
+backButton.Position = UDim2.new(0, 0, 0, 130)
+backButton.Size = UDim2.new(1, -10, 0, 20)
 backButton.Text = "Back"
 backButton.Font = Enum.Font.Code
 backButton.TextSize = 12
@@ -274,7 +289,7 @@ enableButton.MouseButton1Click:Connect(function()
 	enableButton.Visible = false
 	targetFrame.Visible = true
 	populatePlayers()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 150)  -- Adjust for content
+	scroll.CanvasSize = UDim2.new(0, 0, 0, 170)  -- Adjust for content
 end)
 
 -- Target All click
@@ -305,11 +320,22 @@ targetAllButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Start/Stop click
-startStopButton.MouseButton1Click:Connect(function()
-	throwingEnabled = not throwingEnabled
-	orbitingEnabled = not throwingEnabled  -- Toggle between orbiting and throwing
-	startStopButton.Text = throwingEnabled and "Stop" or "Start"
+-- Orbit button click
+orbitButton.MouseButton1Click:Connect(function()
+	orbitingEnabled = not orbitingEnabled
+	throwingEnabled = false  -- Disable throwing when orbiting toggles
+	orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
+end)
+
+-- Throw button click
+throwButton.MouseButton1Click:Connect(function()
+	if #selectedTargets > 0 then
+		throwingEnabled = true
+		orbitingEnabled = false  -- Disable orbiting when throwing
+		-- Optionally reset throwingEnabled after a delay if one-shot
+		-- wait(1)
+		-- throwingEnabled = false
+	end
 end)
 
 -- Back click
