@@ -58,9 +58,9 @@ local removingConn = nil
 local witchMode = false
 local maxGrab = 10
 local config = {
-    radius = 5,
-    height = 10,
-    rotationSpeed = 90,
+    radius = 30,
+    height = 30,
+    rotationSpeed = 1,
     attractionStrength = 100,
 }
 
