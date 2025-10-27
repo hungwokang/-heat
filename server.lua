@@ -12,39 +12,6 @@ RunService.Heartbeat:Connect(function()
 end)
 LocalPlayer.ReplicationFocus = Workspace
 
---// Parts Collection System (exact from Super Ring)
-local parts = {}
-local function RetainPart(Part)
-    if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(Workspace) then
-        if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
-            return false
-        end
-        Part.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0, 0, 0)
-        Part.CanCollide = false
-        return true
-    end
-    return false
-end
-local function addPart(part)
-    if RetainPart(part) then
-        if not table.find(parts, part) then
-            table.insert(parts, part)
-        end
-    end
-end
-local function removePart(part)
-    local index = table.find(parts, part)
-    if index then
-        table.remove(parts, index)
-    end
-end
--- Initial scan
-for _, part in pairs(Workspace:GetDescendants()) do
-    addPart(part)
-end
-Workspace.DescendantAdded:Connect(addPart)
-Workspace.DescendantRemoving:Connect(removePart)
-
 --// Variables
 local levitatingParts = {}
 local levitateConnection = nil
@@ -85,13 +52,13 @@ frame.Draggable = true
 local title = Instance.new("TextLabel")
 title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
-title.Position = UDim2.new(0, 50, 0, 0)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
 title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
+title.Position = UDim2.new(0, 50, 0, 0)
 
 --// Minimize button
 local minimize = Instance.new("TextButton")
@@ -138,14 +105,36 @@ footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 
+--// Minimize toggle
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
+    local targetText = minimized and "+" or "-"
+    TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+        Size = targetSize
+    }):Play()
+    scroll.Visible = not minimized
+    footer.Visible = not minimized
+    minimize.Text = targetText
+end)
+
+--// Notification
+game.StarterGui:SetCore("SendNotification", {
+    Title = "FE HAX";
+    Text = "hehe boi get load'd";
+    Duration = 11;
+})
+
 --// Functions
 local function findNearestLooseParts(num)
     local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root or #parts == 0 then return {} end
+    if not root then return {} end
     local pos = root.Position
+    local allParts = Workspace:GetDescendants()
     local sortedParts = {}
-    for _, part in pairs(parts) do
-        if part.Parent then
+    for _, part in pairs(allParts) do
+        if part:IsA("BasePart") and part.Parent ~= LocalPlayer.Character and not part:IsDescendantOf(LocalPlayer.Character) and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
             table.insert(sortedParts, {part = part, dist = (part.Position - pos).Magnitude})
         end
     end
@@ -154,13 +143,11 @@ local function findNearestLooseParts(num)
     for i = 1, math.min(num, #sortedParts) do
         local p = sortedParts[i].part
         pcall(function() p:SetNetworkOwner(LocalPlayer) end)
-        p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
-        p.Transparency = 0  -- Ensure visible
-        for _, v in pairs(p:GetChildren()) do
-            if v:IsA("Constraint") then
-                v:Destroy()
-            end
-        end
+        pcall(function() p.Anchored = false end)
+        p.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0, 0, 0)
+        p.CanCollide = false
+        p.BrickColor = BrickColor.new("Bright red")
+        p.Transparency = 0
         table.insert(selected, p)
     end
     return selected
@@ -303,14 +290,10 @@ local function enterWitchMode()
             game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Already grabbing parts!", Duration = 3})
             return
         end
-        if #parts == 0 then
-            game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose parts in game!", Duration = 3})
-            return
-        end
         spawn(function()
             local partList = findNearestLooseParts(maxGrab)
             if #partList == 0 then
-                game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose parts found!", Duration = 3})
+                game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No parts found!", Duration = 3})
                 return
             end
             game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Orbiting " .. #partList .. " parts!", Duration = 5})
