@@ -57,8 +57,8 @@ local addedConn = nil
 local removingConn = nil
 local witchMode = false
 local config = {
-    radius = 40,
-    height = 40,
+    radius = 30,
+    height = 30,
     rotationSpeed = 1,
     attractionStrength = 1000,
 }
@@ -457,7 +457,17 @@ remove unnecessary variables .
 
 keep the simulation radius . 
 
-make sure it works in roblox .--// Services
+make sure it works in roblox . 
+
+the orbit logic should use velocity for smooth movement . 
+
+adjust the config for better orbit . radius 20, height 30, rotationSpeed 90, attractionStrength 100 . 
+
+remove the tornado levitate, use the orbitParts function from earlier . 
+
+when disable, stop orbiting and let parts fall . 
+
+the enable button should be centered in the scroll .--// Services
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -476,10 +486,10 @@ local levitatingParts = {}
 local levitateConnection = nil
 local orbitingEnabled = false
 local config = {
-    radius = 50,
-    height = 100,
-    rotationSpeed = 10,
-    attractionStrength = 1000,
+    radius = 20,
+    height = 30,
+    rotationSpeed = 90,
+    attractionStrength = 100,
 }
 
 --// Create GUI
@@ -625,7 +635,7 @@ enableButton.Size = UDim2.new(1, -10, 0, 20)
 enableButton.Text = "ENABLE"
 enableButton.Font = Enum.Font.Code
 enableButton.TextSize = 12
-enableButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+enableButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 enableButton.TextColor3 = Color3.new(0, 0, 0)
 
 -- ENABLE button click
