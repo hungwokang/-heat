@@ -46,7 +46,7 @@ Workspace.DescendantAdded:Connect(addPart)
 Workspace.DescendantRemoving:Connect(removePart)
 
 --// Variables
-local levitatingPart = nil
+local levitatingParts = {}
 local levitateConnection = nil
 local selectedTargets = {}
 local witchBtn = nil
@@ -56,6 +56,13 @@ local buttonFrame = nil
 local addedConn = nil
 local removingConn = nil
 local witchMode = false
+local maxGrab = 10
+local config = {
+    radius = 50,
+    height = 100,
+    rotationSpeed = 10,
+    attractionStrength = 1000,
+}
 
 --// Create GUI
 local gui = Instance.new("ScreenGui")
@@ -132,101 +139,79 @@ footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 footer.TextXAlignment = Enum.TextXAlignment.Center
 
---// Dummy for Align (like Super Ring)
-local Folder = Instance.new("Folder", Workspace)
-local Dummy = Instance.new("Part", Folder)
-Dummy.Anchored = true
-Dummy.CanCollide = false
-Dummy.Transparency = 1
-local Attachment1 = Instance.new("Attachment", Dummy)
-
---// ForcePart from Super Ring, fixed for BasePart
-local function ForcePart(v)
-    if v:IsA("BasePart") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
-        for _, x in next, v:GetChildren() do
-            if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
-                x:Destroy()
-            end
-        end
-        if v:FindFirstChild("Attachment") then
-            v:FindFirstChild("Attachment"):Destroy()
-        end
-        if v:FindFirstChild("AlignPosition") then
-            v:FindFirstChild("AlignPosition"):Destroy()
-        end
-        if v:FindFirstChild("Torque") then
-            v:FindFirstChild("Torque"):Destroy()
-        end
-        v.CanCollide = false
-        local Torque = Instance.new("Torque", v)
-        Torque.Torque = Vector3.new(100000, 100000, 100000)
-        local AlignPosition = Instance.new("AlignPosition", v)
-        local Attachment2 = Instance.new("Attachment", v)
-        Torque.Attachment0 = Attachment2
-        AlignPosition.MaxForce = 9999999999999999999999999999999
-        AlignPosition.MaxVelocity = math.huge
-        AlignPosition.Responsiveness = 200
-        AlignPosition.Attachment0 = Attachment2
-        AlignPosition.Attachment1 = Attachment1
-    end
-end
-
 --// Functions
-local function findNearestLoosePart()
+local function findNearestLooseParts(num)
     local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root or #parts == 0 then return nil end
+    if not root or #parts == 0 then return {} end
     local pos = root.Position
-    local closest, minDist = nil, math.huge
+    local sortedParts = {}
     for _, part in pairs(parts) do
         if part.Parent then
-            local dist = (part.Position - pos).Magnitude
-            if dist < minDist then
-                minDist = dist
-                closest = part
-            end
+            table.insert(sortedParts, {part = part, dist = (part.Position - pos).Magnitude})
         end
     end
-    if closest then
-        pcall(function() closest:SetNetworkOwner(LocalPlayer) end)
+    table.sort(sortedParts, function(a, b) return a.dist < b.dist end)
+    local selected = {}
+    for i = 1, math.min(num, #sortedParts) do
+        local p = sortedParts[i].part
+        pcall(function() p:SetNetworkOwner(LocalPlayer) end)
+        p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
+        p.Transparency = 0  -- Ensure visible
+        table.insert(selected, p)
     end
-    return closest, minDist
+    return selected
 end
 
-local function levitatePart(part)
-    if not part or not part.Parent then return end
-    levitatingPart = part
-    ForcePart(part)
+local function tornadoLevitate(partList)
+    levitatingParts = partList
     if levitateConnection then levitateConnection:Disconnect() end
     levitateConnection = RunService.Heartbeat:Connect(function()
-        if not part.Parent or not levitatingPart then
+        if #levitatingParts == 0 then
             if levitateConnection then levitateConnection:Disconnect() end
-            levitatingPart = nil
             return
         end
         local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if not root then return end
-        local t = tick()
-        local floatPos = root.Position + Vector3.new(math.sin(t * 4) * 1.5, 20 + math.sin(t * 3) * 2, math.cos(t * 4) * 1.5)
-        Dummy.Position = floatPos
-        Dummy.CFrame = CFrame.lookAt(floatPos, root.Position)
+        local tornadoCenter = root.Position
+        for i = #levitatingParts, 1, -1 do
+            local part = levitatingParts[i]
+            if not part.Parent then
+                table.remove(levitatingParts, i)
+            else
+                local pos = part.Position
+                local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+                local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
+                local newAngle = angle + math.rad(config.rotationSpeed)
+                local targetPos = Vector3.new(
+                    tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
+                    tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
+                    tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
+                )
+                local directionToTarget = (targetPos - part.Position).Unit
+                part.Velocity = directionToTarget * config.attractionStrength
+            end
+        end
     end)
 end
 
-local function shootToTarget(part, targetPos)
-    if not part or not part.Parent then return end
-    levitatingPart = nil
+local function shootToTarget(parts, targetPos)
     if levitateConnection then
         levitateConnection:Disconnect()
         levitateConnection = nil
     end
-    for _, v in pairs(part:GetChildren()) do
-        if v:IsA("Constraint") or v:IsA("Attachment") or v:IsA("BodyMover") then
-            v:Destroy()
+    for _, part in pairs(parts) do
+        if part.Parent then
+            for _, v in pairs(part:GetChildren()) do
+                if v:IsA("Constraint") or v:IsA("Attachment") or v:IsA("BodyMover") or v:IsA("Torque") or v:IsA("AlignPosition") then
+                    v:Destroy()
+                end
+            end
+            local dir = (targetPos - part.Position).Unit
+            part.AssemblyLinearVelocity = dir * 600
+            part.AssemblyAngularVelocity = Vector3.new()
         end
     end
-    local dir = (targetPos - part.Position).Unit
-    part.AssemblyLinearVelocity = dir * 600
-    part.AssemblyAngularVelocity = Vector3.new()
+    levitatingParts = {}
 end
 
 local function enterWitchMode()
@@ -345,8 +330,8 @@ local function enterWitchMode()
             game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Select at least 1 target!", Duration = 3})
             return
         end
-        if levitatingPart then
-            game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Already grabbing a part!", Duration = 3})
+        if #levitatingParts > 0 then
+            game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Already grabbing parts!", Duration = 3})
             return
         end
         if #parts == 0 then
@@ -354,16 +339,14 @@ local function enterWitchMode()
             return
         end
         spawn(function()
-            local part, dist = findNearestLoosePart()
-            if not part then
-                game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose part found!", Duration = 3})
+            local partList = findNearestLooseParts(maxGrab)
+            if #partList == 0 then
+                game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose parts found!", Duration = 3})
                 return
             end
-            game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Grabbing [ " .. part.Name .. " ] (" .. part.ClassName .. ") from " .. math.floor(dist) .. " studs!", Duration = 5})
-            part.BrickColor = BrickColor.new("Bright red")  -- Make it red for visibility
-            part.Transparency = 0  -- Ensure visible
-            levitatePart(part)
-            game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Part grabbed! Shooting in 3s...", Duration = 3})
+            game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Grabbing " .. #partList .. " parts into tornado!", Duration = 5})
+            tornadoLevitate(partList)
+            game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Tornado active! Shooting in 3s...", Duration = 3})
             wait(3)
             local sum = Vector3.new()
             local valid = 0
@@ -376,8 +359,8 @@ local function enterWitchMode()
             end
             if valid > 0 then
                 local avgPos = sum / valid
-                shootToTarget(part, avgPos)
-                game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Part shot to " .. valid .. " target(s)!", Duration = 3})
+                shootToTarget(levitatingParts, avgPos)
+                game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Parts shot to " .. valid .. " target(s)!", Duration = 3})
             else
                 game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No valid targets!", Duration = 3})
             end
@@ -386,7 +369,6 @@ local function enterWitchMode()
     
     -- Back
     local backBtn = Instance.new("TextButton")
-    backBtn.Name = "Back"
     backBtn.Parent = buttonFrame
     backBtn.Size = UDim2.new(0.45, 0, 1, 0)
     backBtn.BackgroundTransparency = 1
@@ -396,10 +378,18 @@ local function enterWitchMode()
     backBtn.TextSize = 12
     
     backBtn.MouseButton1Click:Connect(function()
-        if levitatingPart and levitateConnection then
+        if levitateConnection then
             levitateConnection:Disconnect()
-            levitatingPart = nil
+            levitateConnection = nil
         end
+        for _, p in pairs(levitatingParts) do
+            for _, v in pairs(p:GetChildren()) do
+                if v:IsA("Constraint") or v:IsA("Attachment") or v:IsA("BodyMover") then
+                    v:Destroy()
+                end
+            end
+        end
+        levitatingParts = {}
         witchMode = false
         selectedTargets = {}
         if addedConn then addedConn:Disconnect() end
@@ -420,7 +410,7 @@ witchBtn.Name = "WITCH"
 witchBtn.Parent = scroll
 witchBtn.Size = UDim2.new(1, 0, 0, 25)
 witchBtn.BackgroundTransparency = 1
-witchBtn.Text = "WITCH"
+witchBtn.Text = "WITCHH"
 witchBtn.TextColor3 = Color3.fromRGB(255, 0, 0)
 witchBtn.Font = Enum.Font.Code
 witchBtn.TextSize = 14
@@ -445,6 +435,6 @@ end)
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
     Title = "hung";
-    Text = "WITCH loaded! (Shoot enabled)";
+    Text = "WITCH loaded! (Tornado + Shoot)";
     Duration = 5;
 })
