@@ -18,18 +18,23 @@ local parts = {}
 local orbitingEnabled = false
 local orbitHeight = 40  -- Height above HRP
 local orbitRadius = 5   -- Radius of circle
-local rotationSpeed = 90 -- Degrees per second
+local rotationSpeed = 1 -- Degrees per second
 local throwSpeed = 200  -- Velocity for throwing
 local currentAngle = 0
+local witchMode = false
+local addedConn = nil
+local removingConn = nil
+local selectLabel = nil
+local playerScroll = nil
+local buttonFrame = nil
 
 --// Collect unanchored BaseParts
 local function collectParts()
 	parts = {}
 	for _, part in pairs(Workspace:GetDescendants()) do
-		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= LocalPlayer.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
+		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= LocalPlayer.Character and not part:IsDescendantOf(LocalPlayer.Character) and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
 			pcall(function() part:SetNetworkOwner(LocalPlayer) end)
-			table.insert(parts, part)
-			-- Make non-collidable and add kill touch
+			part.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0, 0, 0)
 			part.CanCollide = false
 			local touchConn = part.Touched:Connect(function(hit)
 				local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
@@ -37,10 +42,10 @@ local function collectParts()
 					humanoid.Health = 0
 				end
 			end)
-			-- Optional: Destroy conn when part destroyed
 			part.Destroying:Connect(function()
 				touchConn:Disconnect()
 			end)
+			table.insert(parts, part)
 		end
 	end
 end
@@ -57,9 +62,8 @@ RunService.Heartbeat:Connect(function(deltaTime)
 			if part and part.Parent then
 				local angle = currentAngle + (i / numParts) * 2 * math.pi
 				local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
-				-- For physics, use velocity instead of direct position
-				local direction = (targetPos - part.Position).Unit
-				part.Velocity = direction * 100 + hrp.Velocity  -- Adjust strength
+				local directionToTarget = (targetPos - part.Position).Unit
+				part.Velocity = directionToTarget * 100 + hrp.Velocity
 			end
 		end
 	end
@@ -140,200 +144,207 @@ footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 footer.TextXAlignment = Enum.TextXAlignment.Center
 
---// GUI Elements
-
--- Initial ENABLE button
-local enableButton = Instance.new("TextButton")
-enableButton.Parent = scroll
-enableButton.Size = UDim2.new(1, -10, 0, 20)
-enableButton.Text = "WITCH"
-enableButton.Font = Enum.Font.Code
-enableButton.TextSize = 12
-enableButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-enableButton.TextColor3 = Color3.new(0, 0, 0)
+--// Create initial WITCH button
+local witchBtn = Instance.new("TextButton")
+witchBtn.Name = "WITCH"
+witchBtn.Parent = scroll
+witchBtn.Size = UDim2.new(1, 0, 0, 25)
+witchBtn.BackgroundTransparency = 1
+witchBtn.Text = "WITCH"
+witchBtn.TextColor3 = Color3.fromRGB(255, 0, 0)
+witchBtn.Font = Enum.Font.Code
+witchBtn.TextSize = 14
+witchBtn.TextXAlignment = Enum.TextXAlignment.Center
 
 -- Target selection frame (hidden initially)
 local targetFrame = Instance.new("Frame")
 targetFrame.Parent = scroll
-targetFrame.Size = UDim2.new(1, 0, 1, 0)
+targetFrame.Size = UDim2.new(1, 0, 0, 170)
 targetFrame.BackgroundTransparency = 1
 targetFrame.Visible = false
 
 -- Select target label
-local selectLabel = Instance.new("TextLabel")
+selectLabel = Instance.new("TextLabel")
 selectLabel.Parent = targetFrame
-selectLabel.Size = UDim2.new(1, -10, 0, 20)
-selectLabel.Text = "Select Target:"
+selectLabel.Size = UDim2.new(1, 0, 0, 20)
+selectLabel.BackgroundTransparency = 1
+selectLabel.Text = "select target:"
+selectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 selectLabel.Font = Enum.Font.Code
 selectLabel.TextSize = 12
-selectLabel.BackgroundTransparency = 1
-selectLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+selectLabel.TextXAlignment = Enum.TextXAlignment.Center
 
--- Player list scroll
-local playerScroll = Instance.new("ScrollingFrame")
+-- Player List Scroll
+playerScroll = Instance.new("ScrollingFrame")
 playerScroll.Parent = targetFrame
-playerScroll.Position = UDim2.new(0, 0, 0, 25)
-playerScroll.Size = UDim2.new(1, 0, 0, 50)
+playerScroll.Position = UDim2.new(0, 0, 0, 20)
+playerScroll.Size = UDim2.new(1, 0, 0, 60)
 playerScroll.BackgroundTransparency = 1
-playerScroll.ScrollBarThickness = 2
+playerScroll.BorderSizePixel = 0
 playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+playerScroll.ScrollBarThickness = 2
 
 local playerLayout = Instance.new("UIListLayout")
 playerLayout.Parent = playerScroll
+playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-playerLayout.Padding = UDim.new(0, 2)
+playerLayout.Padding = UDim.new(0, 1)
 
 -- Target All button
 local targetAllButton = Instance.new("TextButton")
 targetAllButton.Parent = targetFrame
 targetAllButton.Position = UDim2.new(0, 0, 0, 80)
-targetAllButton.Size = UDim2.new(1, -10, 0, 20)
+targetAllButton.Size = UDim2.new(1, 0, 0, 20)
+targetAllButton.BackgroundTransparency = 1
 targetAllButton.Text = "Target All: Off"
+targetAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 targetAllButton.Font = Enum.Font.Code
 targetAllButton.TextSize = 12
-targetAllButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-targetAllButton.TextColor3 = Color3.new(0, 0, 0)
 
 -- Orbit button
 local orbitButton = Instance.new("TextButton")
 orbitButton.Parent = targetFrame
 orbitButton.Position = UDim2.new(0, 0, 0, 105)
-orbitButton.Size = UDim2.new(0.5, -5, 0, 20)
+orbitButton.Size = UDim2.new(0.5, 0, 0, 20)
+orbitButton.BackgroundTransparency = 1
 orbitButton.Text = "Orbit Off"
+orbitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 orbitButton.Font = Enum.Font.Code
 orbitButton.TextSize = 12
-orbitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-orbitButton.TextColor3 = Color3.new(0, 0, 0)
 
 -- Throw button
 local throwButton = Instance.new("TextButton")
 throwButton.Parent = targetFrame
-throwButton.Position = UDim2.new(0.5, 5, 0, 105)
-throwButton.Size = UDim2.new(0.5, -5, 0, 20)
+throwButton.Position = UDim2.new(0.5, 0, 0, 105)
+throwButton.Size = UDim2.new(0.5, 0, 0, 20)
+throwButton.BackgroundTransparency = 1
 throwButton.Text = "Throw"
+throwButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 throwButton.Font = Enum.Font.Code
 throwButton.TextSize = 12
-throwButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-throwButton.TextColor3 = Color3.new(0, 0, 0)
 
 -- Back button
-local backButton = Instance.new("TextButton")
-backButton.Parent = targetFrame
-backButton.Position = UDim2.new(0, 0, 0, 130)
-backButton.Size = UDim2.new(1, -10, 0, 20)
-backButton.Text = "Back"
-backButton.Font = Enum.Font.Code
-backButton.TextSize = 12
-backButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-backButton.TextColor3 = Color3.new(0, 0, 0)
+local backBtn = Instance.new("TextButton")
+backBtn.Parent = targetFrame
+backBtn.Position = UDim2.new(0, 0, 0, 130)
+backBtn.Size = UDim2.new(1, 0, 0, 20)
+backBtn.BackgroundTransparency = 1
+backBtn.Text = "Back"
+backBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+backBtn.Font = Enum.Font.Code
+backBtn.TextSize = 12
 
 -- Function to populate player list
 local function populatePlayers()
-	for _, child in pairs(playerScroll:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
-	local allPlayers = Players:GetPlayers()
-	for _, plr in ipairs(allPlayers) do
-		if plr ~= LocalPlayer then
-			local plrButton = Instance.new("TextButton")
-			plrButton.Parent = playerScroll
-			plrButton.Size = UDim2.new(1, -10, 0, 20)
-			plrButton.Text = plr.Name .. " (Off)"
-			plrButton.Font = Enum.Font.Code
-			plrButton.TextSize = 12
-			plrButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-			plrButton.TextColor3 = Color3.new(0, 0, 0)
-			plrButton.MouseButton1Click:Connect(function()
-				if table.find(selectedTargets, plr) then
-					table.remove(selectedTargets, table.find(selectedTargets, plr))
-					plrButton.Text = plr.Name .. " (Off)"
-				else
-					table.insert(selectedTargets, plr)
-					plrButton.Text = plr.Name .. " (On)"
-				end
-			end)
-		end
-	end
-	playerScroll.CanvasSize = UDim2.new(0, 0, 0, #playerScroll:GetChildren() * 22)
-	updateScrollCanvas()
+    for _, btn in pairs(playerScroll:GetChildren()) do
+        if btn:IsA("TextButton") then
+            btn:Destroy()
+        end
+    end
+    local playerButtonList = {}
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            local btn = Instance.new("TextButton")
+            btn.Name = p.Name
+            btn.Parent = playerScroll
+            btn.Size = UDim2.new(0.95, 0, 0, 16)
+            btn.BackgroundTransparency = 1
+            local isSelected = selectedTargets[p.Name]
+            btn.Text = isSelected and (p.Name .. " ✓") or p.Name
+            btn.TextColor3 = isSelected and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+            btn.Font = Enum.Font.Code
+            btn.TextSize = 10
+            btn.TextXAlignment = Enum.TextXAlignment.Left
+            btn.LayoutOrder = #playerButtonList + 1
+            table.insert(playerButtonList, btn)
+            btn.MouseButton1Click:Connect(function()
+                if selectedTargets[p.Name] then
+                    selectedTargets[p.Name] = nil
+                    btn.Text = p.Name
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    selectedTargets[p.Name] = p
+                    btn.Text = p.Name .. " ✓"
+                    btn.TextColor3 = Color3.fromRGB(0, 255, 0)
+                end
+            end)
+        end
+    end
+    playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+    updateScrollCanvas()
 end
 
--- ENABLE button click
-enableButton.MouseButton1Click:Connect(function()
-	collectParts()  -- Collect parts on enable
-	enableButton.Visible = false
-	targetFrame.Visible = true
-	populatePlayers()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 170)  -- Adjust for content
-	updateScrollCanvas()
+-- WITCH button click
+witchBtn.MouseButton1Click:Connect(function()
+    collectParts()
+    witchBtn.Visible = false
+    targetFrame.Visible = true
+    populatePlayers()
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 170)
+    updateScrollCanvas()
+    addedConn = Players.PlayerAdded:Connect(populatePlayers)
+    removingConn = Players.PlayerRemoving:Connect(populatePlayers)
 end)
 
 -- Target All click
 local targetAll = false
 targetAllButton.MouseButton1Click:Connect(function()
-	targetAll = not targetAll
-	targetAllButton.Text = "Target All: " .. (targetAll and "On" or "Off")
-	if targetAll then
-		selectedTargets = {}
-		for _, plr in ipairs(Players:GetPlayers()) do
-			if plr ~= LocalPlayer then
-				table.insert(selectedTargets, plr)
-			end
-		end
-		-- Update buttons
-		for _, btn in pairs(playerScroll:GetChildren()) do
-			if btn:IsA("TextButton") then
-				btn.Text = btn.Text:gsub("%(Off%)", "(On)")
-			end
-		end
-	else
-		selectedTargets = {}
-		for _, btn in pairs(playerScroll:GetChildren()) do
-			if btn:IsA("TextButton") then
-				btn.Text = btn.Text:gsub("%(On%)", "(Off)")
-			end
-		end
-	end
+    targetAll = not targetAll
+    targetAllButton.Text = "Target All: " .. (targetAll and "On" or "Off")
+    selectedTargets = {}
+    populatePlayers()  -- Refresh list to update texts
 end)
 
 -- Orbit button click
 orbitButton.MouseButton1Click:Connect(function()
-	orbitingEnabled = not orbitingEnabled
-	orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
+    orbitingEnabled = not orbitingEnabled
+    orbitButton.Text = "Orbit " .. (orbitingEnabled and "On" or "Off")
+    if orbitingEnabled then
+        game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Orbiting parts!", Duration = 3})
+    else
+        game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Orbit disabled!", Duration = 3})
+    end
 end)
 
 -- Throw button click
 throwButton.MouseButton1Click:Connect(function()
-	if #selectedTargets > 0 and #parts > 0 then
-		-- Pick one part and remove it from the orbiting list
-		local part = table.remove(parts, 1)
-		-- Pick a random target if multiple
-		local target = selectedTargets[math.random(1, #selectedTargets)]
-		local targetHrp = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
-		if targetHrp then
-			-- Set velocity once for straight throw
-			local direction = (targetHrp.Position - part.Position).Unit
-			part.Velocity = direction * throwSpeed
-		end
-	end
+    local count = 0
+    for _ in pairs(selectedTargets) do count = count + 1 end
+    if count == 0 then
+        game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Select at least 1 target!", Duration = 3})
+        return
+    end
+    if #parts == 0 then
+        game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No parts left!", Duration = 3})
+        return
+    end
+    local partIndex = math.random(1, #parts)
+    local part = table.remove(parts, partIndex)
+    local target = selectedTargets[math.random(1, count)]
+    local h = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+    if h then
+        local direction = (h.Position - part.Position).Unit
+        part.Velocity = direction * throwSpeed
+        game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Thrown part at " .. target.Name .. "!", Duration = 3})
+    else
+        table.insert(parts, part)  -- Reinsert if no target HRP
+    end
 end)
 
 -- Back click
-backButton.MouseButton1Click:Connect(function()
-	targetFrame.Visible = false
-	enableButton.Visible = true
-	selectedTargets = {}
-	orbitingEnabled = false
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-	parts = {}
-	updateScrollCanvas()
+backBtn.MouseButton1Click:Connect(function()
+    targetFrame.Visible = false
+    witchBtn.Visible = true
+    selectedTargets = {}
+    orbitingEnabled = false
+    parts = {}
+    if addedConn then addedConn:Disconnect() end
+    if removingConn then removingConn:Disconnect() end
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 30)
+    updateScrollCanvas()
 end)
 
--- Update player list on player join/leave
-Players.PlayerAdded:Connect(populatePlayers)
-Players.PlayerRemoving:Connect(populatePlayers)
+updateScrollCanvas()
 
 --// Minimize toggle
 local minimized = false
