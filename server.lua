@@ -132,6 +132,45 @@ footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 footer.TextXAlignment = Enum.TextXAlignment.Center
 
+--// Dummy for Align (like Super Ring)
+local Folder = Instance.new("Folder", Workspace)
+local Dummy = Instance.new("Part", Folder)
+Dummy.Anchored = true
+Dummy.CanCollide = false
+Dummy.Transparency = 1
+local Attachment1 = Instance.new("Attachment", Dummy)
+
+--// ForcePart from Super Ring, fixed for BasePart
+local function ForcePart(v)
+    if v:IsA("BasePart") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
+        for _, x in next, v:GetChildren() do
+            if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
+                x:Destroy()
+            end
+        end
+        if v:FindFirstChild("Attachment") then
+            v:FindFirstChild("Attachment"):Destroy()
+        end
+        if v:FindFirstChild("AlignPosition") then
+            v:FindFirstChild("AlignPosition"):Destroy()
+        end
+        if v:FindFirstChild("Torque") then
+            v:FindFirstChild("Torque"):Destroy()
+        end
+        v.CanCollide = false
+        local Torque = Instance.new("Torque", v)
+        Torque.Torque = Vector3.new(100000, 100000, 100000)
+        local AlignPosition = Instance.new("AlignPosition", v)
+        local Attachment2 = Instance.new("Attachment", v)
+        Torque.Attachment0 = Attachment2
+        AlignPosition.MaxForce = 9999999999999999999999999999999
+        AlignPosition.MaxVelocity = math.huge
+        AlignPosition.Responsiveness = 200
+        AlignPosition.Attachment0 = Attachment2
+        AlignPosition.Attachment1 = Attachment1
+    end
+end
+
 --// Functions
 local function findNearestLoosePart()
     local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -147,23 +186,16 @@ local function findNearestLoosePart()
             end
         end
     end
-    return closest
-end
-
-local function cleanPartMovers(part)
-    for _, v in pairs(part:GetChildren()) do
-        if v:IsA("BodyMover") or v:IsA("AlignPosition") or v:IsA("AlignOrientation") or v:IsA("Attachment") or v:IsA("Torque") or v:IsA("VectorForce") then
-            v:Destroy()
-        end
+    if closest then
+        pcall(function() closest:SetNetworkOwner(LocalPlayer) end)
     end
+    return closest, minDist
 end
 
 local function levitatePart(part)
     if not part or not part.Parent then return end
     levitatingPart = part
-    pcall(function() part:SetNetworkOwner(LocalPlayer) end)
-    cleanPartMovers(part)
-    part.CanCollide = false
+    ForcePart(part)
     if levitateConnection then levitateConnection:Disconnect() end
     levitateConnection = RunService.Heartbeat:Connect(function()
         if not part.Parent or not levitatingPart then
@@ -174,10 +206,9 @@ local function levitatePart(part)
         local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if not root then return end
         local t = tick()
-        local floatPos = root.Position + Vector3.new(math.sin(t * 4) * 1.5, 10 + math.sin(t * 3) * 0.8, math.cos(t * 4) * 1.5)
-        local directionToTarget = (floatPos - part.Position).Unit
-        part.Velocity = directionToTarget * 2000  -- High strength like ring attraction
-        part.AssemblyAngularVelocity = Vector3.new()  -- Stop spinning
+        local floatPos = root.Position + Vector3.new(math.sin(t * 4) * 1.5, 20 + math.sin(t * 3) * 2, math.cos(t * 4) * 1.5)
+        Dummy.Position = floatPos
+        Dummy.CFrame = CFrame.lookAt(floatPos, root.Position)
     end)
 end
 
@@ -188,7 +219,11 @@ local function shootToTarget(part, targetPos)
         levitateConnection:Disconnect()
         levitateConnection = nil
     end
-    cleanPartMovers(part)
+    for _, v in pairs(part:GetChildren()) do
+        if v:IsA("Constraint") or v:IsA("Attachment") or v:IsA("BodyMover") then
+            v:Destroy()
+        end
+    end
     local dir = (targetPos - part.Position).Unit
     part.AssemblyLinearVelocity = dir * 600
     part.AssemblyAngularVelocity = Vector3.new()
@@ -319,11 +354,14 @@ local function enterWitchMode()
             return
         end
         spawn(function()
-            local part = findNearestLoosePart()
+            local part, dist = findNearestLoosePart()
             if not part then
                 game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose part found!", Duration = 3})
                 return
             end
+            game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Grabbing [ " .. part.Name .. " ] (" .. part.ClassName .. ") from " .. math.floor(dist) .. " studs!", Duration = 5})
+            part.BrickColor = BrickColor.new("Bright red")  -- Make it red for visibility
+            part.Transparency = 0  -- Ensure visible
             levitatePart(part)
             game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Part grabbed! Shooting in 3s...", Duration = 3})
             wait(3)
@@ -342,7 +380,6 @@ local function enterWitchMode()
                 game.StarterGui:SetCore("SendNotification", {Title = "WITCH", Text = "Part shot to " .. valid .. " target(s)!", Duration = 3})
             else
                 game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No valid targets!", Duration = 3})
-                -- Still shoot somewhere or cancel, but here shoot to avg if any
             end
         end)
     end)
@@ -408,6 +445,6 @@ end)
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
     Title = "hung";
-    Text = "WITCH loaded!";
+    Text = "WITCH loaded! (Shoot enabled)";
     Duration = 5;
 })
