@@ -31,7 +31,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "X0N7"
+title.Text = "X0N777"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -101,11 +101,10 @@ game.StarterGui:SetCore("SendNotification", {
 local selectedTargets = {}
 local parts = {}
 local orbitingEnabled = false
-local throwingEnabled = false
-local orbitHeight = 50  -- Height above HRP
-local orbitRadius = 20   -- Radius of circle
+local orbitHeight = 40  -- Height above HRP
+local orbitRadius = 5   -- Radius of circle
 local rotationSpeed = 1 -- Degrees per frame
-local throwSpeed = 200  -- Velocity for throwing
+local throwSpeed = 1000  -- Velocity for throwing
 local currentAngle = 0
 
 --// Collect unanchored BaseParts
@@ -145,22 +144,6 @@ RunService.Heartbeat:Connect(function(deltaTime)
 				part.Position = targetPos  -- Direct position for simplicity; use AlignPosition for physics
 			end
 		end
-	end
-	
-	if throwingEnabled then
-		local numParts = #parts
-		for i, part in ipairs(parts) do
-			if part and part.Parent then
-				local targetPlayer = selectedTargets[(i % #selectedTargets) + 1]
-				local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-				if targetHrp then
-					local direction = (targetHrp.Position - part.Position).unit
-					part.Velocity = direction * throwSpeed
-				end
-			end
-		end
-		-- Optionally disable throwing after one throw to make it one-shot
-		-- throwingEnabled = false
 	end
 end)
 
@@ -323,18 +306,22 @@ end)
 -- Orbit button click
 orbitButton.MouseButton1Click:Connect(function()
 	orbitingEnabled = not orbitingEnabled
-	throwingEnabled = false  -- Disable throwing when orbiting toggles
 	orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
 end)
 
 -- Throw button click
 throwButton.MouseButton1Click:Connect(function()
-	if #selectedTargets > 0 then
-		throwingEnabled = true
-		orbitingEnabled = false  -- Disable orbiting when throwing
-		-- Optionally reset throwingEnabled after a delay if one-shot
-		-- wait(1)
-		-- throwingEnabled = false
+	if #selectedTargets > 0 and #parts > 0 then
+		-- Pick one part and remove it from the orbiting list
+		local part = table.remove(parts, 1)
+		-- Pick a random target if multiple
+		local target = selectedTargets[math.random(1, #selectedTargets)]
+		local targetHrp = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+		if targetHrp then
+			-- Set velocity once for straight throw
+			local direction = (targetHrp.Position - part.Position).unit
+			part.Velocity = direction * throwSpeed
+		end
 	end
 end)
 
@@ -343,7 +330,6 @@ backButton.MouseButton1Click:Connect(function()
 	targetFrame.Visible = false
 	enableButton.Visible = true
 	selectedTargets = {}
-	throwingEnabled = false
 	orbitingEnabled = false
 	scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 end)
