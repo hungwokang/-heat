@@ -157,15 +157,6 @@ local function findNearestLooseParts(num)
         pcall(function() p:SetNetworkOwner(LocalPlayer) end)
         p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
         p.Transparency = 0  -- Ensure visible
-        local touchConn = p.Touched:Connect(function(hit)
-            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid.Health = 0
-            end
-        end)
-        p.Destroying:Connect(function()
-            touchConn:Disconnect()
-        end)
         table.insert(selected, p)
     end
     return selected
@@ -364,7 +355,7 @@ end
 
 --// Create initial WITCH button
 witchBtn = Instance.new("TextButton")
-witchBtn.Name = "WITCH"
+witchBtn.Name = "OPEN"
 witchBtn.Parent = scroll
 witchBtn.Size = UDim2.new(1, 0, 0, 25)
 witchBtn.BackgroundTransparency = 1
