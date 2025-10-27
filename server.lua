@@ -141,25 +141,34 @@ footer.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Functions
 local function findNearestLooseParts(num)
-local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-if not root or #parts == 0 then return {} end
-local pos = root.Position
-local sortedParts = {}
-for _, part in pairs(parts) do
-if part.Parent then
-table.insert(sortedParts, {part = part, dist = (part.Position - pos).Magnitude})
-end
-end
-table.sort(sortedParts, function(a, b) return a.dist < b.dist end)
-local selected = {}
-for i = 1, math.min(num, #sortedParts) do
-local p = sortedParts[i].part
-pcall(function() p:SetNetworkOwner(LocalPlayer) end)
-p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
-p.Transparency = 0  -- Ensure visible
-table.insert(selected, p)
-end
-return selected
+    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root or #parts == 0 then return {} end
+    local pos = root.Position
+    local sortedParts = {}
+    for _, part in pairs(parts) do
+        if part.Parent then
+            table.insert(sortedParts, {part = part, dist = (part.Position - pos).Magnitude})
+        end
+    end
+    table.sort(sortedParts, function(a, b) return a.dist < b.dist end)
+    local selected = {}
+    for i = 1, math.min(num, #sortedParts) do
+        local p = sortedParts[i].part
+        pcall(function() p:SetNetworkOwner(LocalPlayer) end)
+        p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
+        p.Transparency = 0  -- Ensure visible
+        local touchConn = p.Touched:Connect(function(hit)
+            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = 0
+            end
+        end)
+        p.Destroying:Connect(function()
+            touchConn:Disconnect()
+        end)
+        table.insert(selected, p)
+    end
+    return selected
 end
 
 local function orbitParts(partList)
@@ -355,11 +364,11 @@ end
 
 --// Create initial WITCH button
 witchBtn = Instance.new("TextButton")
-witchBtn.Name = "Open"
+witchBtn.Name = "WITCH"
 witchBtn.Parent = scroll
 witchBtn.Size = UDim2.new(1, 0, 0, 25)
 witchBtn.BackgroundTransparency = 1
-witchBtn.Text = "Open"
+witchBtn.Text = "OPEN"
 witchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 witchBtn.Font = Enum.Font.Code
 witchBtn.TextSize = 14
