@@ -8,6 +8,36 @@ local mouse = player:GetMouse()
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
+--// Network Ownership Setup
+if not getgenv().Network then
+    getgenv().Network = {
+        BaseParts = {},
+        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+    }
+
+    Network.RetainPart = function(Part)
+        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
+            table.insert(Network.BaseParts, Part)
+            Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+            Part.CanCollide = true  -- Set to true as per request
+        end
+    end
+
+    local function EnablePartControl()
+        player.ReplicationFocus = Workspace
+        RunService.Heartbeat:Connect(function()
+            sethiddenproperty(player, "SimulationRadius", math.huge)
+            for _, Part in pairs(Network.BaseParts) do
+                if Part:IsDescendantOf(Workspace) then
+                    Part.Velocity = Network.Velocity
+                end
+            end
+        end)
+    end
+
+    EnablePartControl()
+end
+
 --// Create GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "ServerGUI"
@@ -31,7 +61,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "X0N777"
+title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -130,10 +160,11 @@ local function collectParts()
 			alignPos.MaxForce = math.huge
 			alignPos.MaxVelocity = math.huge
 			alignPos.Responsiveness = 200
+			alignPos.RigidityEnabled = true  -- Added for better response
 			local torque = Instance.new("Torque", part)
 			torque.Attachment0 = att2
 			torque.Torque = Vector3.new(100000, 100000, 100000)
-			part.CanCollide = true
+			Network.RetainPart(part)
 			table.insert(parts, {Part = part, Target = targetPart})
 		end
 	end
@@ -141,7 +172,6 @@ end
 
 --// Orbit Logic
 RunService.Heartbeat:Connect(function(deltaTime)
-	sethiddenproperty(player, "SimulationRadius", math.huge)
 	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 	if not hrp then return end
 	
@@ -351,6 +381,11 @@ throwButton.MouseButton1Click:Connect(function()
 		-- Pick one part and remove it from the orbiting list
 		local entry = table.remove(parts, 1)
 		local part = entry.Part
+		-- Remove from Network.BaseParts
+		local index = table.find(Network.BaseParts, part)
+		if index then
+			table.remove(Network.BaseParts, index)
+		end
 		-- Destroy movers
 		if part:FindFirstChild("AlignPosition") then part:FindFirstChild("AlignPosition"):Destroy() end
 		if part:FindFirstChild("Torque") then part:FindFirstChild("Torque"):Destroy() end
@@ -374,6 +409,10 @@ backButton.MouseButton1Click:Connect(function()
 	selectedTargets = {}
 	orbitingEnabled = false
 	scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+	-- Clean up
+	TargetFolder:ClearAllChildren()
+	parts = {}
+	Network.BaseParts = {}
 end)
 
 -- Update player list on player join/leave
