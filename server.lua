@@ -8,36 +8,6 @@ local mouse = player:GetMouse()
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
---// Network Ownership Setup
-if not getgenv().Network then
-    getgenv().Network = {
-        BaseParts = {},
-        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
-    }
-
-    Network.RetainPart = function(Part)
-        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
-            table.insert(Network.BaseParts, Part)
-            Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
-            Part.CanCollide = true  -- Set to true as per request
-        end
-    end
-
-    local function EnablePartControl()
-        player.ReplicationFocus = Workspace
-        RunService.Heartbeat:Connect(function()
-            sethiddenproperty(player, "SimulationRadius", math.huge)
-            for _, Part in pairs(Network.BaseParts) do
-                if Part:IsDescendantOf(Workspace) then
-                    Part.Velocity = Network.Velocity
-                end
-            end
-        end)
-    end
-
-    EnablePartControl()
-end
-
 --// Create GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "ServerGUI"
@@ -61,7 +31,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hung"
+title.Text = "X0N777"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -134,38 +104,17 @@ local orbitingEnabled = false
 local orbitHeight = 40  -- Height above HRP
 local orbitRadius = 20   -- Radius of circle
 local rotationSpeed = 1 -- Degrees per frame
-local throwSpeed = 200  -- Velocity for throwing
+local throwSpeed = 100  -- Velocity for throwing
 local currentAngle = 0
-
-local TargetFolder = Instance.new("Folder")
-TargetFolder.Name = "OrbitTargets"
-TargetFolder.Parent = Workspace
 
 --// Collect unanchored BaseParts
 local function collectParts()
 	parts = {}
 	for _, part in pairs(Workspace:GetDescendants()) do
 		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= player.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
-			local targetPart = Instance.new("Part")
-			targetPart.Anchored = true
-			targetPart.CanCollide = false
-			targetPart.Transparency = 1
-			targetPart.Name = "Target"
-			targetPart.Parent = TargetFolder
-			local att1 = Instance.new("Attachment", targetPart)
-			local att2 = Instance.new("Attachment", part)
-			local alignPos = Instance.new("AlignPosition", part)
-			alignPos.Attachment0 = att2
-			alignPos.Attachment1 = att1
-			alignPos.MaxForce = math.huge
-			alignPos.MaxVelocity = math.huge
-			alignPos.Responsiveness = 200
-			alignPos.RigidityEnabled = true  -- Added for better response
-			local torque = Instance.new("Torque", part)
-			torque.Attachment0 = att2
-			torque.Torque = Vector3.new(100000, 100000, 100000)
-			Network.RetainPart(part)
-			table.insert(parts, {Part = part, Target = targetPart})
+			table.insert(parts, part)
+			-- Make collidable
+			part.CanCollide = true
 		end
 	end
 end
@@ -178,11 +127,11 @@ RunService.Heartbeat:Connect(function(deltaTime)
 	if orbitingEnabled then
 		currentAngle = currentAngle + rotationSpeed * deltaTime
 		local numParts = #parts
-		for i, entry in ipairs(parts) do
-			if entry.Part and entry.Part.Parent and entry.Target then
+		for i, part in ipairs(parts) do
+			if part and part.Parent then
 				local angle = currentAngle + (i / numParts) * 2 * math.pi
 				local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
-				entry.Target.Position = targetPos
+				part.Position = targetPos  -- Direct position for simplicity; use AlignPosition for physics
 			end
 		end
 	end
@@ -379,18 +328,7 @@ end)
 throwButton.MouseButton1Click:Connect(function()
 	if #selectedTargets > 0 and #parts > 0 then
 		-- Pick one part and remove it from the orbiting list
-		local entry = table.remove(parts, 1)
-		local part = entry.Part
-		-- Remove from Network.BaseParts
-		local index = table.find(Network.BaseParts, part)
-		if index then
-			table.remove(Network.BaseParts, index)
-		end
-		-- Destroy movers
-		if part:FindFirstChild("AlignPosition") then part:FindFirstChild("AlignPosition"):Destroy() end
-		if part:FindFirstChild("Torque") then part:FindFirstChild("Torque"):Destroy() end
-		if part:FindFirstChild("Attachment") then part:FindFirstChild("Attachment"):Destroy() end
-		if entry.Target then entry.Target:Destroy() end
+		local part = table.remove(parts, 1)
 		-- Pick a random target if multiple
 		local target = selectedTargets[math.random(1, #selectedTargets)]
 		local targetHrp = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
@@ -409,10 +347,6 @@ backButton.MouseButton1Click:Connect(function()
 	selectedTargets = {}
 	orbitingEnabled = false
 	scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-	-- Clean up
-	TargetFolder:ClearAllChildren()
-	parts = {}
-	Network.BaseParts = {}
 end)
 
 -- Update player list on player join/leave
