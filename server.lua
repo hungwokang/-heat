@@ -12,39 +12,6 @@ RunService.Heartbeat:Connect(function()
 end)
 LocalPlayer.ReplicationFocus = Workspace
 
---// Parts Collection System (exact from Super Ring)
-local parts = {}
-local function RetainPart(Part)
-    if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(Workspace) then
-        if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
-            return false
-        end
-        Part.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0, 0, 0)
-        Part.CanCollide = false
-        return true
-    end
-    return false
-end
-local function addPart(part)
-    if RetainPart(part) then
-        if not table.find(parts, part) then
-            table.insert(parts, part)
-        end
-    end
-end
-local function removePart(part)
-    local index = table.find(parts, part)
-    if index then
-        table.remove(parts, index)
-    end
-end
--- Initial scan
-for _, part in pairs(Workspace:GetDescendants()) do
-    addPart(part)
-end
-Workspace.DescendantAdded:Connect(addPart)
-Workspace.DescendantRemoving:Connect(removePart)
-
 --// Variables
 local levitatingParts = {}
 local levitateConnection = nil
@@ -56,9 +23,8 @@ local buttonFrame = nil
 local addedConn = nil
 local removingConn = nil
 local witchMode = false
-local maxGrab = 10
 local config = {
-    radius = 20,
+    radius = 30,
     height = 30,
     rotationSpeed = 1,
     attractionStrength = 100,
@@ -84,14 +50,14 @@ frame.Draggable = true
 --// Title bar
 local title = Instance.new("TextLabel")
 title.Parent = frame
-title.Size = UDim2.new(1, 0, 0, 20)
-title.Position = UDim2.new(0, 0, 0, 0)
+title.Size = UDim2.new(1, -20, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
 title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
-title.TextXAlignment = Enum.TextXAlignment.Center
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Position = UDim2.new(0, 50, 0, 0)
 
 --// Minimize button
 local minimize = Instance.new("TextButton")
@@ -137,38 +103,42 @@ footer.Font = Enum.Font.Code
 footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
-footer.TextXAlignment = Enum.TextXAlignment.Center
+
+--// Minimize toggle
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
+    local targetText = minimized and "+" or "-"
+    TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+        Size = targetSize
+    }):Play()
+    scroll.Visible = not minimized
+    footer.Visible = not minimized
+    minimize.Text = targetText
+end)
+
+--// Notification
+game.StarterGui:SetCore("SendNotification", {
+    Title = "FE HAX";
+    Text = "hehe boi get load'd";
+    Duration = 11;
+})
 
 --// Functions
-local function findNearestLooseParts(num)
-    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root or #parts == 0 then return {} end
-    local pos = root.Position
-    local sortedParts = {}
-    for _, part in pairs(parts) do
-        if part.Parent then
-            table.insert(sortedParts, {part = part, dist = (part.Position - pos).Magnitude})
+local function collectParts()
+    local partList = {}
+    for _, part in pairs(Workspace:GetDescendants()) do
+        if part:IsA("BasePart") and not part.Anchored and part.Parent ~= LocalPlayer.Character and not part:IsDescendantOf(LocalPlayer.Character) and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
+            pcall(function() part:SetNetworkOwner(LocalPlayer) end)
+            part.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0, 0, 0)
+            part.CanCollide = false
+            part.BrickColor = BrickColor.new("Bright red")
+            part.Transparency = 0
+            table.insert(partList, part)
         end
     end
-    table.sort(sortedParts, function(a, b) return a.dist < b.dist end)
-    local selected = {}
-    for i = 1, math.min(num, #sortedParts) do
-        local p = sortedParts[i].part
-        pcall(function() p:SetNetworkOwner(LocalPlayer) end)
-        p.BrickColor = BrickColor.new("Bright red")  -- Make red for visibility
-        p.Transparency = 0  -- Ensure visible
-        local touchConn = p.Touched:Connect(function(hit)
-            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid.Health = 0
-            end
-        end)
-        p.Destroying:Connect(function()
-            touchConn:Disconnect()
-        end)
-        table.insert(selected, p)
-    end
-    return selected
+    return partList
 end
 
 local function orbitParts(partList)
@@ -304,18 +274,12 @@ local function enterWitchMode()
     startBtn.TextSize = 12
     
     startBtn.MouseButton1Click:Connect(function()
-        local count = 0
-        for _ in pairs(selectedTargets) do count = count + 1 end
         if #levitatingParts > 0 then
             game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Already grabbing parts!", Duration = 3})
             return
         end
-        if #parts == 0 then
-            game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose parts in game!", Duration = 3})
-            return
-        end
         spawn(function()
-            local partList = findNearestLooseParts(maxGrab)
+            local partList = collectParts()
             if #partList == 0 then
                 game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No loose parts found!", Duration = 3})
                 return
@@ -392,7 +356,7 @@ end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-    Title = "hung";
-    Text = "WITCH loaded! (Orbit)";
-    Duration = 5;
+    Title = "FE HAX";
+    Text = "hehe boi get load'd";
+    Duration = 11;
 })
