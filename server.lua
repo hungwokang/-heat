@@ -374,7 +374,7 @@ throwButton.MouseButton1Click:Connect(function()
 		local offset = Vector3.new(math.random(-5,5), math.random(-5,5), math.random(-5,5))
 		clone.Position = myHrp.Position + base + offset
 
-		-- 1.5-second bob above YOU
+		-- 1-second bob above YOU
 		task.spawn(function()
 			local start = tick()
 			local conn
@@ -392,7 +392,7 @@ throwButton.MouseButton1Click:Connect(function()
 					clone.Velocity = flingVel
 					print("[Fling Debug] Accurate launch at " .. targetPlr.Name .. " (dist: " .. math.floor(distance) .. ", upward: " .. upward .. ", speed: " .. flingVel.Magnitude .. ")")
 
-				    -- Optional: Guided throw (uncomment for homing)
+					-- Guided throw (homing)
 					local bodyPos = Instance.new("BodyPosition")
 					bodyPos.MaxForce = Vector3.new(4000, 4000, 4000)
 					bodyPos.Position = tgtHrp.Position
@@ -428,7 +428,7 @@ throwButton.MouseButton1Click:Connect(function()
 end)
 
 --// -------------------------------------------------
---// 7. NEW SPAWN FLING FUNCTION (Spawn on Target Body → Fling After 2s)
+--// 7. FIXED SPAWN FLING FUNCTION (Spawn on Target → Explode to Fling Target + Block Path)
 --// -------------------------------------------------
 local spawnButton = Instance.new("TextButton")
 spawnButton.Size = UDim2.new(1,-10,0,20)
@@ -463,12 +463,14 @@ spawnButton.MouseButton1Click:Connect(function()
 		local tgtHrp = tgtChar:FindFirstChild("HumanoidRootPart")
 		if not tgtHrp then continue end
 
-		-- Spawn 5 random parts on target's body (e.g., limbs/torso)
-		for i = 1, 5 do
+		local spawnedParts = {}  -- Track spawned parts for explosion
+
+		-- Spawn 10 parts around/on target's body (for explosion fling)
+		for i = 1, 20 do
 			local src = srcParts[math.random(1, #srcParts)]
 			local clone = src:Clone()
-			clone.Anchored = true  -- Start anchored on body
-			clone.CanCollide = false  -- No collision during attach
+			clone.Anchored = true  -- Start anchored (no immediate collision)
+			clone.CanCollide = false
 			clone.CollisionGroup = THROWN_GROUP
 			clone.Massless = false
 			if clone.Size.Magnitude < 3 then
@@ -476,36 +478,63 @@ spawnButton.MouseButton1Click:Connect(function()
 			end
 			clone.Parent = Workspace
 
-			-- Position on random body part (e.g., Head, Torso, Arms, Legs)
-			local bodyParts = {"Head", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg"}
+			-- Position on/around random body part
+			local bodyParts = {"Head", "UpperTorso", "LowerTorso", "LeftUpperArm", "RightUpperArm", "LeftLowerArm", "RightLowerArm", "LeftUpperLeg", "RightUpperLeg", "LeftLowerLeg", "RightLowerLeg"}
 			local bodyPartName = bodyParts[math.random(1, #bodyParts)]
 			local bodyPart = tgtChar:FindFirstChild(bodyPartName)
 			if bodyPart then
-				clone.Position = bodyPart.Position + Vector3.new(math.random(-2,2), math.random(-1,1), math.random(-2,2))
+				clone.Position = bodyPart.Position + Vector3.new(math.random(-3,3), math.random(-2,2), math.random(-3,3))
 			else
-				clone.Position = tgtHrp.Position + Vector3.new(math.random(-2,2), math.random(-1,1), math.random(-2,2))
+				clone.Position = tgtHrp.Position + Vector3.new(math.random(-3,3), math.random(-2,2), math.random(-3,3))
 			end
 
-			-- After 2 seconds, unanchor and fling outward
-			task.spawn(function()
-				task.wait(0.1)
-				clone.Anchored = false
-				clone.CanCollide = true
-				-- Random outward fling direction (explosive from body)
-				local randomDir = Vector3.new(math.random(-1,1), math.random(0,1), math.random(-1,1)).Unit
-				local flingVel = randomDir * 400 + Vector3.new(0, 100, 0)  -- High speed outward + up
-				clone.AssemblyLinearVelocity = flingVel
-				clone.Velocity = flingVel
-				print("[Spawn Fling Debug] Spawned & flung part on " .. targetPlr.Name .. " (speed: " .. flingVel.Magnitude .. ")")
-
-				-- Extra impulse on target's HRP for full ragdoll
-				local bodyVel = Instance.new("BodyVelocity")
-				bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-				bodyVel.Velocity = flingVel * 1.5
-				bodyVel.Parent = tgtHrp
-				game:GetService("Debris"):AddItem(bodyVel, 0.3)
-			end)
+			table.insert(spawnedParts, clone)
 		end
+
+		-- Spawn 5 anchored parts in front of target to block path (wall-like)
+		local forwardDir = tgtHrp.CFrame.LookVector
+		for i = 1, 5 do
+			local src = srcParts[math.random(1, #srcParts)]
+			local blockClone = src:Clone()
+			blockClone.Anchored = true  -- Permanently anchored to block
+			blockClone.CanCollide = true
+			blockClone.CollisionGroup = "Default"  -- Collides with everyone (blocks target)
+			blockClone.Massless = true  -- Lightweight but solid
+			if blockClone.Size.Magnitude < 3 then
+				blockClone.Size = blockClone.Size * 3
+			end
+			blockClone.Parent = Workspace
+
+			-- Position in front (blocking forward path)
+			local blockPos = tgtHrp.Position + (forwardDir * (5 + i * 2)) + Vector3.new(math.random(-4,4), math.random(-1,1), math.random(-4,4))
+			blockClone.Position = blockPos
+			blockClone.Orientation = Vector3.new(0, math.random(0,360), 0)  -- Random rotation for wall effect
+		end
+
+		-- it explode spawned parts to fling target via collision
+		task.spawn(function()
+			
+			for _, clone in ipairs(spawnedParts) do
+				if clone and clone.Parent then
+					clone.Anchored = false
+					clone.CanCollide = true  -- Now collides with target
+					-- Outward fling from target's center (explosion effect pushes target)
+					local dirFromCenter = (clone.Position - tgtHrp.Position).Unit
+					local flingVel = dirFromCenter * 600 + Vector3.new(0, 150, 0)  -- High outward speed + up for ragdoll
+					clone.AssemblyLinearVelocity = flingVel
+					clone.Velocity = flingVel
+					print("[Spawn Fling Debug] Exploded part on " .. targetPlr.Name .. " (speed: " .. flingVel.Magnitude .. ")")
+				end
+			end
+
+			-- Extra direct fling on target's HRP (ensures ragdoll even if collisions miss)
+			local bodyVel = Instance.new("BodyVelocity")
+			bodyVel.MaxForce = Vector3.new(2e5, 2e5, 2e5)  -- Stronger force
+			bodyVel.Velocity = Vector3.new(math.random(-300,300), 200, math.random(-300,300))  -- Random chaotic direction
+			bodyVel.Parent = tgtHrp
+			game:GetService("Debris"):AddItem(bodyVel, 0.5)
+			print("[Spawn Fling Debug] Direct ragdoll impulse on " .. targetPlr.Name)
+		end)
 	end
 end)
 
