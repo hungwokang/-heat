@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
---// Infinite Simulation Radius (for FE replication)
+--// Infinite Simulation Radius
 RunService.Heartbeat:Connect(function()
     pcall(function()
         sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
@@ -178,120 +178,179 @@ minimize.MouseButton1Click:Connect(function()
     minimize.Text = targetText
 end)
 
---// Functionality Variables
-local orbitingEnabled = false
-local bumpingEnabled = false
-local orbitHeight = 30   -- Tighter for kill aura
-local orbitRadius = 3   -- Tighter for kill aura
-local rotationSpeed = 60 -- Degrees per second
-local bumpSpeed = 50   -- Faster for better bump
-local angularScale = 5  -- For fling rotation during bump
-local currentAngle = 0
+--// Notification
+game.StarterGui:SetCore("SendNotification", {
+    Title = "hung",
+    Text = "Player List GUI Loaded",
+    Duration = 4,
+})
+
+--// Parts collection and auto refresh
 local parts = {}
 local MAX_PARTS = 10
-
---// Collect unanchored BaseParts (closest 50)
 local function collectParts()
     parts = {}
-    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
+    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
     
     local candidates = {}
     for _, part in pairs(Workspace:GetDescendants()) do
-        if part:IsA("BasePart") and not part.Anchored and part.Parent ~= LocalPlayer.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
-            table.insert(candidates, part)
+        if part:IsA("BasePart") and not part.Anchored and part:IsDescendantOf(Workspace) then
+            if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then
+                -- skip
+            else
+                table.insert(candidates, part)
+            end
         end
     end
     
     -- Sort by distance
     table.sort(candidates, function(a, b)
-        return (a.Position - hrp.Position).Magnitude < (b.Position - hrp.Position).Magnitude
+        return (a.Position - root.Position).Magnitude < (b.Position - root.Position).Magnitude
     end)
     
-    -- Take top 50 and setup kill aura (touch kill)
     for i = 1, math.min(MAX_PARTS, #candidates) do
-        local part = candidates[i]
-        table.insert(parts, part)
-        part.CanCollide = true  -- For better collision/kill detection
-        local touchConn = part.Touched:Connect(function(hit)
-            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-            if humanoid and humanoid.Health > 0 then
-                humanoid.Health = 0
-            end
-        end)
-        part.Destroying:Connect(function()
-            touchConn:Disconnect()
-        end)
+        table.insert(parts, candidates[i])
     end
 end
 
---// Auto refresh parts (every 5 sec + on new parts)
+collectParts()
+Workspace.DescendantAdded:Connect(collectParts)
 task.spawn(function()
     while true do
         collectParts()
         task.wait(5)
     end
 end)
-Workspace.DescendantAdded:Connect(function(obj)
-    if obj:IsA("BasePart") and not obj.Anchored then
-        collectParts()
-    end
-end)
 
---// Orbit (kill aura) and Bump Logic
-RunService.Heartbeat:Connect(function(dt)
-    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
+--// Orbit Variables
+local orbitConn = nil
+local orbitSpeed = 3
+local orbitRadius = 20
+local orbitHeight = 30
+
+--// Orbit Functions
+local function startOrbit()
+    if orbitConn then return end
+    collectParts()  -- Refresh parts
+    if #parts == 0 then
+        game.StarterGui:SetCore("SendNotification", {Title="hung", Text="No unanchored parts found", Duration=3})
+        return
+    end
     
-    if orbitingEnabled then
-        currentAngle = currentAngle + math.rad(rotationSpeed) * dt
-        local numParts = #parts
-        for i, part in ipairs(parts) do
+    game.StarterGui:SetCore("SendNotification", {Title="hung", Text="Orbiting "..#parts.." parts", Duration=4})
+    
+    local t = 0
+    orbitConn = RunService.Heartbeat:Connect(function(dt)
+        t = t + dt * orbitSpeed
+        local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        
+        for i, part in pairs(parts) do
             if part and part.Parent then
-                local angle = currentAngle + (i / numParts) * 2 * math.pi
-                local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
-                part.Position = targetPos  -- Direct pos for tight aura orbit
-                part.AssemblyLinearVelocity = Vector3.zero  -- Reset vel for stable orbit
-                part.AssemblyAngularVelocity = Vector3.zero
+                part.CanCollide = false
+                local angle = (i / #parts) * math.pi * 2 + t
+                local offset = Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
+                part.Velocity = Vector3.zero
+                part.RotVelocity = Vector3.zero
+                part.CFrame = CFrame.new(root.Position + offset) * CFrame.Angles(0, angle + math.pi/2, 0)
             end
+        end
+    end)
+end
+
+local function stopOrbit()
+    if orbitConn then
+        orbitConn:Disconnect()
+        orbitConn = nil
+        game.StarterGui:SetCore("SendNotification", {Title="hung", Text="Orbit stopped", Duration=2})
+    end
+end
+
+--// Bump Function (one-time, lasts 3 seconds)
+local function startBump()
+    stopOrbit()  -- Stop orbit to avoid conflict
+    collectParts()  -- Refresh parts
+    
+    local validTargets = {}
+    for _, target in pairs(selectedTargets) do
+        if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            table.insert(validTargets, target.Character.HumanoidRootPart)
         end
     end
     
-    if bumpingEnabled then
-        local numTargets = #selectedTargets
-        if numTargets == 0 then return end
-        for i, part in ipairs(parts) do
-            if part and part.Parent then
-                local targetPlayer = selectedTargets[((i - 1) % numTargets) + 1]
-                local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if targetHrp then
-                    local dir = (targetHrp.Position - part.Position)
-                    if dir.Magnitude > 0 then
-                        part.AssemblyLinearVelocity = dir.Unit * bumpSpeed
-                        part.AssemblyAngularVelocity = Vector3.new(math.random(-10,10), math.random(-10,10), math.random(-10,10)) * angularScale
-                    end
+    if #validTargets == 0 then
+        game.StarterGui:SetCore("SendNotification", {Title="hung", Text="No target selected!", Duration=3})
+        return
+    end
+    
+    if #parts == 0 then
+        game.StarterGui:SetCore("SendNotification", {Title="hung", Text="No unanchored parts found", Duration=3})
+        return
+    end
+    
+    game.StarterGui:SetCore("SendNotification", {Title="hung", Text="Bumping with "..#parts.." parts!", Duration=4})
+    
+    for _, obj in pairs(parts) do
+        if obj and obj.Parent then
+            obj.CanCollide = true
+            local closestTarget
+            local closestDist = math.huge
+            
+            for _, hrp in pairs(validTargets) do
+                local dist = (hrp.Position - obj.Position).Magnitude
+                if dist < closestDist then
+                    closestDist = dist
+                    closestTarget = hrp
                 end
             end
+            
+            if closestTarget then
+                task.spawn(function()
+                    local lifetime = 3
+                    local startTime = tick()
+                    while tick() - startTime < lifetime do
+                        if obj and obj.Parent and closestTarget and closestTarget.Parent then
+                            local dir = (closestTarget.Position - obj.Position)
+                            obj.AssemblyLinearVelocity = dir.Unit * 250
+                            obj.AssemblyAngularVelocity = Vector3.new(math.random(), math.random(), math.random()) * 50
+                        else
+                            break
+                        end
+                        RunService.Heartbeat:Wait()
+                    end
+                    -- Stop and stay
+                    if obj and obj.Parent then
+                        obj.AssemblyLinearVelocity = Vector3.zero
+                        obj.AssemblyAngularVelocity = Vector3.zero
+                    end
+                end)
+            end
         end
     end
-end)
+end
 
---// Orbit button
+--// Add buttons below player list
 local orbitButton = Instance.new("TextButton")
 orbitButton.Parent = scroll
 orbitButton.Size = UDim2.new(1, -10, 0, 20)
-orbitButton.Text = "Orbit Off"
+orbitButton.Text = "Orbit"
 orbitButton.Font = Enum.Font.Code
 orbitButton.TextSize = 12
 orbitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 orbitButton.TextColor3 = Color3.new(0, 0, 0)
-orbitButton.MouseButton1Click:Connect(function()
-    orbitingEnabled = not orbitingEnabled
-    bumpingEnabled = false
-    orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
-end)
+orbitButton.MouseButton1Click:Connect(startOrbit)
 
---// Bump button
+local stopOrbitButton = Instance.new("TextButton")
+stopOrbitButton.Parent = scroll
+stopOrbitButton.Size = UDim2.new(1, -10, 0, 20)
+stopOrbitButton.Text = "Stop"
+stopOrbitButton.Font = Enum.Font.Code
+stopOrbitButton.TextSize = 12
+stopOrbitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+stopOrbitButton.TextColor3 = Color3.new(0, 0, 0)
+stopOrbitButton.MouseButton1Click:Connect(stopOrbit)
+
 local bumpButton = Instance.new("TextButton")
 bumpButton.Parent = scroll
 bumpButton.Size = UDim2.new(1, -10, 0, 20)
@@ -300,8 +359,4 @@ bumpButton.Font = Enum.Font.Code
 bumpButton.TextSize = 12
 bumpButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 bumpButton.TextColor3 = Color3.new(0, 0, 0)
-bumpButton.MouseButton1Click:Connect(function()
-    bumpingEnabled = not bumpingEnabled
-    orbitingEnabled = false
-    bumpButton.Text = bumpingEnabled and "Bump On" or "Bump"
-end)
+bumpButton.MouseButton1Click:Connect(startBump)
