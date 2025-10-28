@@ -1,4 +1,4 @@
---//  GUI + Auto Collision Setup + Float/Bob Toggle + Super-Fling Throw (NDS-Optimized, No Fly)
+--//  GUI + Auto Collision Setup + Float/Bob Toggle + Accurate-Fling Throw (NDS-Optimized)
 --//  LocalScript (paste in StarterPlayerScripts)
 
 local Players        = game:GetService("Players")
@@ -88,7 +88,7 @@ gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,120,0,160)  -- Back to original size (no fly button)
+frame.Size = UDim2.new(0,120,0,160)
 frame.Position = UDim2.new(0.5,-60,0.5,-80)
 frame.BackgroundColor3 = Color3.new(0,0,0)
 frame.BackgroundTransparency = 0.4
@@ -228,7 +228,7 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = minimized and "+" or "-"
 end)
 
-StarterGui:SetCore("SendNotification", {Title="hung", Text="GUI Loaded (Super Fling! Try during disaster)", Duration=4})
+StarterGui:SetCore("SendNotification", {Title="hung", Text="GUI Loaded (Accurate Fling! Try during disaster)", Duration=4})
 
 --// -------------------------------------------------
 --// 5. FLOAT & BOB (unchanged)
@@ -318,7 +318,7 @@ blobButton.MouseButton1Click:Connect(function()
 end)
 
 --// -------------------------------------------------
---// 6. SUPER FLING THROW (TOUCHED EVENT + HIGH VELOCITY)
+--// 6. ACCURATE SUPER FLING THROW (FIXED ARC + PROPORTIONAL UPWARD)
 --// -------------------------------------------------
 local throwButton = Instance.new("TextButton")
 throwButton.Size = UDim2.new(1,-10,0,20)
@@ -366,29 +366,40 @@ throwButton.MouseButton1Click:Connect(function()
 		clone.CanCollide = false
 		clone.CollisionGroup = THROWN_GROUP
 		clone.Massless = false  -- Heavy for impact
-		if clone.Size.Magnitude < 3 then
-			clone.Size = clone.Size * 3  -- Bigger for better hits
+		if clone.Size.Magnitude < 2 then
+			clone.Size = clone.Size * 2  -- Bigger for better hits
 		end
 		clone.Parent = Workspace
 
 		local offset = Vector3.new(math.random(-5,5), math.random(-5,5), math.random(-5,5))
 		clone.Position = myHrp.Position + base + offset
 
-		-- 3-second bob above YOU
+		-- 1.5-second bob above YOU
 		task.spawn(function()
 			local start = tick()
 			local conn
 			conn = RunService.Heartbeat:Connect(function()
-				if tick() - start >= 1.5 then
+				if tick() - start >= 1 then
 					conn:Disconnect()
 					clone.Anchored = false
 					clone.CanCollide = true
-					-- HIGH VELOCITY LAUNCH
+					-- FIXED ACCURATE LAUNCH
 					local dir = (tgtHrp.Position - clone.Position).Unit
-					local flingVel = dir * 500 + Vector3.new(0, 500, 0)  -- Ultra-boosted
+					local distance = (tgtHrp.Position - clone.Position).Magnitude  -- Horizontal distance
+					local upward = 50 + (distance * 0.1)  -- Proportional arc (low for close, slight for far)
+					local flingVel = dir * 500 + Vector3.new(0, upward - (dir.Y * 20), 0)  -- Slight downward aim + proportional up
 					clone.AssemblyLinearVelocity = flingVel
 					clone.Velocity = flingVel
-					print("[Fling Debug] Launched at " .. targetPlr.Name .. " with " .. flingVel.Magnitude .. " speed")
+					print("[Fling Debug] Accurate launch at " .. targetPlr.Name .. " (dist: " .. math.floor(distance) .. ", upward: " .. upward .. ", speed: " .. flingVel.Magnitude .. ")")
+
+					-- Optional: Guided throw (uncomment for homing)
+					local bodyPos = Instance.new("BodyPosition")
+					bodyPos.MaxForce = Vector3.new(4000, 4000, 4000)
+					bodyPos.Position = tgtHrp.Position
+					bodyPos.D = 500  -- Damping for smooth pull
+					bodyPos.P = 3000  -- Power
+					bodyPos.Parent = clone
+					game:GetService("Debris"):AddItem(bodyPos, 3)  -- Remove after 3s
 
 					-- Touched event for extra impulse on hit
 					local touchConn
@@ -397,12 +408,12 @@ throwButton.MouseButton1Click:Connect(function()
 						if humanoid and hit.Parent ~= myChar then
 							-- Apply extra fling force
 							local bodyVel = Instance.new("BodyVelocity")
-							bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)  -- Massive force
-							bodyVel.Velocity = flingVel * 2  -- Double for ragdoll
+							bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+							bodyVel.Velocity = flingVel * 2
 							bodyVel.Parent = hit
 							game:GetService("Debris"):AddItem(bodyVel, 0.5)
 							print("[Fling Debug] Direct hit & extra impulse on " .. hit.Parent.Name)
-							touchConn:Disconnect()  -- One-time per part
+							touchConn:Disconnect()
 						end
 					end)
 
