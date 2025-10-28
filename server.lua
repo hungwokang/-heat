@@ -287,7 +287,7 @@ local function startBlob()
 	local hrp = char:FindFirstChild("HumanoidRootPart")
 	if not hrp then stopBlob(); return end
 
-	local base = Vector3.new(0, 10, 0)
+	local base = Vector3.new(0, 15, 0)
 	local offsets = {}
 
 	for i, part in ipairs(blobParts) do
@@ -326,7 +326,7 @@ throwButton.BackgroundTransparency = 1
 throwButton.Font = Enum.Font.Code
 throwButton.TextColor3 = Color3.fromRGB(255,0,0)
 throwButton.TextSize = 12
-throwButton.Text = "Super Fling Throw"
+throwButton.Text = "start throw"
 throwButton.TextXAlignment = Enum.TextXAlignment.Center
 throwButton.Parent = scroll
 
@@ -366,8 +366,8 @@ throwButton.MouseButton1Click:Connect(function()
 		clone.CanCollide = false
 		clone.CollisionGroup = THROWN_GROUP
 		clone.Massless = false  -- Heavy for impact
-		if clone.Size.Magnitude < 2 then
-			clone.Size = clone.Size * 2  -- Bigger for better hits
+		if clone.Size.Magnitude < 4 then
+			clone.Size = clone.Size * 4  -- Bigger for better hits
 		end
 		clone.Parent = Workspace
 
@@ -385,7 +385,7 @@ throwButton.MouseButton1Click:Connect(function()
 					clone.CanCollide = true
 					-- HIGH VELOCITY LAUNCH
 					local dir = (tgtHrp.Position - clone.Position).Unit
-					local flingVel = dir * 50 + Vector3.new(0, 50, 0)  -- Ultra-boosted
+					local flingVel = dir * 500 + Vector3.new(0, 500, 0)  -- Ultra-boosted
 					clone.AssemblyLinearVelocity = flingVel
 					clone.Velocity = flingVel
 					print("[Fling Debug] Launched at " .. targetPlr.Name .. " with " .. flingVel.Magnitude .. " speed")
