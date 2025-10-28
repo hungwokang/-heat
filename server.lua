@@ -57,9 +57,9 @@ local addedConn = nil
 local removingConn = nil
 local witchMode = false
 local config = {
-    radius = 50,
-    height = 100,
-    rotationSpeed = 10,
+    radius = 40,
+    height = 40,
+    rotationSpeed = 1,
     attractionStrength = 1000,
 }
 
@@ -457,17 +457,7 @@ remove unnecessary variables .
 
 keep the simulation radius . 
 
-make sure it works in roblox . 
-
-the orbit logic should use velocity for smooth movement . 
-
-adjust the config for better orbit . radius 20, height 30, rotationSpeed 90, attractionStrength 100 . 
-
-remove the tornado levitate, use the orbitParts function from earlier . 
-
-when disable, stop orbiting and let parts fall . 
-
-the enable button should be centered in the scroll .--// Services
+make sure it works in roblox .--// Services
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -486,10 +476,10 @@ local levitatingParts = {}
 local levitateConnection = nil
 local orbitingEnabled = false
 local config = {
-    radius = 20,
-    height = 30,
-    rotationSpeed = 90,
-    attractionStrength = 100,
+    radius = 50,
+    height = 100,
+    rotationSpeed = 10,
+    attractionStrength = 1000,
 }
 
 --// Create GUI
@@ -582,7 +572,7 @@ end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-    Title = "FE HAX";
+    Title = "FE HAXXXXXXXXXXXXXXXXXXXXXXXXXX";
     Text = "hehe boi get load'd";
     Duration = 11;
 })
