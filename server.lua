@@ -372,7 +372,7 @@ end)
 -- Orbit button click
 orbitButton.MouseButton1Click:Connect(function()
 	orbitingEnabled = not orbitingEnabled
-	orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
+	orbitButton.Text = orbitingEnabled and "Orbit Onnn" or "Orbit Off"
 end)
 
 -- Throw button click
