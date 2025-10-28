@@ -326,7 +326,7 @@ throwButton.BackgroundTransparency = 1
 throwButton.Font = Enum.Font.Code
 throwButton.TextColor3 = Color3.fromRGB(255,0,0)
 throwButton.TextSize = 12
-throwButton.Text = "start throw"
+throwButton.Text = "start throww"
 throwButton.TextXAlignment = Enum.TextXAlignment.Center
 throwButton.Parent = scroll
 
@@ -366,8 +366,8 @@ throwButton.MouseButton1Click:Connect(function()
 		clone.CanCollide = false
 		clone.CollisionGroup = THROWN_GROUP
 		clone.Massless = false  -- Heavy for impact
-		if clone.Size.Magnitude < 4 then
-			clone.Size = clone.Size * 4  -- Bigger for better hits
+		if clone.Size.Magnitude < 3 then
+			clone.Size = clone.Size * 3  -- Bigger for better hits
 		end
 		clone.Parent = Workspace
 
