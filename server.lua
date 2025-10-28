@@ -1,14 +1,19 @@
 --// Services
 local TweenService = game:GetService("TweenService")
-local vim = game:GetService("VirtualInputManager")
-local player = game.Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local mouse = player:GetMouse()
-local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
---// Create GUI
+--// Infinite Simulation Radius (for FE replication)
+RunService.Heartbeat:Connect(function()
+    pcall(function()
+        sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+    end)
+end)
+LocalPlayer.ReplicationFocus = Workspace
+
+--// GUI Setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "ServerGUI"
 gui.ResetOnSpawn = false
@@ -17,8 +22,8 @@ gui.Parent = game.CoreGui
 --// Main Frame
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0, 120, 0, 130)
-frame.Position = UDim2.new(0.5, -60, 0.5, -65)
+frame.Size = UDim2.new(0, 120, 0, 160)
+frame.Position = UDim2.new(0.5, -60, 0.5, -80)
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BackgroundTransparency = 0.4
 frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -28,14 +33,13 @@ frame.Draggable = true
 --// Title bar
 local title = Instance.new("TextLabel")
 title.Parent = frame
-title.Size = UDim2.new(1, -20, 0, 20)
+title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "Xefwfwef7"
+title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Position = UDim2.new(0, 50, 0, 0)
+title.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Minimize button
 local minimize = Instance.new("TextButton")
@@ -65,6 +69,11 @@ layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Padding = UDim.new(0, 5)
 
+local function updateScrollCanvas()
+    scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
+
 --// Footer
 local footer = Instance.new("TextLabel")
 footer.Parent = frame
@@ -75,279 +84,224 @@ footer.Font = Enum.Font.Code
 footer.Text = "published by server"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
+footer.TextXAlignment = Enum.TextXAlignment.Center
 
---// Minimize toggle
-local minimized = false
-minimize.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 130)
-	local targetText = minimized and "+" or "-"
-	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-		Size = targetSize
-	}):Play()
-	scroll.Visible = not minimized
-	footer.Visible = not minimized
-	minimize.Text = targetText
-end)
+--// Header (Select Target)
+local headerButton = Instance.new("TextButton")
+headerButton.Parent = scroll
+headerButton.Size = UDim2.new(1, -10, 0, 20)
+headerButton.BackgroundTransparency = 1 -- fully transparent header
+headerButton.BorderSizePixel = 0
+headerButton.Font = Enum.Font.Code
+headerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+headerButton.TextSize = 12
+headerButton.Text = "Select Target"
+headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
---// Notification
-game.StarterGui:SetCore("SendNotification", {
-	Title = "FE HAX";
-	Text = "hehe boi get load'd";
-	Duration = 11;
-})
-
---// Functionality Variables
-local selectedTargets = {}
-local parts = {}
-local orbitingEnabled = false
-local throwingEnabled = false
-local orbitHeight = 40  -- Height above HRP
-local orbitRadius = 5   -- Radius of circle
-local rotationSpeed = 1 -- Degrees per frame
-local throwSpeed = 200  -- Velocity for throwing
-local currentAngle = 0
-
---// Collect unanchored BaseParts
-local function collectParts()
-	parts = {}
-	for _, part in pairs(Workspace:GetDescendants()) do
-		if part:IsA("BasePart") and not part.Anchored and part.Parent ~= player.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
-			table.insert(parts, part)
-			-- Make non-collidable and add kill touch
-			part.CanCollide = false
-			local touchConn = part.Touched:Connect(function(hit)
-				local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-				if humanoid then
-					humanoid.Health = 0
-				end
-			end)
-			-- Optional: Destroy conn when part destroyed
-			part.Destroying:Connect(function()
-				touchConn:Disconnect()
-			end)
-		end
-	end
-end
-
---// Orbit Logic
-RunService.Heartbeat:Connect(function(deltaTime)
-	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-	if not hrp then return end
-	
-	if orbitingEnabled then
-		currentAngle = currentAngle + rotationSpeed * deltaTime
-		local numParts = #parts
-		for i, part in ipairs(parts) do
-			if part and part.Parent then
-				local angle = currentAngle + (i / numParts) * 2 * math.pi
-				local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
-				part.Position = targetPos  -- Direct position for simplicity; use AlignPosition for physics
-			end
-		end
-	end
-	
-	if throwingEnabled then
-		local numParts = #parts
-		for i, part in ipairs(parts) do
-			if part and part.Parent then
-				local targetPlayer = selectedTargets[(i % #selectedTargets) + 1]
-				local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-				if targetHrp then
-					local direction = (targetHrp.Position - part.Position).unit
-					part.Velocity = direction * throwSpeed
-				end
-			end
-		end
-		-- Optionally disable throwing after one throw to make it one-shot
-		-- throwingEnabled = false
-	end
-end)
-
---// GUI Elements
-
--- Initial ENABLE button
-local enableButton = Instance.new("TextButton")
-enableButton.Parent = scroll
-enableButton.Size = UDim2.new(1, -10, 0, 20)
-enableButton.Text = "ENABLE"
-enableButton.Font = Enum.Font.Code
-enableButton.TextSize = 12
-enableButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-enableButton.TextColor3 = Color3.new(0, 0, 0)
-
--- Target selection frame (hidden initially)
-local targetFrame = Instance.new("Frame")
-targetFrame.Parent = scroll
-targetFrame.Size = UDim2.new(1, 0, 1, 0)
-targetFrame.BackgroundTransparency = 1
-targetFrame.Visible = false
-
--- Select target label
-local selectLabel = Instance.new("TextLabel")
-selectLabel.Parent = targetFrame
-selectLabel.Size = UDim2.new(1, -10, 0, 20)
-selectLabel.Text = "Select Target:"
-selectLabel.Font = Enum.Font.Code
-selectLabel.TextSize = 12
-selectLabel.BackgroundTransparency = 1
-selectLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-
--- Player list scroll
+--// Player list container (slight transparency)
 local playerScroll = Instance.new("ScrollingFrame")
-playerScroll.Parent = targetFrame
-playerScroll.Position = UDim2.new(0, 0, 0, 25)
-playerScroll.Size = UDim2.new(1, 0, 0, 50)
-playerScroll.BackgroundTransparency = 1
+playerScroll.Parent = scroll
+playerScroll.Size = UDim2.new(1, -10, 0, 60)
+playerScroll.Position = UDim2.new(0, 5, 0, 0)
+playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
+playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
+playerScroll.BorderSizePixel = 0
 playerScroll.ScrollBarThickness = 2
 playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 
 local playerLayout = Instance.new("UIListLayout")
 playerLayout.Parent = playerScroll
+playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-playerLayout.Padding = UDim.new(0, 2)
+playerLayout.Padding = UDim.new(0, 1)
 
--- Target All button
-local targetAllButton = Instance.new("TextButton")
-targetAllButton.Parent = targetFrame
-targetAllButton.Position = UDim2.new(0, 0, 0, 80)
-targetAllButton.Size = UDim2.new(1, -10, 0, 20)
-targetAllButton.Text = "Target All: Off"
-targetAllButton.Font = Enum.Font.Code
-targetAllButton.TextSize = 12
-targetAllButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-targetAllButton.TextColor3 = Color3.new(0, 0, 0)
+local selectedTargets = {}
+local listHidden = false
 
--- Orbit button
+--// Player list update
+local function updatePlayerList()
+    for _, btn in pairs(playerScroll:GetChildren()) do
+        if btn:IsA("TextButton") then btn:Destroy() end
+    end
+
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            local btn = Instance.new("TextButton")
+            btn.Name = p.Name
+            btn.Parent = playerScroll
+            btn.Size = UDim2.new(0.95, 0, 0, 16)
+            btn.BackgroundTransparency = 1
+            btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
+            btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+            btn.Font = Enum.Font.Code
+            btn.TextSize = 10
+            btn.TextXAlignment = Enum.TextXAlignment.Left
+
+            btn.MouseButton1Click:Connect(function()
+                if selectedTargets[p.Name] then
+                    selectedTargets[p.Name] = nil
+                    btn.Text = p.Name
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    selectedTargets[p.Name] = p
+                    btn.Text = p.Name .. " ✓"
+                    btn.TextColor3 = Color3.fromRGB(0, 255, 0)
+                end
+            end)
+        end
+    end
+    playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+    updateScrollCanvas()
+end
+
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
+--// Toggle list visibility when clicking header
+headerButton.MouseButton1Click:Connect(function()
+    listHidden = not listHidden
+    playerScroll.Visible = not listHidden
+end)
+
+--// Minimize toggle
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
+    local targetText = minimized and "+" or "-"
+    TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+        Size = targetSize
+    }):Play()
+    scroll.Visible = not minimized
+    footer.Visible = not minimized
+    minimize.Text = targetText
+end)
+
+--// Functionality Variables
+local orbitingEnabled = false
+local bumpingEnabled = false
+local orbitHeight = 30   -- Tighter for kill aura
+local orbitRadius = 3   -- Tighter for kill aura
+local rotationSpeed = 60 -- Degrees per second
+local bumpSpeed = 50   -- Faster for better bump
+local angularScale = 5  -- For fling rotation during bump
+local currentAngle = 0
+local parts = {}
+local MAX_PARTS = 10
+
+--// Collect unanchored BaseParts (closest 50)
+local function collectParts()
+    parts = {}
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    
+    local candidates = {}
+    for _, part in pairs(Workspace:GetDescendants()) do
+        if part:IsA("BasePart") and not part.Anchored and part.Parent ~= LocalPlayer.Character and not part.Parent:FindFirstChild("Humanoid") and part.Name ~= "Handle" then
+            table.insert(candidates, part)
+        end
+    end
+    
+    -- Sort by distance
+    table.sort(candidates, function(a, b)
+        return (a.Position - hrp.Position).Magnitude < (b.Position - hrp.Position).Magnitude
+    end)
+    
+    -- Take top 50 and setup kill aura (touch kill)
+    for i = 1, math.min(MAX_PARTS, #candidates) do
+        local part = candidates[i]
+        table.insert(parts, part)
+        part.CanCollide = true  -- For better collision/kill detection
+        local touchConn = part.Touched:Connect(function(hit)
+            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                humanoid.Health = 0
+            end
+        end)
+        part.Destroying:Connect(function()
+            touchConn:Disconnect()
+        end)
+    end
+end
+
+--// Auto refresh parts (every 5 sec + on new parts)
+task.spawn(function()
+    while true do
+        collectParts()
+        task.wait(5)
+    end
+end)
+Workspace.DescendantAdded:Connect(function(obj)
+    if obj:IsA("BasePart") and not obj.Anchored then
+        collectParts()
+    end
+end)
+
+--// Orbit (kill aura) and Bump Logic
+RunService.Heartbeat:Connect(function(dt)
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    
+    if orbitingEnabled then
+        currentAngle = currentAngle + math.rad(rotationSpeed) * dt
+        local numParts = #parts
+        for i, part in ipairs(parts) do
+            if part and part.Parent then
+                local angle = currentAngle + (i / numParts) * 2 * math.pi
+                local targetPos = hrp.Position + Vector3.new(math.cos(angle) * orbitRadius, orbitHeight, math.sin(angle) * orbitRadius)
+                part.Position = targetPos  -- Direct pos for tight aura orbit
+                part.AssemblyLinearVelocity = Vector3.zero  -- Reset vel for stable orbit
+                part.AssemblyAngularVelocity = Vector3.zero
+            end
+        end
+    end
+    
+    if bumpingEnabled then
+        local numTargets = #selectedTargets
+        if numTargets == 0 then return end
+        for i, part in ipairs(parts) do
+            if part and part.Parent then
+                local targetPlayer = selectedTargets[((i - 1) % numTargets) + 1]
+                local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if targetHrp then
+                    local dir = (targetHrp.Position - part.Position)
+                    if dir.Magnitude > 0 then
+                        part.AssemblyLinearVelocity = dir.Unit * bumpSpeed
+                        part.AssemblyAngularVelocity = Vector3.new(math.random(-10,10), math.random(-10,10), math.random(-10,10)) * angularScale
+                    end
+                end
+            end
+        end
+    end
+end)
+
+--// Orbit button
 local orbitButton = Instance.new("TextButton")
-orbitButton.Parent = targetFrame
-orbitButton.Position = UDim2.new(0, 0, 0, 105)
-orbitButton.Size = UDim2.new(0.5, -5, 0, 20)
+orbitButton.Parent = scroll
+orbitButton.Size = UDim2.new(1, -10, 0, 20)
 orbitButton.Text = "Orbit Off"
 orbitButton.Font = Enum.Font.Code
 orbitButton.TextSize = 12
 orbitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 orbitButton.TextColor3 = Color3.new(0, 0, 0)
-
--- Throw button
-local throwButton = Instance.new("TextButton")
-throwButton.Parent = targetFrame
-throwButton.Position = UDim2.new(0.5, 5, 0, 105)
-throwButton.Size = UDim2.new(0.5, -5, 0, 20)
-throwButton.Text = "Throw"
-throwButton.Font = Enum.Font.Code
-throwButton.TextSize = 12
-throwButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-throwButton.TextColor3 = Color3.new(0, 0, 0)
-
--- Back button
-local backButton = Instance.new("TextButton")
-backButton.Parent = targetFrame
-backButton.Position = UDim2.new(0, 0, 0, 130)
-backButton.Size = UDim2.new(1, -10, 0, 20)
-backButton.Text = "Back"
-backButton.Font = Enum.Font.Code
-backButton.TextSize = 12
-backButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-backButton.TextColor3 = Color3.new(0, 0, 0)
-
--- Function to populate player list
-local function populatePlayers()
-	for _, child in pairs(playerScroll:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
-	local allPlayers = Players:GetPlayers()
-	for _, plr in ipairs(allPlayers) do
-		if plr ~= player then
-			local plrButton = Instance.new("TextButton")
-			plrButton.Parent = playerScroll
-			plrButton.Size = UDim2.new(1, -10, 0, 20)
-			plrButton.Text = plr.Name .. " (Off)"
-			plrButton.Font = Enum.Font.Code
-			plrButton.TextSize = 12
-			plrButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-			plrButton.TextColor3 = Color3.new(0, 0, 0)
-			plrButton.MouseButton1Click:Connect(function()
-				if table.find(selectedTargets, plr) then
-					table.remove(selectedTargets, table.find(selectedTargets, plr))
-					plrButton.Text = plr.Name .. " (Off)"
-				else
-					table.insert(selectedTargets, plr)
-					plrButton.Text = plr.Name .. " (On)"
-				end
-			end)
-		end
-	end
-	playerScroll.CanvasSize = UDim2.new(0, 0, 0, #playerScroll:GetChildren() * 22)
-end
-
--- ENABLE button click
-enableButton.MouseButton1Click:Connect(function()
-	collectParts()  -- Collect parts on enable
-	enableButton.Visible = false
-	targetFrame.Visible = true
-	populatePlayers()
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 170)  -- Adjust for content
-end)
-
--- Target All click
-local targetAll = false
-targetAllButton.MouseButton1Click:Connect(function()
-	targetAll = not targetAll
-	targetAllButton.Text = "Target All: " .. (targetAll and "On" or "Off")
-	if targetAll then
-		selectedTargets = {}
-		for _, plr in ipairs(Players:GetPlayers()) do
-			if plr ~= player then
-				table.insert(selectedTargets, plr)
-			end
-		end
-		-- Update buttons
-		for _, btn in pairs(playerScroll:GetChildren()) do
-			if btn:IsA("TextButton") then
-				btn.Text = btn.Text:gsub("%(Off%)", "(On)")
-			end
-		end
-	else
-		selectedTargets = {}
-		for _, btn in pairs(playerScroll:GetChildren()) do
-			if btn:IsA("TextButton") then
-				btn.Text = btn.Text:gsub("%(On%)", "(Off)")
-			end
-		end
-	end
-end)
-
--- Orbit button click
 orbitButton.MouseButton1Click:Connect(function()
-	orbitingEnabled = not orbitingEnabled
-	throwingEnabled = false  -- Disable throwing when orbiting toggles
-	orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
+    orbitingEnabled = not orbitingEnabled
+    bumpingEnabled = false
+    orbitButton.Text = orbitingEnabled and "Orbit On" or "Orbit Off"
 end)
 
--- Throw button click
-throwButton.MouseButton1Click:Connect(function()
-	if #selectedTargets > 0 then
-		throwingEnabled = true
-		orbitingEnabled = false  -- Disable orbiting when throwing
-		-- Optionally reset throwingEnabled after a delay if one-shot
-		-- wait(1)
-		-- throwingEnabled = false
-	end
+--// Bump button
+local bumpButton = Instance.new("TextButton")
+bumpButton.Parent = scroll
+bumpButton.Size = UDim2.new(1, -10, 0, 20)
+bumpButton.Text = "Bump"
+bumpButton.Font = Enum.Font.Code
+bumpButton.TextSize = 12
+bumpButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+bumpButton.TextColor3 = Color3.new(0, 0, 0)
+bumpButton.MouseButton1Click:Connect(function()
+    bumpingEnabled = not bumpingEnabled
+    orbitingEnabled = false
+    bumpButton.Text = bumpingEnabled and "Bump On" or "Bump"
 end)
-
--- Back click
-backButton.MouseButton1Click:Connect(function()
-	targetFrame.Visible = false
-	enableButton.Visible = true
-	selectedTargets = {}
-	throwingEnabled = false
-	orbitingEnabled = false
-	scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-end)
-
--- Update player list on player join/leave
-Players.PlayerAdded:Connect(populatePlayers)
-Players.PlayerRemoving:Connect(populatePlayers)
