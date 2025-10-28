@@ -287,7 +287,7 @@ local function startBlob()
 	local hrp = char:FindFirstChild("HumanoidRootPart")
 	if not hrp then stopBlob(); return end
 
-	local base = Vector3.new(0, 15, 0)
+	local base = Vector3.new(0, 20, 0)
 	local offsets = {}
 
 	for i, part in ipairs(blobParts) do
@@ -488,7 +488,7 @@ spawnButton.MouseButton1Click:Connect(function()
 
 			-- After 2 seconds, unanchor and fling outward
 			task.spawn(function()
-				task.wait(2)
+				task.wait(0.1)
 				clone.Anchored = false
 				clone.CanCollide = true
 				-- Random outward fling direction (explosive from body)
