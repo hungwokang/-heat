@@ -1,4 +1,4 @@
---//  GUI + Auto Collision Setup + Float/Bob Toggle + Accurate-Fling Throw (NDS-Optimized)
+--//  GUI + Auto Collision Setup + Float/Bob Toggle + Accurate-Fling Throw + Spawn Fling (NDS-Optimized)
 --//  LocalScript (paste in StarterPlayerScripts)
 
 local Players        = game:GetService("Players")
@@ -88,8 +88,8 @@ gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,120,0,160)
-frame.Position = UDim2.new(0.5,-60,0.5,-80)
+frame.Size = UDim2.new(0,120,0,180)  -- Slightly taller for new button
+frame.Position = UDim2.new(0.5,-60,0.5,-90)
 frame.BackgroundColor3 = Color3.new(0,0,0)
 frame.BackgroundTransparency = 0.4
 frame.BorderColor3 = Color3.fromRGB(255,0,0)
@@ -221,14 +221,14 @@ end)
 local minimized = false
 minimize.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	local target = minimized and UDim2.new(0,120,0,25) or UDim2.new(0,120,0,160)
+	local target = minimized and UDim2.new(0,120,0,25) or UDim2.new(0,120,0,180)
 	TweenService:Create(frame,TweenInfo.new(0.25,Enum.EasingStyle.Sine), {Size = target}):Play()
 	scroll.Visible = not minimized
 	footer.Visible = not minimized
 	minimize.Text = minimized and "+" or "-"
 end)
 
-StarterGui:SetCore("SendNotification", {Title="hung", Text="GUI Loaded (Accurate Fling! Try during disaster)", Duration=4})
+StarterGui:SetCore("SendNotification", {Title="hung", Text="GUI Loaded (Spawn Fling Added! Try during disaster)", Duration=4})
 
 --// -------------------------------------------------
 --// 5. FLOAT & BOB (unchanged)
@@ -318,7 +318,7 @@ blobButton.MouseButton1Click:Connect(function()
 end)
 
 --// -------------------------------------------------
---// 6. ACCURATE SUPER FLING THROW (FIXED ARC + PROPORTIONAL UPWARD)
+--// 6. ACCURATE SUPER FLING THROW (unchanged)
 --// -------------------------------------------------
 local throwButton = Instance.new("TextButton")
 throwButton.Size = UDim2.new(1,-10,0,20)
@@ -392,7 +392,7 @@ throwButton.MouseButton1Click:Connect(function()
 					clone.Velocity = flingVel
 					print("[Fling Debug] Accurate launch at " .. targetPlr.Name .. " (dist: " .. math.floor(distance) .. ", upward: " .. upward .. ", speed: " .. flingVel.Magnitude .. ")")
 
-					-- Optional: Guided throw (uncomment for homing)
+				    -- Optional: Guided throw (uncomment for homing)
 					local bodyPos = Instance.new("BodyPosition")
 					bodyPos.MaxForce = Vector3.new(4000, 4000, 4000)
 					bodyPos.Position = tgtHrp.Position
@@ -424,6 +424,88 @@ throwButton.MouseButton1Click:Connect(function()
 				clone.Position = myHrp.Position + base + offset + bob
 			end)
 		end)
+	end
+end)
+
+--// -------------------------------------------------
+--// 7. NEW SPAWN FLING FUNCTION (Spawn on Target Body → Fling After 2s)
+--// -------------------------------------------------
+local spawnButton = Instance.new("TextButton")
+spawnButton.Size = UDim2.new(1,-10,0,20)
+spawnButton.BackgroundTransparency = 1
+spawnButton.Font = Enum.Font.Code
+spawnButton.TextColor3 = Color3.fromRGB(255,0,0)
+spawnButton.TextSize = 12
+spawnButton.Text = "spawn(target)"
+spawnButton.TextXAlignment = Enum.TextXAlignment.Center
+spawnButton.Parent = scroll
+
+spawnButton.MouseButton1Click:Connect(function()
+	task.wait(0.5)
+
+	local srcParts = getUnanchoredParts()
+	if #srcParts == 0 then
+		StarterGui:SetCore("SendNotification", {Title="No Parts!", Text="Wait for a disaster for debris to spawn.", Duration=3})
+		return
+	end
+
+	for _,targetPlr in pairs(selectedTargets) do
+		local tgtChar = targetPlr.Character
+		if not tgtChar then continue end
+
+		-- Tag target
+		for _,p in ipairs(tgtChar:GetDescendants()) do
+			if p:IsA("BasePart") then
+				p.CollisionGroup = TARGET_GROUP
+			end
+		end
+
+		local tgtHrp = tgtChar:FindFirstChild("HumanoidRootPart")
+		if not tgtHrp then continue end
+
+		-- Spawn 5 random parts on target's body (e.g., limbs/torso)
+		for i = 1, 5 do
+			local src = srcParts[math.random(1, #srcParts)]
+			local clone = src:Clone()
+			clone.Anchored = true  -- Start anchored on body
+			clone.CanCollide = false  -- No collision during attach
+			clone.CollisionGroup = THROWN_GROUP
+			clone.Massless = false
+			if clone.Size.Magnitude < 3 then
+				clone.Size = clone.Size * 3
+			end
+			clone.Parent = Workspace
+
+			-- Position on random body part (e.g., Head, Torso, Arms, Legs)
+			local bodyParts = {"Head", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg"}
+			local bodyPartName = bodyParts[math.random(1, #bodyParts)]
+			local bodyPart = tgtChar:FindFirstChild(bodyPartName)
+			if bodyPart then
+				clone.Position = bodyPart.Position + Vector3.new(math.random(-2,2), math.random(-1,1), math.random(-2,2))
+			else
+				clone.Position = tgtHrp.Position + Vector3.new(math.random(-2,2), math.random(-1,1), math.random(-2,2))
+			end
+
+			-- After 2 seconds, unanchor and fling outward
+			task.spawn(function()
+				task.wait(2)
+				clone.Anchored = false
+				clone.CanCollide = true
+				-- Random outward fling direction (explosive from body)
+				local randomDir = Vector3.new(math.random(-1,1), math.random(0,1), math.random(-1,1)).Unit
+				local flingVel = randomDir * 400 + Vector3.new(0, 100, 0)  -- High speed outward + up
+				clone.AssemblyLinearVelocity = flingVel
+				clone.Velocity = flingVel
+				print("[Spawn Fling Debug] Spawned & flung part on " .. targetPlr.Name .. " (speed: " .. flingVel.Magnitude .. ")")
+
+				-- Extra impulse on target's HRP for full ragdoll
+				local bodyVel = Instance.new("BodyVelocity")
+				bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+				bodyVel.Velocity = flingVel * 1.5
+				bodyVel.Parent = tgtHrp
+				game:GetService("Debris"):AddItem(bodyVel, 0.3)
+			end)
+		end
 	end
 end)
 
