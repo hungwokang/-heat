@@ -1,8 +1,8 @@
 --// Services
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
@@ -155,8 +155,21 @@ headerButton.MouseButton1Click:Connect(function()
 	playerScroll.Visible = not listHidden
 end)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- Ring Parts Claim
-local Workspace = game:GetService("Workspace")
+local Workspace = game:GetService("workspace")
 
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -199,7 +212,6 @@ if not getgenv().Network then
     end
 
     EnablePartControl()
-end
 
 -- Filters parts to include in the tornado
 local function RetainPart(Part)
@@ -244,12 +256,13 @@ workspace.DescendantRemoving:Connect(removePart)
 
 local config = {
     radius = 10, -- Max horizontal distance parts can orbit
-    height = 40, -- Vertical range of the tornado
+    height = 30, -- Vertical range of the tornado
     rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 100, -- Force pulling parts toward the ring
+    attractionStrength = 500, -- Force pulling parts toward the ring
 }
 
 local ringPartsEnabled = false
+
 
 -- Main tornado loop - runs every frame
 RunService.Heartbeat:Connect(function()
@@ -293,6 +306,7 @@ collectButton.MouseButton1Click:Connect(function()
     collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 end)
 
+
 --// Minimize toggle
 local minimized = false
 minimize.MouseButton1Click:Connect(function()
@@ -309,7 +323,7 @@ end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-	Title = "hung",
+	Title = "hungg",
 	Text = "Player List GUI Loaded",
-	Duration = 4,
+	Duration = 8,
 })
