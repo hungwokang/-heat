@@ -117,8 +117,8 @@ playerLayout.Padding = UDim.new(0, 1)
 local config = {
     radius = 10, -- Max horizontal distance parts can orbit
     height = 50, -- Vertical range of the tornado
-    rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 500, -- Force pulling parts toward the ring
+    rotationSpeed = 10, -- How fast parts rotate around the player
+    attractionStrength = 100, -- Force pulling parts toward the ring
 }
 
 
@@ -268,7 +268,7 @@ end)
 
 
 local selectedTargets = {}
-local listHidden = true
+local listHidden = false
 
 --// Player list update
 local function updatePlayerList()
@@ -306,6 +306,7 @@ local function updatePlayerList()
 	updateScrollCanvas()
 end
 
+updatePlayerList()
 Players.PlayerAdded:Connect(updatePlayerList)
 Players.PlayerRemoving:Connect(updatePlayerList)
 
@@ -346,7 +347,7 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
     collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
-    collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+    collectButton.TextColor3 = ringPartsEnabled
 end)
 
 --// Notification
