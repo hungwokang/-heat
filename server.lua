@@ -109,7 +109,12 @@ playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 playerLayout.Padding = UDim.new(0, 1)
 
 
-
+-- Rainbow TextLabel
+local textHue = 0
+RunService.Heartbeat:Connect(function()
+    textHue = (textHue + 0.01) % 1
+    title.TextColor3 = Color3.fromHSV(textHue, 1, 1)
+end)
 
 
 
