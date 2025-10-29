@@ -121,15 +121,15 @@ end)
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 20, -- Max horizontal distance parts can orbit
-    height = 1, -- Vertical range of the tornado
+    radius = 100, -- Max horizontal distance parts can orbit
+    height = 100, -- Vertical range of the tornado
     rotationSpeed = 1, -- How fast parts rotate around the player
     attractionStrength = 1000, -- Force pulling parts toward the ring
 }
 
 
 -- Ring Parts Claim
-local Workspace = game:GetService("Workspace")
+local Workspace = game:GetService("workspace")
 
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -189,7 +189,7 @@ local function ForcePart(v)
 
         v.CanCollide = false
         local Torque = Instance.new("Torque", v)
-        Torque.Torque = Vector3.new(100000, 100000, 100000) -- High spin
+        Torque.Torque = Vector3.new(100, 100, 100) -- High spin
         local AlignPosition = Instance.new("AlignPosition", v)
         local Attachment2 = Instance.new("Attachment", v)
         Torque.Attachment0 = Attachment2
@@ -353,7 +353,7 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 -- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
+    collectButton.Text = ringPartsEnabled and "Collect Off" or "Collect On"
     collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 
