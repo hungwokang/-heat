@@ -29,7 +29,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hung"
+title.Text = "hung v1"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -114,15 +114,16 @@ local textHue = 0
 RunService.Heartbeat:Connect(function()
     textHue = (textHue + 0.01) % 1
     title.TextColor3 = Color3.fromHSV(textHue, 1, 1)
+	footer.TextColor3 = Color3.fromHSV(textHue, 1, 1)
 end)
 
 
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 30, -- Max horizontal distance parts can orbit
-    height = 100, -- Vertical range of the tornado
-    rotationSpeed = 10, -- How fast parts rotate around the player
+    radius = 20, -- Max horizontal distance parts can orbit
+    height = 1, -- Vertical range of the tornado
+    rotationSpeed = 1, -- How fast parts rotate around the player
     attractionStrength = 1000, -- Force pulling parts toward the ring
 }
 
@@ -311,6 +312,7 @@ local function updatePlayerList()
 	updateScrollCanvas()
 end
 
+playerScroll.Visible = listHidden 
 updatePlayerList()
 Players.PlayerAdded:Connect(updatePlayerList)
 Players.PlayerRemoving:Connect(updatePlayerList)
@@ -351,6 +353,7 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
     collectButton.Text = ringPartsEnabled and "Collect Off" or "Collect On"
+	collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 
 --// Notification
