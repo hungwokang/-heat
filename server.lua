@@ -158,7 +158,19 @@ headerButton.MouseButton1Click:Connect(function()
 end)
 
 
-
+--// Minimize toggle
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
+	local targetText = minimized and "+" or "-"
+	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = targetSize
+	}):Play()
+	scroll.Visible = not minimized
+	footer.Visible = not minimized
+	minimize.Text = targetText
+end)
 
 
 
@@ -325,11 +337,15 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Toggle tornado on/off
-ToggleButton.MouseButton1Click:Connect(function()
+-- Now create the button (unchanged)
+local collectButton = Instance.new("TextButton")
+collectButton.Parent = scroll
+
+-- Now the click event (now button exists)
+collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    ToggleButton.Text = ringPartsEnabled and "Tornado On" or "Tornado Off"
-    ToggleButton.BackgroundColor3 = ringPartsEnabled and Color3.fromRGB(50, 205, 50) or Color3.fromRGB(160, 82, 45)
+    collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
+    collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 end)
 
 
@@ -350,19 +366,7 @@ end)
 
 
 
---// Minimize toggle
-local minimized = false
-minimize.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
-	local targetText = minimized and "+" or "-"
-	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-		Size = targetSize
-	}):Play()
-	scroll.Visible = not minimized
-	footer.Visible = not minimized
-	minimize.Text = targetText
-end)
+
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
