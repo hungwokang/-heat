@@ -121,10 +121,10 @@ end)
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 10, -- Max horizontal distance parts can orbit
-    height = 10, -- Vertical range of the tornado
-    rotationSpeed = 10, -- How fast parts rotate around the player
-    attractionStrength = 700, -- Force pulling parts toward the ring
+    radius = 30, -- Max horizontal distance parts can orbit
+    height = 0, -- Vertical range of the tornado
+    rotationSpeed = 1, -- How fast parts rotate around the player
+    attractionStrength = 1000, -- Force pulling parts toward the ring
 }
 
 
@@ -193,7 +193,7 @@ local function ForcePart(v)
         local AlignPosition = Instance.new("AlignPosition", v)
         local Attachment2 = Instance.new("Attachment", v)
         Torque.Attachment0 = Attachment2
-        AlignPosition.MaxForce = 1000 -- Extremely high force
+        AlignPosition.MaxForce = 9999999999999999999999999999999 -- Extremely high force
         AlignPosition.MaxVelocity = math.huge
         AlignPosition.Responsiveness = 200
         AlignPosition.Attachment0 = Attachment2
@@ -203,7 +203,6 @@ end
 
 -- Edits
 local ringPartsEnabled = false -- Toggle state
-local hoverEnabled = false -- Toggle state
 
 -- Filters parts to include in the tornado
 local function RetainPart(Part)
@@ -219,15 +218,12 @@ local function RetainPart(Part)
 end
 
 local parts = {} -- Table of parts in the tornado
-local activeParts = {} -- Limited active parts
-local partOffsets = {} -- For bobbing offsets
 
 -- Add part to tornado list
 local function addPart(part)
     if RetainPart(part) then
         if not table.find(parts, part) then
             table.insert(parts, part)
-            partOffsets[part] = math.random() * math.pi * 2 -- Random offset for bobbing
         end
     end
 end
@@ -237,7 +233,6 @@ local function removePart(part)
     local index = table.find(parts, part)
     if index then
         table.remove(parts, index)
-        partOffsets[part] = nil
     end
 end
 
@@ -252,24 +247,20 @@ workspace.DescendantRemoving:Connect(removePart)
 
 -- Main tornado loop - runs every frame
 RunService.Heartbeat:Connect(function()
-    if not (ringPartsEnabled or hoverEnabled) then return end
+    if not ringPartsEnabled then return end
 
     local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if humanoidRootPart then
         local tornadoCenter = humanoidRootPart.Position
-        local rotationSpeed = ringPartsEnabled and 0.1 or 0
-        local baseHoverHeight = ringPartsEnabled and 0 or 20
-        local time = tick()
-        for _, part in pairs(activeParts) do
+        for _, part in pairs(parts) do
             if part.Parent and not part.Anchored then
                 local pos = part.Position
                 local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
                 local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
-                local newAngle = angle + math.rad(rotationSpeed) -- Rotate or not
-                local bobHeight = math.sin(time + partOffsets[part]) * 2 -- Slow bobbing, amplitude 2
+                local newAngle = angle + math.rad(config.rotationSpeed) -- Rotate
                 local targetPos = Vector3.new(
                     tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
-                    tornadoCenter.Y + baseHoverHeight + bobHeight,
+                    tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
                     tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
                 )
                 local directionToTarget = (targetPos - part.Position).unit
@@ -354,71 +345,16 @@ collectButton.Size = UDim2.new(1, -10, 0, 20)
 collectButton.BackgroundTransparency = 1
 collectButton.BorderSizePixel = 0
 collectButton.Font = Enum.Font.Code
-collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
 collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
 
 -- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
-    if hoverEnabled then
-        hoverEnabled = false
-        hoverButton.Text = "Hover Above"
-    end
     ringPartsEnabled = not ringPartsEnabled
-    if ringPartsEnabled then
-        activeParts = {}
-        local center = humanoidRootPart.Position
-        local sortedParts = {}
-        for _, part in pairs(parts) do
-            if part.Parent then
-                local dist = (part.Position - center).Magnitude
-                table.insert(sortedParts, {part = part, dist = dist})
-            end
-        end
-        table.sort(sortedParts, function(a,b) return a.dist < b.dist end)
-        for i=1, math.min(500, #sortedParts) do
-            table.insert(activeParts, sortedParts[i].part)
-        end
-    end
     collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
-    collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-end)
-
-local hoverButton = Instance.new("TextButton")
-hoverButton.Parent = scroll
-hoverButton.Size = UDim2.new(1, -10, 0, 20)
-hoverButton.BackgroundTransparency = 1
-hoverButton.BorderSizePixel = 0
-hoverButton.Font = Enum.Font.Code
-hoverButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-hoverButton.TextSize = 12
-hoverButton.Text = "Hover Above"
-hoverButton.TextXAlignment = Enum.TextXAlignment.Center
-
-hoverButton.MouseButton1Click:Connect(function()
-    if ringPartsEnabled then
-        ringPartsEnabled = false
-        collectButton.Text = "Collect"
-    end
-    hoverEnabled = not hoverEnabled
-    if hoverEnabled then
-        activeParts = {}
-        local center = humanoidRootPart.Position
-        local sortedParts = {}
-        for _, part in pairs(parts) do
-            if part.Parent then
-                local dist = (part.Position - center).Magnitude
-                table.insert(sortedParts, {part = part, dist = dist})
-            end
-        end
-        table.sort(sortedParts, function(a,b) return a.dist < b.dist end)
-        for i=1, math.min(500, #sortedParts) do
-            table.insert(activeParts, sortedParts[i].part)
-        end
-    end
-    hoverButton.Text = hoverEnabled and "Hovering..." or "Hover Above"
-    hoverButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
 end)
 
 --// Notification
