@@ -123,8 +123,8 @@ end)
 local config = {
     radius = 10, -- Max horizontal distance parts can orbit
     height = 10, -- Vertical range of the tornado
-    rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 1000, -- Force pulling parts toward the ring
+    rotationSpeed = 10, -- How fast parts rotate around the player
+    attractionStrength = 300, -- Force pulling parts toward the ring
 }
 
 
@@ -220,12 +220,14 @@ end
 
 local parts = {} -- Table of parts in the tornado
 local activeParts = {} -- Limited active parts
+local partOffsets = {} -- For bobbing offsets
 
 -- Add part to tornado list
 local function addPart(part)
     if RetainPart(part) then
         if not table.find(parts, part) then
             table.insert(parts, part)
+            partOffsets[part] = math.random() * math.pi * 2 -- Random offset for bobbing
         end
     end
 end
@@ -235,6 +237,7 @@ local function removePart(part)
     local index = table.find(parts, part)
     if index then
         table.remove(parts, index)
+        partOffsets[part] = nil
     end
 end
 
@@ -255,16 +258,18 @@ RunService.Heartbeat:Connect(function()
     if humanoidRootPart then
         local tornadoCenter = humanoidRootPart.Position
         local rotationSpeed = ringPartsEnabled and 0.1 or 0
-        local hoverHeight = ringPartsEnabled and 0 or 20
+        local baseHoverHeight = ringPartsEnabled and 0 or 20
+        local time = tick()
         for _, part in pairs(activeParts) do
             if part.Parent and not part.Anchored then
                 local pos = part.Position
                 local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
                 local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
                 local newAngle = angle + math.rad(rotationSpeed) -- Rotate or not
+                local bobHeight = math.sin(time + partOffsets[part]) * 2 -- Slow bobbing, amplitude 2
                 local targetPos = Vector3.new(
                     tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
-                    tornadoCenter.Y + hoverHeight,
+                    tornadoCenter.Y + baseHoverHeight + bobHeight,
                     tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
                 )
                 local directionToTarget = (targetPos - part.Position).unit
