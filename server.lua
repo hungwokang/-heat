@@ -1,8 +1,8 @@
 --// Services
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
@@ -155,27 +155,6 @@ headerButton.MouseButton1Click:Connect(function()
 	playerScroll.Visible = not listHidden
 end)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- Ring Parts Claim
 local Workspace = game:GetService("Workspace")
 
@@ -207,22 +186,6 @@ if not getgenv().Network then
     end
 
     -- Force server to replicate part changes
-    local function EnablePartControl()
-        LocalPlayer.ReplicationFocus = Workspace
-        RunService.Heartbeat:Connect(function()
-            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge) -- Bypass distance limit
-            for _, Part in pairs(Network.BaseParts) do
-                if Part:IsDescendantOf(Workspace) then
-                    Part.Velocity = Network.Velocity -- Keep parts in motion
-                end
-            end
-        end)
-    end
-
-    EnablePartControl()
-end
-
--- Force server to replicate part changes
     local function EnablePartControl()
         LocalPlayer.ReplicationFocus = Workspace
         RunService.Heartbeat:Connect(function()
@@ -279,6 +242,15 @@ end
 workspace.DescendantAdded:Connect(addPart)
 workspace.DescendantRemoving:Connect(removePart)
 
+local config = {
+    radius = 10, -- Max horizontal distance parts can orbit
+    height = 40, -- Vertical range of the tornado
+    rotationSpeed = 1, -- How fast parts rotate around the player
+    attractionStrength = 1000, -- Force pulling parts toward the ring
+}
+
+local ringPartsEnabled = false
+
 -- Main tornado loop - runs every frame
 RunService.Heartbeat:Connect(function()
     if not ringPartsEnabled then return end
@@ -304,14 +276,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-local config = {
-    radius = 10, -- Max horizontal distance parts can orbit
-    height = 40, -- Vertical range of the tornado
-    rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 1000, -- Force pulling parts toward the ring
-}
-
-
 local collectButton = Instance.new("TextButton")
 collectButton.Parent = scroll
 collectButton.Size = UDim2.new(1, -10, 0, 20)
@@ -323,15 +287,11 @@ collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
 
-
-local ringPartsEnabled = false
-
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
     collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
     collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 end)
-
 
 --// Minimize toggle
 local minimized = false
