@@ -338,7 +338,6 @@ collectButton.Size = UDim2.new(1, -10, 0, 20)
 collectButton.BackgroundTransparency = 1
 collectButton.BorderSizePixel = 0
 collectButton.Font = Enum.Font.Code
-collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
 collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
@@ -346,8 +345,7 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 -- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
-    collectButton.TextColor3 = ringPartsEnabled
+    collectButton.Text = ringPartsEnabled and "Collect Off" or "Collect On"
 end)
 
 --// Notification
