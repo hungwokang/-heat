@@ -124,7 +124,7 @@ local config = {
     radius = 10, -- Max horizontal distance parts can orbit
     height = 10, -- Vertical range of the tornado
     rotationSpeed = 10, -- How fast parts rotate around the player
-    attractionStrength = 300, -- Force pulling parts toward the ring
+    attractionStrength = 700, -- Force pulling parts toward the ring
 }
 
 
