@@ -108,79 +108,6 @@ playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 playerLayout.Padding = UDim.new(0, 1)
 
-local selectedTargets = {}
-local listHidden = true
-
---// Player list update
-local function updatePlayerList()
-	for _, btn in pairs(playerScroll:GetChildren()) do
-		if btn:IsA("TextButton") then btn:Destroy() end
-	end
-
-	for _, p in pairs(Players:GetPlayers()) do
-		if p ~= LocalPlayer then
-			local btn = Instance.new("TextButton")
-			btn.Name = p.Name
-			btn.Parent = playerScroll
-			btn.Size = UDim2.new(0.95, 0, 0, 16)
-			btn.BackgroundTransparency = 1
-			btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
-			btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
-			btn.Font = Enum.Font.Code
-			btn.TextSize = 10
-			btn.TextXAlignment = Enum.TextXAlignment.Left
-
-			btn.MouseButton1Click:Connect(function()
-				if selectedTargets[p.Name] then
-					selectedTargets[p.Name] = nil
-					btn.Text = p.Name
-					btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-				else
-					selectedTargets[p.Name] = p
-					btn.Text = p.Name .. " ✓"
-					btn.TextColor3 = Color3.fromRGB(0, 255, 0)
-				end
-			end)
-		end
-	end
-	playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-	updateScrollCanvas()
-end
-
-updatePlayerList()
-Players.PlayerAdded:Connect(updatePlayerList)
-Players.PlayerRemoving:Connect(updatePlayerList)
-
---// Toggle list visibility when clicking header
-headerButton.MouseButton1Click:Connect(function()
-	listHidden = not listHidden
-	playerScroll.Visible = not listHidden
-end)
-
-
---// Minimize toggle
-local minimized = false
-minimize.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
-	local targetText = minimized and "+" or "-"
-	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-		Size = targetSize
-	}):Play()
-	scroll.Visible = not minimized
-	footer.Visible = not minimized
-	minimize.Text = targetText
-end)
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -337,6 +264,73 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+
+
+
+local selectedTargets = {}
+local listHidden = true
+
+--// Player list update
+local function updatePlayerList()
+	for _, btn in pairs(playerScroll:GetChildren()) do
+		if btn:IsA("TextButton") then btn:Destroy() end
+	end
+
+	for _, p in pairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer then
+			local btn = Instance.new("TextButton")
+			btn.Name = p.Name
+			btn.Parent = playerScroll
+			btn.Size = UDim2.new(0.95, 0, 0, 16)
+			btn.BackgroundTransparency = 1
+			btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
+			btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+			btn.Font = Enum.Font.Code
+			btn.TextSize = 10
+			btn.TextXAlignment = Enum.TextXAlignment.Left
+
+			btn.MouseButton1Click:Connect(function()
+				if selectedTargets[p.Name] then
+					selectedTargets[p.Name] = nil
+					btn.Text = p.Name
+					btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+				else
+					selectedTargets[p.Name] = p
+					btn.Text = p.Name .. " ✓"
+					btn.TextColor3 = Color3.fromRGB(0, 255, 0)
+				end
+			end)
+		end
+	end
+	playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+	updateScrollCanvas()
+end
+
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
+--// Toggle list visibility when clicking header
+headerButton.MouseButton1Click:Connect(function()
+	listHidden = not listHidden
+	playerScroll.Visible = not listHidden
+end)
+
+
+--// Minimize toggle
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
+	local targetText = minimized and "+" or "-"
+	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = targetSize
+	}):Play()
+	scroll.Visible = not minimized
+	footer.Visible = not minimized
+	minimize.Text = targetText
+end)
+
 -- Now create the button (unchanged)
 local collectButton = Instance.new("TextButton")
 collectButton.Parent = scroll
@@ -347,26 +341,6 @@ collectButton.MouseButton1Click:Connect(function()
     collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
     collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
