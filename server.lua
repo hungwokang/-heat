@@ -353,7 +353,7 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 -- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collect Off" or "Collect On"
+    collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
     collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 
