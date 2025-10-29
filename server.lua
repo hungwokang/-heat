@@ -2,7 +2,26 @@
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
+local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
+local Workspace = game:GetService("Workspace")
+
 local LocalPlayer = Players.LocalPlayer
+
+-- Sound Effects
+local function playSound(soundId)
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://" .. soundId
+    sound.Parent = SoundService
+    sound:Play()
+    sound.Ended:Connect(function()
+        sound:Destroy()
+    end)
+end
+
+-- Play initial sound
+playSound("2865227271")
 
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
@@ -27,7 +46,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hung"
+title.Text = "Super Ring Parts V6 by lukas"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -72,7 +91,7 @@ footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.Code
-footer.Text = "published by server"
+footer.Text = "by lukas"
 footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 footer.TextXAlignment = Enum.TextXAlignment.Center
@@ -155,13 +174,43 @@ headerButton.MouseButton1Click:Connect(function()
 	playerScroll.Visible = not listHidden
 end)
 
--- Ring Parts Claim
-local Workspace = game:GetService("workspace")
+--// Tornado Toggle Button
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Parent = scroll
+ToggleButton.Size = UDim2.new(1, -10, 0, 30)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ToggleButton.Font = Enum.Font.Code
+ToggleButton.TextSize = 12
+ToggleButton.Text = "Tornado Off"
+ToggleButton.TextXAlignment = Enum.TextXAlignment.Center
+
+--// Configuration table
+local config = {
+    radius = 50,
+    height = 100,
+    rotationSpeed = 10,
+    attractionStrength = 1000,
+}
+
+-- Save and load functions
+local function saveConfig()
+    local configStr = HttpService:JSONEncode(config)
+    writefile("SuperRingPartsConfig.txt", configStr)
+end
+
+local function loadConfig()
+    if isfile("SuperRingPartsConfig.txt") then
+        local configStr = readfile("SuperRingPartsConfig.txt")
+        config = HttpService:JSONDecode(configStr)
+    end
+end
+
+loadConfig()
 
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
--- Create anchor part for AlignPosition constraints
 local Folder = Instance.new("Folder", Workspace)
 local Part = Instance.new("Part", Folder)
 local Attachment1 = Instance.new("Attachment", Part)
@@ -169,14 +218,12 @@ Part.Anchored = true
 Part.CanCollide = false
 Part.Transparency = 1
 
--- Network ownership bypass to control distant parts
 if not getgenv().Network then
     getgenv().Network = {
         BaseParts = {},
         Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
     }
 
-    -- Retain network ownership of parts
     Network.RetainPart = function(Part)
         if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
             table.insert(Network.BaseParts, Part)
@@ -185,14 +232,13 @@ if not getgenv().Network then
         end
     end
 
-    -- Force server to replicate part changes
     local function EnablePartControl()
         LocalPlayer.ReplicationFocus = Workspace
         RunService.Heartbeat:Connect(function()
-            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge) -- Bypass distance limit
+            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
             for _, Part in pairs(Network.BaseParts) do
                 if Part:IsDescendantOf(Workspace) then
-                    Part.Velocity = Network.Velocity -- Keep parts in motion
+                    Part.Velocity = Network.Velocity
                 end
             end
         end)
@@ -201,12 +247,45 @@ if not getgenv().Network then
     EnablePartControl()
 end
 
--- Filters parts to include in the tornado
+local function ForcePart(v)
+    if v:IsA("Part") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
+        for _, x in next, v:GetChildren() do
+            if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
+                x:Destroy()
+            end
+        end
+        if v:FindFirstChild("Attachment") then
+            v:FindFirstChild("Attachment"):Destroy()
+        end
+        if v:FindFirstChild("AlignPosition") then
+            v:FindFirstChild("AlignPosition"):Destroy()
+        end
+        if v:FindFirstChild("Torque") then
+            v:FindFirstChild("Torque"):Destroy()
+        end
+        v.CanCollide = false
+        local Torque = Instance.new("Torque", v)
+        Torque.Torque = Vector3.new(100000, 100000, 100000)
+        local AlignPosition = Instance.new("AlignPosition", v)
+        local Attachment2 = Instance.new("Attachment", v)
+        Torque.Attachment0 = Attachment2
+        AlignPosition.MaxForce = 9999999999999999999999999999999
+        AlignPosition.MaxVelocity = math.huge
+        AlignPosition.Responsiveness = 200
+        AlignPosition.Attachment0 = Attachment2
+        AlignPosition.Attachment1 = Attachment1
+    end
+end
+
+-- Edits
+local ringPartsEnabled = false
+
 local function RetainPart(Part)
     if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
         if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
-            return false -- Exclude player
+            return false
         end
+
         Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
         Part.CanCollide = false
         return true
@@ -214,9 +293,7 @@ local function RetainPart(Part)
     return false
 end
 
-local parts = {} -- Table of parts in the tornado
-
--- Add part to tornado list
+local parts = {}
 local function addPart(part)
     if RetainPart(part) then
         if not table.find(parts, part) then
@@ -225,7 +302,6 @@ local function addPart(part)
     end
 end
 
--- Remove part when destroyed
 local function removePart(part)
     local index = table.find(parts, part)
     if index then
@@ -233,64 +309,60 @@ local function removePart(part)
     end
 end
 
--- Initialize with existing parts
 for _, part in pairs(workspace:GetDescendants()) do
     addPart(part)
 end
 
--- Listen for new/destroyed parts
 workspace.DescendantAdded:Connect(addPart)
 workspace.DescendantRemoving:Connect(removePart)
 
-local config = {
-    radius = 10, -- Max horizontal distance parts can orbit
-    height = 40, -- Vertical range of the tornado
-    rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 1000, -- Force pulling parts toward the ring
-}
-
-local ringPartsEnabled = false
-
--- Main tornado loop - runs every frame
 RunService.Heartbeat:Connect(function()
     if not ringPartsEnabled then return end
 
-    local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart then
-        local tornadoCenter = humanoidRootPart.Position
-        for _, part in pairs(parts) do
-            if part.Parent and not part.Anchored then
-                local pos = part.Position
-                local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+    local centers = {}
+    for _, p in pairs(selectedTargets) do
+        local hrp = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            table.insert(centers, hrp.Position)
+        end
+    end
+    if #centers == 0 then return end
+
+    for _, part in pairs(parts) do
+        if part.Parent and not part.Anchored then
+            local pos = part.Position
+            local closestCenter = nil
+            local minDist = math.huge
+            for _, tornadoCenter in pairs(centers) do
+                local dist = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+                if dist < minDist then
+                    minDist = dist
+                    closestCenter = tornadoCenter
+                end
+            end
+            if closestCenter then
+                local tornadoCenter = closestCenter
+                local distance = minDist
                 local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
-                local newAngle = angle + math.rad(config.rotationSpeed) -- Rotate
+                local newAngle = angle + math.rad(config.rotationSpeed)
                 local targetPos = Vector3.new(
                     tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
                     tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
                     tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
                 )
-                local directionToTarget = (targetPos - part.Position).unit
-                part.Velocity = directionToTarget * config.attractionStrength -- Pull toward ring
+                local directionToTarget = (targetPos - part.Position).Unit
+                part.Velocity = directionToTarget * config.attractionStrength
             end
         end
     end
 end)
 
-local collectButton = Instance.new("TextButton")
-collectButton.Parent = scroll
-collectButton.Size = UDim2.new(1, -10, 0, 20)
-collectButton.BackgroundTransparency = 1
-collectButton.BorderSizePixel = 0
-collectButton.Font = Enum.Font.Code
-collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-collectButton.TextSize = 12
-collectButton.Text = "Collect"
-collectButton.TextXAlignment = Enum.TextXAlignment.Center
-
-collectButton.MouseButton1Click:Connect(function()
+-- Button functionality
+ToggleButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collect" or "Collect Off"
-    collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+    ToggleButton.Text = ringPartsEnabled and "Tornado On" or "Tornado Off"
+    ToggleButton.BackgroundColor3 = ringPartsEnabled and Color3.fromRGB(50, 205, 50) or Color3.fromRGB(255, 0, 0)
+    playSound("12221967")
 end)
 
 --// Minimize toggle
@@ -307,9 +379,50 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
+-- Get player thumbnail
+local userId = Players:GetUserIdFromNameAsync("Robloxlukasgames")
+local thumbType = Enum.ThumbnailType.HeadShot
+local thumbSize = Enum.ThumbnailSize.Size420x420
+local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-	Title = "hung",
-	Text = "Player List GUI Loaded",
+	Title = "Super Ring Parts V6 by lukas",
+	Text = "Loaded!",
 	Duration = 4,
 })
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Hey",
+    Text = "Enjoy the Script!",
+    Icon = content,
+    Duration = 5
+})
+
+StarterGui:SetCore("SendNotification", {
+    Title = "TIPS",
+    Text = "Select players and toggle Tornado On",
+    Icon = content,
+    Duration = 5
+})
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Credits",
+    Text = "On scriptblox!",
+    Icon = content,
+    Duration = 5
+})
+
+-- Rainbow Background Effect
+local hue = 0
+RunService.Heartbeat:Connect(function()
+    hue = (hue + 0.01) % 1
+    frame.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
+end)
+
+-- Rainbow TextLabel
+local textHue = 0
+RunService.Heartbeat:Connect(function()
+    textHue = (textHue + 0.01) % 1
+    title.TextColor3 = Color3.fromHSV(textHue, 1, 1)
+end)
