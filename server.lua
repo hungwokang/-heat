@@ -2,6 +2,7 @@
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
