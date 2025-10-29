@@ -1,541 +1,275 @@
---//  GUI + Auto Collision Setup + Float/Bob Toggle + Accurate-Fling Throw + Spawn Fling (NDS-Optimized)
---//  LocalScript (paste in StarterPlayerScripts)
+--// Services
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
-local Players        = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService     = game:GetService("RunService")
-local TweenService   = game:GetService("TweenService")
-local Workspace      = game.Workspace
-local StarterGui     = game:GetService("StarterGui")
-local LocalPlayer    = Players.LocalPlayer
-
---// -------------------------------------------------
---// 1. AUTO CREATE SERVER SCRIPT & REMOTE EVENT
---// -------------------------------------------------
-local REMOTE_NAME = "SetupCollisionGroups"
-
-local remote = ReplicatedStorage:FindFirstChild(REMOTE_NAME)
-if not remote then
-	remote = Instance.new("RemoteEvent")
-	remote.Name = REMOTE_NAME
-	remote.Parent = ReplicatedStorage
-
-	-- Auto-create ServerScript to handle the event
-	local serverScript = Instance.new("Script")
-	serverScript.Name = "CollisionGroupHandler"
-	serverScript.Source = [[
-		local PhysicsService = game:GetService("PhysicsService")
-		local ReplicatedStorage = game:GetService("ReplicatedStorage")
-		local remote = ReplicatedStorage:WaitForChild("SetupCollisionGroups")
-
-		local done = false
-		remote.OnServerEvent:Connect(function()
-			if done then return end
-			done = true
-
-			local thrown = "ThrownParts"
-			local target = "TargetPlayers"
-
-			if not PhysicsService:IsCollisionGroupRegistered(thrown) then
-				PhysicsService:RegisterCollisionGroup(thrown)
-			end
-			if not PhysicsService:IsCollisionGroupRegistered(target) then
-				PhysicsService:RegisterCollisionGroup(target)
-			end
-
-			PhysicsService:CollisionGroupSetCollidable(thrown, "Default", false)
-			PhysicsService:CollisionGroupSetCollidable(thrown, target, true)
-		end)
-	]]
-	serverScript.Parent = game:GetService("ServerScriptService")
-	print("[GUI] Server collision handler injected")
-end
-
--- Fire once to trigger server setup
-remote:FireServer()
-
---// -------------------------------------------------
---// 2. CONSTANTS
---// -------------------------------------------------
-local THROWN_GROUP = "ThrownParts"
-local TARGET_GROUP = "TargetPlayers"
-
---// -------------------------------------------------
---// 3. FIXED PART COLLECTION (NDS-STYLE)
---// -------------------------------------------------
-local function getUnanchoredParts()
-	local parts = {}
-	for _, obj in pairs(Workspace:GetDescendants()) do
-		if obj:IsA("BasePart") and not obj.Anchored then
-			if obj.Name ~= "Baseplate" 
-				and not obj.Parent:FindFirstChildOfClass("Humanoid")
-				and obj.Transparency < 1
-				and obj.Size.Magnitude > 0.1 then
-				table.insert(parts, obj)
-			end
-		end
-	end
-	print("[NDS Debug] Found " .. #parts .. " unanchored parts")
-	return parts
-end
-
---// -------------------------------------------------
---// 4. GUI SETUP
---// -------------------------------------------------
+--// GUI Setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "ServerGUI"
 gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
+--// Main Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,120,0,180)  -- Slightly taller for new button
-frame.Position = UDim2.new(0.5,-60,0.5,-90)
-frame.BackgroundColor3 = Color3.new(0,0,0)
+frame.Parent = gui
+frame.Size = UDim2.new(0, 120, 0, 160)
+frame.Position = UDim2.new(0.5, -60, 0.5, -80)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
 frame.BackgroundTransparency = 0.4
-frame.BorderColor3 = Color3.fromRGB(255,0,0)
+frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
 frame.Active = true
 frame.Draggable = true
-frame.Parent = gui
 
+--// Title bar
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,0,0,20)
+title.Parent = frame
+title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
 title.Text = "hung"
-title.TextColor3 = Color3.fromRGB(255,0,0)
+title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
-title.Parent = frame
 
+--// Minimize button
 local minimize = Instance.new("TextButton")
-minimize.Size = UDim2.new(0,20,0,20)
-minimize.Position = UDim2.new(1,-22,0,0)
+minimize.Parent = frame
+minimize.Size = UDim2.new(0, 20, 0, 20)
+minimize.Position = UDim2.new(1, -22, 0, 0)
 minimize.Text = "-"
 minimize.Font = Enum.Font.Code
 minimize.TextSize = 14
 minimize.BackgroundTransparency = 1
-minimize.TextColor3 = Color3.fromRGB(255,0,0)
-minimize.Parent = frame
+minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
 
+--// Scroll Holder
 local scroll = Instance.new("ScrollingFrame")
-scroll.Position = UDim2.new(0,0,0,22)
-scroll.Size = UDim2.new(1,0,1,-42)
+scroll.Parent = frame
+scroll.Position = UDim2.new(0, 0, 0, 22)
+scroll.Size = UDim2.new(1, 0, 1, -42)
 scroll.BackgroundTransparency = 1
 scroll.BorderSizePixel = 0
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 scroll.ScrollBarThickness = 2
-scroll.Parent = frame
 
+--// Layout
 local layout = Instance.new("UIListLayout")
+layout.Parent = scroll
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Padding = UDim.new(0,5)
-layout.Parent = scroll
+layout.Padding = UDim.new(0, 5)
 
-local function updateCanvas()
-	scroll.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+local function updateScrollCanvas()
+	scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
 end
-layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
 
+--// Footer
 local footer = Instance.new("TextLabel")
-footer.Size = UDim2.new(1,0,0,20)
-footer.Position = UDim2.new(0,0,1,-20)
+footer.Parent = frame
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.Code
 footer.Text = "published by server"
-footer.TextColor3 = Color3.fromRGB(255,0,0)
+footer.TextColor3 = Color3.fromRGB(255, 0, 0)
 footer.TextSize = 10
 footer.TextXAlignment = Enum.TextXAlignment.Center
-footer.Parent = frame
 
--- Player List
-local header = Instance.new("TextButton")
-header.Size = UDim2.new(1,-10,0,20)
-header.BackgroundTransparency = 1
-header.Font = Enum.Font.Code
-header.TextColor3 = Color3.fromRGB(255,255,255)
-header.TextSize = 12
-header.Text = "Select Target"
-header.TextXAlignment = Enum.TextXAlignment.Center
-header.Parent = scroll
+--// Header (Select Target)
+local headerButton = Instance.new("TextButton")
+headerButton.Parent = scroll
+headerButton.Size = UDim2.new(1, -10, 0, 20)
+headerButton.BackgroundTransparency = 1 -- fully transparent header
+headerButton.BorderSizePixel = 0
+headerButton.Font = Enum.Font.Code
+headerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+headerButton.TextSize = 12
+headerButton.Text = "Select Target"
+headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
+--// Player list container (slight transparency)
 local playerScroll = Instance.new("ScrollingFrame")
-playerScroll.Size = UDim2.new(1,-10,0,60)
-playerScroll.Position = UDim2.new(0,5,0,0)
-playerScroll.BackgroundColor3 = Color3.new(0,0,0)
-playerScroll.BackgroundTransparency = 0.6
+playerScroll.Parent = scroll
+playerScroll.Size = UDim2.new(1, -10, 0, 60)
+playerScroll.Position = UDim2.new(0, 5, 0, 0)
+playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
+playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
 playerScroll.BorderSizePixel = 0
 playerScroll.ScrollBarThickness = 2
-playerScroll.Parent = scroll
+playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 
 local playerLayout = Instance.new("UIListLayout")
+playerLayout.Parent = playerScroll
 playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-playerLayout.Padding = UDim.new(0,1)
-playerLayout.Parent = playerScroll
+playerLayout.Padding = UDim.new(0, 1)
 
 local selectedTargets = {}
 local listHidden = false
 
-local function refreshPlayers()
-	for _,c in ipairs(playerScroll:GetChildren()) do
-		if c:IsA("TextButton") then c:Destroy() end
+--// Player list update
+local function updatePlayerList()
+	for _, btn in pairs(playerScroll:GetChildren()) do
+		if btn:IsA("TextButton") then btn:Destroy() end
 	end
-	for _,p in ipairs(Players:GetPlayers()) do
+
+	for _, p in pairs(Players:GetPlayers()) do
 		if p ~= LocalPlayer then
 			local btn = Instance.new("TextButton")
 			btn.Name = p.Name
-			btn.Size = UDim2.new(0.95,0,0,16)
+			btn.Parent = playerScroll
+			btn.Size = UDim2.new(0.95, 0, 0, 16)
 			btn.BackgroundTransparency = 1
+			btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
+			btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
 			btn.Font = Enum.Font.Code
 			btn.TextSize = 10
 			btn.TextXAlignment = Enum.TextXAlignment.Left
-			btn.Text = selectedTargets[p.Name] and (p.Name.." [Checkmark]") or p.Name
-			btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0,255,0) or Color3.fromRGB(255,255,255)
-			btn.Parent = playerScroll
 
 			btn.MouseButton1Click:Connect(function()
 				if selectedTargets[p.Name] then
 					selectedTargets[p.Name] = nil
 					btn.Text = p.Name
-					btn.TextColor3 = Color3.fromRGB(255,255,255)
+					btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 				else
 					selectedTargets[p.Name] = p
-					btn.Text = p.Name.." [Checkmark]"
-					btn.TextColor3 = Color3.fromRGB(0,255,0)
+					btn.Text = p.Name .. " ✓"
+					btn.TextColor3 = Color3.fromRGB(0, 255, 0)
 				end
 			end)
 		end
 	end
-	playerScroll.CanvasSize = UDim2.new(0,0,0,playerLayout.AbsoluteContentSize.Y)
-	updateCanvas()
+	playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+	updateScrollCanvas()
 end
-refreshPlayers()
-Players.PlayerAdded:Connect(refreshPlayers)
-Players.PlayerRemoving:Connect(refreshPlayers)
 
-header.MouseButton1Click:Connect(function()
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
+--// Toggle list visibility when clicking header
+headerButton.MouseButton1Click:Connect(function()
 	listHidden = not listHidden
 	playerScroll.Visible = not listHidden
 end)
 
+--// Collect Button
+local collectButton = Instance.new("TextButton")
+collectButton.Parent = scroll
+collectButton.Size = UDim2.new(1, -10, 0, 20)
+collectButton.BackgroundTransparency = 1
+collectButton.BorderSizePixel = 0
+collectButton.Font = Enum.Font.Code
+collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+collectButton.TextSize = 12
+collectButton.Text = "Collect Off"
+collectButton.TextXAlignment = Enum.TextXAlignment.Center
+
+--// Minimize toggle
 local minimized = false
 minimize.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	local target = minimized and UDim2.new(0,120,0,25) or UDim2.new(0,120,0,180)
-	TweenService:Create(frame,TweenInfo.new(0.25,Enum.EasingStyle.Sine), {Size = target}):Play()
+	local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 160)
+	local targetText = minimized and "+" or "-"
+	TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = targetSize
+	}):Play()
 	scroll.Visible = not minimized
 	footer.Visible = not minimized
-	minimize.Text = minimized and "+" or "-"
+	minimize.Text = targetText
 end)
 
-StarterGui:SetCore("SendNotification", {Title="hung", Text="GUI Loaded (Spawn Fling Added! Try during disaster)", Duration=4})
+--// Notification
+game.StarterGui:SetCore("SendNotification", {
+	Title = "hung",
+	Text = "Player List GUI Loaded",
+	Duration = 4,
+})
 
---// -------------------------------------------------
---// 5. FLOAT & BOB (unchanged)
---// -------------------------------------------------
-local blobButton = Instance.new("TextButton")
-blobButton.Size = UDim2.new(1,-10,0,20)
-blobButton.BackgroundTransparency = 1
-blobButton.Font = Enum.Font.Code
-blobButton.TextColor3 = Color3.fromRGB(255,0,0)
-blobButton.TextSize = 12
-blobButton.Text = "grab"
-blobButton.TextXAlignment = Enum.TextXAlignment.Center
-blobButton.Parent = scroll
+--// Collect Functions (Integrated from Reference)
+local config = {
+    radius = 10,
+    height = 40,
+    rotationSpeed = 1,
+    attractionStrength = 1000,
+}
 
-local blobActive = false
-local blobParts = {}
-local blobConns = {}
+local ringPartsEnabled = false
 
-local function stopBlob()
-	if not blobActive then return end
-	blobActive = false
-	blobButton.Text = "grab"
-	for _,part in ipairs(blobParts) do
-		part.Anchored = false
-	end
-	for _,conn in ipairs(blobConns) do
-		if conn.Connected then conn:Disconnect() end
-	end
-	blobParts = {}
-	blobConns = {}
+collectButton.MouseButton1Click:Connect(function()
+    ringPartsEnabled = not ringPartsEnabled
+    collectButton.Text = ringPartsEnabled and "Collect On" or "Collect Off"
+    collectButton.TextColor3 = ringPartsEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+end)
+
+local function RetainPart(Part)
+    if typeof(Part) == "Instance" and Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(Workspace) then
+        if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
+            return false
+        end
+        Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+        Part.CanCollide = false
+        return true
+    end
+    return false
 end
 
-local function startBlob()
-	if blobActive then return end
-
-	local allParts = getUnanchoredParts()
-	if #allParts == 0 then
-		StarterGui:SetCore("SendNotification", {Title="No Parts!", Text="Wait for a disaster (e.g., Earthquake) for debris.", Duration=3})
-		return
-	end
-
-	local count = math.min(100, #allParts)
-	blobParts = {}
-	local used = {}
-	for i = 1, count do
-		local idx = math.random(1, #allParts)
-		while used[idx] do 
-			idx = math.random(1, #allParts)
-		end
-		used[idx] = true
-		table.insert(blobParts, allParts[idx])
-	end
-
-	local char = LocalPlayer.Character
-	if not char then stopBlob(); return end
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	if not hrp then stopBlob(); return end
-
-	local base = Vector3.new(0, 20, 0)
-	local offsets = {}
-
-	for i, part in ipairs(blobParts) do
-		local offset = Vector3.new(math.random(-5,5), math.random(-5,5), math.random(-5,5))
-		table.insert(offsets, offset)
-		TweenService:Create(part, TweenInfo.new(2), {Position = hrp.Position + base + offset}):Play()
-	end
-	task.wait(2.5)
-
-	blobActive = true
-	blobButton.Text = "stop"
-
-	for i, part in ipairs(blobParts) do
-		part.Anchored = true
-		local offset = offsets[i]
-		local conn = RunService.Heartbeat:Connect(function()
-			if not (char and hrp and part and part.Parent) then stopBlob(); return end
-			local t = tick()
-			local bob = Vector3.new(0, math.sin(t * math.pi) * 3, 0)
-			part.Position = hrp.Position + base + offset + bob
-		end)
-		table.insert(blobConns, conn)
-	end
+local parts = {}
+local function addPart(part)
+    if RetainPart(part) then
+        if not table.find(parts, part) then
+            table.insert(parts, part)
+        end
+    end
 end
 
-blobButton.MouseButton1Click:Connect(function()
-	if blobActive then stopBlob() else startBlob() end
+local function removePart(part)
+    local index = table.find(parts, part)
+    if index then
+        table.remove(parts, index)
+    end
+end
+
+for _, part in pairs(Workspace:GetDescendants()) do
+    addPart(part)
+end
+
+Workspace.DescendantAdded:Connect(addPart)
+Workspace.DescendantRemoving:Connect(removePart)
+
+-- Enable simulation radius control
+local function EnablePartControl()
+    LocalPlayer.ReplicationFocus = Workspace
+    RunService.Heartbeat:Connect(function()
+        sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+    end)
+end
+EnablePartControl()
+
+-- Orbiting logic
+RunService.Heartbeat:Connect(function()
+    if not ringPartsEnabled then return end
+    local character = LocalPlayer.Character
+    if not character then return end
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+    local tornadoCenter = humanoidRootPart.Position
+    for _, part in pairs(parts) do
+        if part.Parent and not part.Anchored then
+            local pos = part.Position
+            local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+            local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
+            local newAngle = angle + math.rad(config.rotationSpeed)
+            local targetPos = Vector3.new(
+                tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
+                tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
+                tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
+            )
+            local directionToTarget = (targetPos - part.Position).Unit
+            part.Velocity = directionToTarget * config.attractionStrength
+        end
+    end
 end)
-
---// -------------------------------------------------
---// 6. ACCURATE SUPER FLING THROW (unchanged)
---// -------------------------------------------------
-local throwButton = Instance.new("TextButton")
-throwButton.Size = UDim2.new(1,-10,0,20)
-throwButton.BackgroundTransparency = 1
-throwButton.Font = Enum.Font.Code
-throwButton.TextColor3 = Color3.fromRGB(255,0,0)
-throwButton.TextSize = 12
-throwButton.Text = "start throww"
-throwButton.TextXAlignment = Enum.TextXAlignment.Center
-throwButton.Parent = scroll
-
-throwButton.MouseButton1Click:Connect(function()
-	task.wait(0.5)
-
-	local srcParts = getUnanchoredParts()
-	if #srcParts == 0 then
-		StarterGui:SetCore("SendNotification", {Title="No Parts!", Text="Wait for a disaster for debris to fling.", Duration=3})
-		return
-	end
-
-	local myChar = LocalPlayer.Character
-	if not myChar then return end
-	local myHrp = myChar:FindFirstChild("HumanoidRootPart")
-	if not myHrp then return end
-
-	local base = Vector3.new(0, 10, 0)
-
-	for _,targetPlr in pairs(selectedTargets) do
-		local tgtChar = targetPlr.Character
-		if not tgtChar then continue end
-
-		-- Tag target
-		for _,p in ipairs(tgtChar:GetDescendants()) do
-			if p:IsA("BasePart") then
-				p.CollisionGroup = TARGET_GROUP
-			end
-		end
-
-		local tgtHrp = tgtChar:FindFirstChild("HumanoidRootPart")
-		if not tgtHrp then continue end
-
-		local src = srcParts[math.random(1, #srcParts)]
-		local clone = src:Clone()
-		clone.Anchored = true
-		clone.CanCollide = false
-		clone.CollisionGroup = THROWN_GROUP
-		clone.Massless = false  -- Heavy for impact
-		if clone.Size.Magnitude < 2 then
-			clone.Size = clone.Size * 2  -- Bigger for better hits
-		end
-		clone.Parent = Workspace
-
-		local offset = Vector3.new(math.random(-5,5), math.random(-5,5), math.random(-5,5))
-		clone.Position = myHrp.Position + base + offset
-
-		-- 1-second bob above YOU
-		task.spawn(function()
-			local start = tick()
-			local conn
-			conn = RunService.Heartbeat:Connect(function()
-				if tick() - start >= 1 then
-					conn:Disconnect()
-					clone.Anchored = false
-					clone.CanCollide = true
-					-- FIXED ACCURATE LAUNCH
-					local dir = (tgtHrp.Position - clone.Position).Unit
-					local distance = (tgtHrp.Position - clone.Position).Magnitude  -- Horizontal distance
-					local upward = 50 + (distance * 0.1)  -- Proportional arc (low for close, slight for far)
-					local flingVel = dir * 500 + Vector3.new(0, upward - (dir.Y * 20), 0)  -- Slight downward aim + proportional up
-					clone.AssemblyLinearVelocity = flingVel
-					clone.Velocity = flingVel
-					print("[Fling Debug] Accurate launch at " .. targetPlr.Name .. " (dist: " .. math.floor(distance) .. ", upward: " .. upward .. ", speed: " .. flingVel.Magnitude .. ")")
-
-					-- Guided throw (homing)
-					local bodyPos = Instance.new("BodyPosition")
-					bodyPos.MaxForce = Vector3.new(4000, 4000, 4000)
-					bodyPos.Position = tgtHrp.Position
-					bodyPos.D = 500  -- Damping for smooth pull
-					bodyPos.P = 3000  -- Power
-					bodyPos.Parent = clone
-					game:GetService("Debris"):AddItem(bodyPos, 3)  -- Remove after 3s
-
-					-- Touched event for extra impulse on hit
-					local touchConn
-					touchConn = clone.Touched:Connect(function(hit)
-						local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-						if humanoid and hit.Parent ~= myChar then
-							-- Apply extra fling force
-							local bodyVel = Instance.new("BodyVelocity")
-							bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-							bodyVel.Velocity = flingVel * 2
-							bodyVel.Parent = hit
-							game:GetService("Debris"):AddItem(bodyVel, 0.5)
-							print("[Fling Debug] Direct hit & extra impulse on " .. hit.Parent.Name)
-							touchConn:Disconnect()
-						end
-					end)
-
-					return
-				end
-				local t = tick()
-				local bob = Vector3.new(0, math.sin(t * math.pi) * 3, 0)
-				clone.Position = myHrp.Position + base + offset + bob
-			end)
-		end)
-	end
-end)
-
---// -------------------------------------------------
---// 7. FIXED SPAWN FLING FUNCTION (Spawn on Target → Explode to Fling Target + Block Path)
---// -------------------------------------------------
-local spawnButton = Instance.new("TextButton")
-spawnButton.Size = UDim2.new(1,-10,0,20)
-spawnButton.BackgroundTransparency = 1
-spawnButton.Font = Enum.Font.Code
-spawnButton.TextColor3 = Color3.fromRGB(255,0,0)
-spawnButton.TextSize = 12
-spawnButton.Text = "spawn(target)"
-spawnButton.TextXAlignment = Enum.TextXAlignment.Center
-spawnButton.Parent = scroll
-
-spawnButton.MouseButton1Click:Connect(function()
-	task.wait(0.5)
-
-	local srcParts = getUnanchoredParts()
-	if #srcParts == 0 then
-		StarterGui:SetCore("SendNotification", {Title="No Parts!", Text="Wait for a disaster for debris to spawn.", Duration=3})
-		return
-	end
-
-	for _,targetPlr in pairs(selectedTargets) do
-		local tgtChar = targetPlr.Character
-		if not tgtChar then continue end
-
-		-- Tag target
-		for _,p in ipairs(tgtChar:GetDescendants()) do
-			if p:IsA("BasePart") then
-				p.CollisionGroup = TARGET_GROUP
-			end
-		end
-
-		local tgtHrp = tgtChar:FindFirstChild("HumanoidRootPart")
-		if not tgtHrp then continue end
-
-		local spawnedParts = {}  -- Track spawned parts for explosion
-
-		-- Spawn 10 parts around/on target's body (for explosion fling)
-		for i = 1, 20 do
-			local src = srcParts[math.random(1, #srcParts)]
-			local clone = src:Clone()
-			clone.Anchored = true  -- Start anchored (no immediate collision)
-			clone.CanCollide = false
-			clone.CollisionGroup = THROWN_GROUP
-			clone.Massless = false
-			if clone.Size.Magnitude < 3 then
-				clone.Size = clone.Size * 3
-			end
-			clone.Parent = Workspace
-
-			-- Position on/around random body part
-			local bodyParts = {"Head", "UpperTorso", "LowerTorso", "LeftUpperArm", "RightUpperArm", "LeftLowerArm", "RightLowerArm", "LeftUpperLeg", "RightUpperLeg", "LeftLowerLeg", "RightLowerLeg"}
-			local bodyPartName = bodyParts[math.random(1, #bodyParts)]
-			local bodyPart = tgtChar:FindFirstChild(bodyPartName)
-			if bodyPart then
-				clone.Position = bodyPart.Position + Vector3.new(math.random(-3,3), math.random(-2,2), math.random(-3,3))
-			else
-				clone.Position = tgtHrp.Position + Vector3.new(math.random(-3,3), math.random(-2,2), math.random(-3,3))
-			end
-
-			table.insert(spawnedParts, clone)
-		end
-
-		-- Spawn 5 anchored parts in front of target to block path (wall-like)
-		local forwardDir = tgtHrp.CFrame.LookVector
-		for i = 1, 5 do
-			local src = srcParts[math.random(1, #srcParts)]
-			local blockClone = src:Clone()
-			blockClone.Anchored = true  -- Permanently anchored to block
-			blockClone.CanCollide = true
-			blockClone.CollisionGroup = "Default"  -- Collides with everyone (blocks target)
-			blockClone.Massless = true  -- Lightweight but solid
-			if blockClone.Size.Magnitude < 3 then
-				blockClone.Size = blockClone.Size * 3
-			end
-			blockClone.Parent = Workspace
-
-			-- Position in front (blocking forward path)
-			local blockPos = tgtHrp.Position + (forwardDir * (5 + i * 2)) + Vector3.new(math.random(-4,4), math.random(-1,1), math.random(-4,4))
-			blockClone.Position = blockPos
-			blockClone.Orientation = Vector3.new(0, math.random(0,360), 0)  -- Random rotation for wall effect
-		end
-
-		-- it explode spawned parts to fling target via collision
-		task.spawn(function()
-			
-			for _, clone in ipairs(spawnedParts) do
-				if clone and clone.Parent then
-					clone.Anchored = false
-					clone.CanCollide = true  -- Now collides with target
-					-- Outward fling from target's center (explosion effect pushes target)
-					local dirFromCenter = (clone.Position - tgtHrp.Position).Unit
-					local flingVel = dirFromCenter * 600 + Vector3.new(0, 150, 0)  -- High outward speed + up for ragdoll
-					clone.AssemblyLinearVelocity = flingVel
-					clone.Velocity = flingVel
-					print("[Spawn Fling Debug] Exploded part on " .. targetPlr.Name .. " (speed: " .. flingVel.Magnitude .. ")")
-				end
-			end
-
-			-- Extra direct fling on target's HRP (ensures ragdoll even if collisions miss)
-			local bodyVel = Instance.new("BodyVelocity")
-			bodyVel.MaxForce = Vector3.new(2e5, 2e5, 2e5)  -- Stronger force
-			bodyVel.Velocity = Vector3.new(math.random(-300,300), 200, math.random(-300,300))  -- Random chaotic direction
-			bodyVel.Parent = tgtHrp
-			game:GetService("Debris"):AddItem(bodyVel, 0.5)
-			print("[Spawn Fling Debug] Direct ragdoll impulse on " .. targetPlr.Name)
-		end)
-	end
-end)
-
-updateCanvas()
