@@ -320,6 +320,7 @@ Players.PlayerRemoving:Connect(updatePlayerList)
 --// Toggle list visibility when clicking header
 headerButton.MouseButton1Click:Connect(function()
 	playerScroll.Visible = not listHidden
+	listHidden = not listHidden
 end)
 
 
@@ -344,6 +345,7 @@ collectButton.Size = UDim2.new(1, -10, 0, 20)
 collectButton.BackgroundTransparency = 1
 collectButton.BorderSizePixel = 0
 collectButton.Font = Enum.Font.Code
+collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
@@ -351,13 +353,13 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 -- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collect Off" or "Collect On"
+    collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
     collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
-	Title = "hungg",
+	Title = "hung",
 	Text = "Player List GUI Loaded",
 	Duration = 4,
 })
