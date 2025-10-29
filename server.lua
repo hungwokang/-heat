@@ -121,10 +121,12 @@ end)
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 30, -- Max horizontal distance parts can orbit
-    height = 0, -- Vertical range of the tornado
-    rotationSpeed = 1, -- How fast parts rotate around the player
-    attractionStrength = 1000, -- Force pulling parts toward the ring
+    radius = 10, -- Max horizontal distance parts can orbit
+    aboveHeight = 20, -- Base height above the player for floating
+    bobAmplitude = 2, -- Amplitude of bobbing motion
+    bobSpeed = 2, -- Speed of bobbing motion
+    rotationSpeed = 1000, -- Rotation speed for visible movement
+    searchRadius = 1000 -- Radius to search for parts to avoid lag
 }
 
 
@@ -134,83 +136,18 @@ local Workspace = game:GetService("workspace")
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
--- Create anchor part for AlignPosition constraints
-local Folder = Instance.new("Folder", Workspace)
-local Part = Instance.new("Part", Folder)
-local Attachment1 = Instance.new("Attachment", Part)
-Part.Anchored = true
-Part.CanCollide = false
-Part.Transparency = 1
-
--- Network ownership bypass to control distant parts
-if not getgenv().Network then
-    getgenv().Network = {
-        BaseParts = {},
-        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
-    }
-
-    -- Retain network ownership of parts
-    Network.RetainPart = function(Part)
-        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
-            table.insert(Network.BaseParts, Part)
-            Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
-            Part.CanCollide = false
-        end
-    end
-
-    -- Force server to replicate part changes
-    local function EnablePartControl()
-        LocalPlayer.ReplicationFocus = Workspace
-        RunService.Heartbeat:Connect(function()
-            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge) -- Bypass distance limit
-            for _, Part in pairs(Network.BaseParts) do
-                if Part:IsDescendantOf(Workspace) then
-                    Part.Velocity = Network.Velocity -- Keep parts in motion
-                end
-            end
-        end)
-    end
-
-    EnablePartControl()
-end
-
--- Applies physics constraints to make parts follow the ring
-local function ForcePart(v)
-    if v:IsA("Part") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
-        -- Remove existing body movers
-        for _, x in next, v:GetChildren() do
-            if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
-                x:Destroy()
-            end
-        end
-        if v:FindFirstChild("Attachment") then v:FindFirstChild("Attachment"):Destroy() end
-        if v:FindFirstChild("AlignPosition") then v:FindFirstChild("AlignPosition"):Destroy() end
-        if v:FindFirstChild("Torque") then v:FindFirstChild("Torque"):Destroy() end
-
-        v.CanCollide = false
-        local Torque = Instance.new("Torque", v)
-        Torque.Torque = Vector3.new(100, 100, 100) -- High spin
-        local AlignPosition = Instance.new("AlignPosition", v)
-        local Attachment2 = Instance.new("Attachment", v)
-        Torque.Attachment0 = Attachment2
-        AlignPosition.MaxForce = 9999999999999999999999999999999 -- Extremely high force
-        AlignPosition.MaxVelocity = math.huge
-        AlignPosition.Responsiveness = 200
-        AlignPosition.Attachment0 = Attachment2
-        AlignPosition.Attachment1 = Attachment1 -- Link to anchor
-    end
-end
-
 -- Edits
 local ringPartsEnabled = false -- Toggle state
 
 -- Filters parts to include in the tornado
 local function RetainPart(Part)
-    if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
+    if Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
         if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
             return false -- Exclude player
         end
-        Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+        if Part.Parent:FindFirstChild("Humanoid") or Part.Parent:FindFirstChild("Head") or Part.Name == "Handle" then
+            return false
+        end
         Part.CanCollide = false
         return true
     end
@@ -218,15 +155,6 @@ local function RetainPart(Part)
 end
 
 local parts = {} -- Table of parts in the tornado
-
--- Add part to tornado list
-local function addPart(part)
-    if RetainPart(part) then
-        if not table.find(parts, part) then
-            table.insert(parts, part)
-        end
-    end
-end
 
 -- Remove part when destroyed
 local function removePart(part)
@@ -236,35 +164,27 @@ local function removePart(part)
     end
 end
 
--- Initialize with existing parts
-for _, part in pairs(workspace:GetDescendants()) do
-    addPart(part)
-end
-
--- Listen for new/destroyed parts
-workspace.DescendantAdded:Connect(addPart)
+-- Listen for destroyed parts
 workspace.DescendantRemoving:Connect(removePart)
 
--- Main tornado loop - runs every frame
+-- Main loop - runs every frame
 RunService.Heartbeat:Connect(function()
     if not ringPartsEnabled then return end
 
     local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if humanoidRootPart then
         local tornadoCenter = humanoidRootPart.Position
-        for _, part in pairs(parts) do
-            if part.Parent and not part.Anchored then
-                local pos = part.Position
-                local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
-                local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
-                local newAngle = angle + math.rad(config.rotationSpeed) -- Rotate
+        local currentTime = tick()
+        for i, part in pairs(parts) do
+            if part.Parent then
+                local angle = (i / #parts) * math.pi * 2 + currentTime * config.rotationSpeed -- Even distribution with rotation
+                local bobOffset = math.sin(currentTime * config.bobSpeed + angle) * config.bobAmplitude -- Bobbing based on angle for varied motion
                 local targetPos = Vector3.new(
-                    tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
-                    tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
-                    tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
+                    tornadoCenter.X + math.cos(angle) * config.radius,
+                    tornadoCenter.Y + config.aboveHeight + bobOffset,
+                    tornadoCenter.Z + math.sin(angle) * config.radius
                 )
-                local directionToTarget = (targetPos - part.Position).unit
-                part.Velocity = directionToTarget * config.attractionStrength -- Pull toward ring
+                part.CFrame = CFrame.new(targetPos) * CFrame.Angles(math.pi, 0, 0) -- Upside down
             end
         end
     end
@@ -345,7 +265,7 @@ collectButton.Size = UDim2.new(1, -10, 0, 20)
 collectButton.BackgroundTransparency = 1
 collectButton.BorderSizePixel = 0
 collectButton.Font = Enum.Font.Code
-collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
@@ -354,7 +274,54 @@ collectButton.TextXAlignment = Enum.TextXAlignment.Center
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
     collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
-    collectButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+    collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    if ringPartsEnabled then
+        parts = {}
+        local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local playerPos = humanoidRootPart.Position
+            local candidates = {}
+            for _, desc in pairs(workspace:GetDescendants()) do
+                if RetainPart(desc) and (desc.Position - playerPos).Magnitude < config.searchRadius then
+                    table.insert(candidates, {part = desc, dist = (desc.Position - playerPos).Magnitude})
+                end
+            end
+            table.sort(candidates, function(a, b) return a.dist < b.dist end)
+            local numParts = math.min(50, #candidates)
+            for i = 1, numParts do
+                local part = candidates[i].part
+                table.insert(parts, part)
+
+                -- Remove any movers
+                for _, x in next, part:GetChildren() do
+                    if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") or x:IsA("AlignPosition") or x:IsA("AlignOrientation") or x:IsA("Torque") or x:IsA("Attachment") then
+                        x:Destroy()
+                    end
+                end
+
+                -- Break joints and anchor
+                part:BreakJoints()
+                part.Anchored = true
+
+                -- Instant collect by setting initial position
+                local initialAngle = (i / numParts) * math.pi * 2
+                local initialTargetPos = Vector3.new(
+                    playerPos.X + math.cos(initialAngle) * config.radius,
+                    playerPos.Y + config.aboveHeight,
+                    playerPos.Z + math.sin(initialAngle) * config.radius
+                )
+                part.CFrame = CFrame.new(initialTargetPos) * CFrame.Angles(math.pi, 0, 0)
+            end
+        end
+    else
+        -- Release parts when disabling
+        for _, part in pairs(parts) do
+            if part.Parent then
+                part.Anchored = false
+            end
+        end
+        parts = {}
+    end
 end)
 
 --// Notification
