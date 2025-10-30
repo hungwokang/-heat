@@ -4,8 +4,6 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
-local LocalPlayer = Players.LocalPlayer
-
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "ServerGUI"
@@ -29,7 +27,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hung v1"
+title.Text = "hung v1.1"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -86,9 +84,9 @@ headerButton.Size = UDim2.new(1, -10, 0, 20)
 headerButton.BackgroundTransparency = 1 -- fully transparent header
 headerButton.BorderSizePixel = 0
 headerButton.Font = Enum.Font.Code
-headerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
 headerButton.TextSize = 12
-headerButton.Text = "Select Target"
+headerButton.Text = "SELECT PLAYER"
 headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Player list container (slight transparency)
@@ -108,27 +106,25 @@ playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 playerLayout.Padding = UDim.new(0, 1)
 
-
 -- Rainbow TextLabel
 local textHue = 0
+local rainbowTexts = {title, footer}
 RunService.Heartbeat:Connect(function()
     textHue = (textHue + 0.01) % 1
-    title.TextColor3 = Color3.fromHSV(textHue, 1, 1)
-	footer.TextColor3 = Color3.fromHSV(textHue, 1, 1)
+    local color = Color3.fromHSV(textHue, 1, 1)
+    for _, text in pairs(rainbowTexts) do
+        text.TextColor3 = color
+    end
 end)
-
-
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 10, -- Spread radius for floating parts above player
-    height = 15, -- Base height above player for floating
+    radius = 0, -- Spread radius for floating parts above player
+    height = 50, -- Base height above player for floating
     rotationSpeed = 1, -- How fast parts rotate while floating
-    attractionStrength = 100, -- Increased base force for faster movement
-    maxParts = 100, -- Maximum number of parts to collect
+    attractionStrength = 1000, -- Increased base force for faster movement
     shootSpeed = 200, -- Speed for shooting parts to target
 }
-
 
 -- Network ownership bypass to control distant parts
 if not getgenv().Network then
@@ -183,10 +179,10 @@ end
 
 local parts = {} -- Table of parts in the collection
 
--- Add part to collection list (limit to maxParts)
+-- Add part to collection list (no limit)
 local function addPart(part)
     if RetainPart(part) then
-        if not table.find(parts, part) and #parts < config.maxParts then
+        if not table.find(parts, part) then
             table.insert(parts, part)
         end
     end
@@ -205,14 +201,11 @@ local function removePart(part)
     end
 end
 
--- Initialize with existing unanchored parts (limit to maxParts)
+-- Initialize with existing unanchored parts (no limit)
 local tempParts = {}
 for _, part in pairs(workspace:GetDescendants()) do
     if RetainPart(part) and not table.find(tempParts, part) then
         table.insert(tempParts, part)
-        if #tempParts >= config.maxParts then
-            break
-        end
     end
 end
 for _, part in pairs(tempParts) do
@@ -224,6 +217,7 @@ workspace.DescendantAdded:Connect(addPart)
 workspace.DescendantRemoving:Connect(removePart)
 
 -- Main collection loop - runs every frame (floating above and following)
+local ringPartsEnabled = false
 RunService.Heartbeat:Connect(function()
     if not ringPartsEnabled then return end
 
@@ -246,8 +240,8 @@ RunService.Heartbeat:Connect(function()
                 local distance = (targetPos - part.Position).Magnitude
 
                 -- Scale speed with distance for far pulls (stronger when farther, increased multiplier for speed)
-                local speed = config.attractionStrength + (distance * 10) -- Increased from 5 to 10 for faster pull
-                speed = math.min(speed, 300) -- Increased cap from 200 to 300 for faster movement
+                local speed = config.attractionStrength + (distance * 50) -- Increased from 5 to 10 for faster pull
+                speed = math.min(speed, 500) -- Increased cap from 200 to 300 for faster movement
 
                 -- Apply real velocity (replicates to all clients, allows collision)
                 part.Velocity = direction * speed
@@ -259,9 +253,6 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
-
-
-
 
 local selectedTargets = {}
 local listHidden = false
@@ -305,14 +296,16 @@ end
 playerScroll.Visible = listHidden 
 updatePlayerList()
 Players.PlayerAdded:Connect(updatePlayerList)
-Players.PlayerRemoving:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(function(p)
+    selectedTargets[p.Name] = nil
+    updatePlayerList()
+end)
 
 --// Toggle list visibility when clicking header
 headerButton.MouseButton1Click:Connect(function()
 	playerScroll.Visible = not listHidden
 	listHidden = not listHidden
 end)
-
 
 --// Minimize toggle
 local minimized = false
@@ -328,86 +321,78 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
--- Collect button
-local collectButton = Instance.new("TextButton")
-collectButton.Parent = scroll
-collectButton.Size = UDim2.new(1, -10, 0, 20)
-collectButton.BackgroundTransparency = 1
-collectButton.BorderSizePixel = 0
-collectButton.Font = Enum.Font.Code
-collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-collectButton.TextSize = 12
-collectButton.Text = "Collect"
-collectButton.TextXAlignment = Enum.TextXAlignment.Center
+-- Collect and Shoot container
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Parent = scroll
+buttonContainer.Size = UDim2.new(1, -10, 0, 20)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.BorderSizePixel = 0
 
-collectButton.MouseButton1Click:Connect(function()
-    ringPartsEnabled = not ringPartsEnabled
-    collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
-    collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-end)
+-- Main button (switches between collect and shot)
+local actionButton = Instance.new("TextButton")
+actionButton.Parent = buttonContainer
+actionButton.Size = UDim2.new(1, 0, 1, 0)
+actionButton.Position = UDim2.new(0, 0, 0, 0)
+actionButton.BackgroundTransparency = 1
+actionButton.BorderSizePixel = 0
+actionButton.Font = Enum.Font.Code
+actionButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+actionButton.TextSize = 12
+actionButton.Text = "collect"
+actionButton.TextXAlignment = Enum.TextXAlignment.Center
 
--- Shoot button
-local shootButton = Instance.new("TextButton")
-shootButton.Parent = scroll
-shootButton.Size = UDim2.new(1, -10, 0, 20)
-shootButton.BackgroundTransparency = 1
-shootButton.BorderSizePixel = 0
-shootButton.Font = Enum.Font.Code
-shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-shootButton.TextSize = 12
-shootButton.Text = "Shoot"
-shootButton.TextXAlignment = Enum.TextXAlignment.Center
-
--- Shoot function
-local function shootParts()
-    local targets = {}
-    for _, player in pairs(selectedTargets) do
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            table.insert(targets, player.Character.HumanoidRootPart)
-        end
-    end
-    
-    if #targets == 0 then
+actionButton.MouseButton1Click:Connect(function()
+    if actionButton.Text == "collect" then
+        ringPartsEnabled = true
+        actionButton.Text = "shot"
         game.StarterGui:SetCore("SendNotification", {
             Title = "hung",
-            Text = "No valid targets selected!",
+            Text = "Collecting Parts!",
             Duration = 3,
         })
-        return
-    end
-    
-    local numTargets = #targets
-    local partIndex = 1
-    for i, part in pairs(parts) do
-        if part and part.Parent then
-            local target = targets[partIndex % numTargets + 1] -- Cycle through targets
-            if target then
-                local direction = (target.Position - part.Position).Unit
-                part.Velocity = direction * config.shootSpeed
-            end
-            partIndex = partIndex + 1
-        end
-    end
-    
-    -- Clear parts after shooting
-    parts = {}
-    
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "hung",
-        Text = "Parts shot to targets!",
-        Duration = 3,
-    })
-end
-
-shootButton.MouseButton1Click:Connect(function()
-    if ringPartsEnabled and #parts > 0 then
-        shootParts()
-        ringPartsEnabled = false -- Stop collecting after shooting
-        collectButton.Text = "Collect"
     else
+        ringPartsEnabled = false
+        actionButton.Text = "collect"
+        if #parts == 0 then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "Collect parts first!",
+                Duration = 3,
+            })
+            return
+        end
+        local targets = {}
+        for _, player in pairs(selectedTargets) do
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                table.insert(targets, player.Character.HumanoidRootPart)
+            end
+        end
+        if #targets == 0 then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "No valid targets selected!",
+                Duration = 3,
+            })
+            return
+        end
+        -- Shoot
+        local numTargets = #targets
+        local partIndex = 1
+        for i, part in pairs(parts) do
+            if part and part.Parent then
+                local target = targets[partIndex % numTargets + 1] -- Cycle through targets
+                if target then
+                    local direction = (target.Position - part.Position).Unit
+                    part.Velocity = direction * config.shootSpeed
+                end
+                partIndex = partIndex + 1
+            end
+        end
+        -- Clear parts after shooting
+        parts = {}
         game.StarterGui:SetCore("SendNotification", {
             Title = "hung",
-            Text = "Collect parts first!",
+            Text = "Parts shot to targets!",
             Duration = 3,
         })
     end
@@ -416,6 +401,6 @@ end)
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
 	Title = "hung",
-	Text = "Floating Collector GUI Loaded (100 Parts Max, Faster, Shoot Added)",
+	Text = "Floating Collector GUI Loaded (Unlimited Parts)",
 	Duration = 4,
 })
