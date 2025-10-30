@@ -121,40 +121,76 @@ end)
 
 -- Configuration table - stores customizable values
 local config = {
-    radius = 10, -- Max horizontal distance parts can orbit
-    aboveHeight = 20, -- Base height above the player for floating
-    bobAmplitude = 2, -- Amplitude of bobbing motion
-    bobSpeed = 2, -- Speed of bobbing motion
-    rotationSpeed = 1000, -- Rotation speed for visible movement
-    searchRadius = 1000 -- Radius to search for parts to avoid lag
+    radius = 10, -- Spread radius for floating parts above player
+    height = 15, -- Base height above player for floating
+    rotationSpeed = 1, -- How fast parts rotate while floating
+    attractionStrength = 100, -- Increased base force for faster movement
+    maxParts = 100, -- Maximum number of parts to collect
+    shootSpeed = 200, -- Speed for shooting parts to target
 }
 
 
--- Ring Parts Claim
-local Workspace = game:GetService("workspace")
+-- Network ownership bypass to control distant parts
+if not getgenv().Network then
+    getgenv().Network = {
+        BaseParts = {},
+        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+    }
 
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    -- Retain network ownership of parts (preserve collidability)
+    Network.RetainPart = function(Part)
+        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
+            table.insert(Network.BaseParts, Part)
+            -- Remove CustomPhysicalProperties to allow real physics
+            if Part:FindFirstChildOfClass("CustomPhysicalProperties") then
+                Part:FindFirstChildOfClass("CustomPhysicalProperties"):Destroy()
+            end
+            -- Preserve or enable collision
+            Part.CanCollide = true
+        end
+    end
 
--- Edits
-local ringPartsEnabled = false -- Toggle state
+    -- Force server to replicate part changes
+    local function EnablePartControl()
+        LocalPlayer.ReplicationFocus = Workspace
+        RunService.Heartbeat:Connect(function()
+            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge) -- Bypass distance limit
+            for _, Part in pairs(Network.BaseParts) do
+                if Part:IsDescendantOf(Workspace) and Part.Parent then
+                    -- Removed fixed velocity override to allow per-part control
+                end
+            end
+        end)
+    end
 
--- Filters parts to include in the tornado
+    EnablePartControl()
+end
+
+-- Filters parts to include in the collection (unanchored only)
 local function RetainPart(Part)
-    if Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
+    if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
         if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
             return false -- Exclude player
         end
-        if Part.Parent:FindFirstChild("Humanoid") or Part.Parent:FindFirstChild("Head") or Part.Name == "Handle" then
-            return false
-        end
-        Part.CanCollide = false
+        -- Enable collision for all collected parts
+        Part.CanCollide = true
+        -- Retain network ownership
+        Network.RetainPart(Part)
         return true
     end
     return false
 end
 
-local parts = {} -- Table of parts in the tornado
+local parts = {} -- Table of parts in the collection
+
+-- Add part to collection list (limit to maxParts)
+local function addPart(part)
+    if RetainPart(part) then
+        if not table.find(parts, part) and #parts < config.maxParts then
+            table.insert(parts, part)
+        end
+    end
+end
 
 -- Remove part when destroyed
 local function removePart(part)
@@ -162,29 +198,63 @@ local function removePart(part)
     if index then
         table.remove(parts, index)
     end
+    -- Clean up from network list if needed
+    local netIndex = table.find(Network.BaseParts, part)
+    if netIndex then
+        table.remove(Network.BaseParts, netIndex)
+    end
 end
 
--- Listen for destroyed parts
+-- Initialize with existing unanchored parts (limit to maxParts)
+local tempParts = {}
+for _, part in pairs(workspace:GetDescendants()) do
+    if RetainPart(part) and not table.find(tempParts, part) then
+        table.insert(tempParts, part)
+        if #tempParts >= config.maxParts then
+            break
+        end
+    end
+end
+for _, part in pairs(tempParts) do
+    table.insert(parts, part)
+end
+
+-- Listen for new/destroyed parts
+workspace.DescendantAdded:Connect(addPart)
 workspace.DescendantRemoving:Connect(removePart)
 
--- Main loop - runs every frame
+-- Main collection loop - runs every frame (floating above and following)
 RunService.Heartbeat:Connect(function()
     if not ringPartsEnabled then return end
 
-    local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local character = LocalPlayer.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
     if humanoidRootPart then
-        local tornadoCenter = humanoidRootPart.Position
-        local currentTime = tick()
+        local playerPos = humanoidRootPart.Position
+        local time = tick()
         for i, part in pairs(parts) do
-            if part.Parent then
-                local angle = (i / #parts) * math.pi * 2 + currentTime * config.rotationSpeed -- Even distribution with rotation
-                local bobOffset = math.sin(currentTime * config.bobSpeed + angle) * config.bobAmplitude -- Bobbing based on angle for varied motion
-                local targetPos = Vector3.new(
-                    tornadoCenter.X + math.cos(angle) * config.radius,
-                    tornadoCenter.Y + config.aboveHeight + bobOffset,
-                    tornadoCenter.Z + math.sin(angle) * config.radius
-                )
-                part.CFrame = CFrame.new(targetPos) * CFrame.Angles(math.pi, 0, 0) -- Upside down
+            if part.Parent and part and part.Parent ~= nil and part:IsDescendantOf(workspace) then
+                -- Calculate floating position above player (orbiting for spread)
+                local angle = (time * config.rotationSpeed) + (i * math.pi * 2 / math.max(#parts, 1)) -- Unique angle per part, avoid div0
+                local offsetX = math.sin(angle) * config.radius
+                local offsetZ = math.cos(angle) * config.radius
+                local floatHeight = config.height + math.sin(time * 2 + i) * 2 -- Slight bobbing for floating effect
+                local targetPos = playerPos + Vector3.new(offsetX, floatHeight, offsetZ)
+
+                -- Direction and distance
+                local direction = (targetPos - part.Position).Unit
+                local distance = (targetPos - part.Position).Magnitude
+
+                -- Scale speed with distance for far pulls (stronger when farther, increased multiplier for speed)
+                local speed = config.attractionStrength + (distance * 10) -- Increased from 5 to 10 for faster pull
+                speed = math.min(speed, 300) -- Increased cap from 200 to 300 for faster movement
+
+                -- Apply real velocity (replicates to all clients, allows collision)
+                part.Velocity = direction * speed
+
+                -- Ensure collidable and unanchored
+                part.CanCollide = true
+                part.Anchored = false
             end
         end
     end
@@ -258,7 +328,7 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
--- Now create the button (unchanged)
+-- Collect button
 local collectButton = Instance.new("TextButton")
 collectButton.Parent = scroll
 collectButton.Size = UDim2.new(1, -10, 0, 20)
@@ -270,63 +340,82 @@ collectButton.TextSize = 12
 collectButton.Text = "Collect"
 collectButton.TextXAlignment = Enum.TextXAlignment.Center
 
--- Now the click event (now button exists)
 collectButton.MouseButton1Click:Connect(function()
     ringPartsEnabled = not ringPartsEnabled
     collectButton.Text = ringPartsEnabled and "Collecting..." or "Collect"
     collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    if ringPartsEnabled then
-        parts = {}
-        local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if humanoidRootPart then
-            local playerPos = humanoidRootPart.Position
-            local candidates = {}
-            for _, desc in pairs(workspace:GetDescendants()) do
-                if RetainPart(desc) and (desc.Position - playerPos).Magnitude < config.searchRadius then
-                    table.insert(candidates, {part = desc, dist = (desc.Position - playerPos).Magnitude})
-                end
-            end
-            table.sort(candidates, function(a, b) return a.dist < b.dist end)
-            local numParts = math.min(50, #candidates)
-            for i = 1, numParts do
-                local part = candidates[i].part
-                table.insert(parts, part)
+end)
 
-                -- Remove any movers
-                for _, x in next, part:GetChildren() do
-                    if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") or x:IsA("AlignPosition") or x:IsA("AlignOrientation") or x:IsA("Torque") or x:IsA("Attachment") then
-                        x:Destroy()
-                    end
-                end
+-- Shoot button
+local shootButton = Instance.new("TextButton")
+shootButton.Parent = scroll
+shootButton.Size = UDim2.new(1, -10, 0, 20)
+shootButton.BackgroundTransparency = 1
+shootButton.BorderSizePixel = 0
+shootButton.Font = Enum.Font.Code
+shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+shootButton.TextSize = 12
+shootButton.Text = "Shoot"
+shootButton.TextXAlignment = Enum.TextXAlignment.Center
 
-                -- Break joints and anchor
-                part:BreakJoints()
-                part.Anchored = true
-
-                -- Instant collect by setting initial position
-                local initialAngle = (i / numParts) * math.pi * 2
-                local initialTargetPos = Vector3.new(
-                    playerPos.X + math.cos(initialAngle) * config.radius,
-                    playerPos.Y + config.aboveHeight,
-                    playerPos.Z + math.sin(initialAngle) * config.radius
-                )
-                part.CFrame = CFrame.new(initialTargetPos) * CFrame.Angles(math.pi, 0, 0)
-            end
+-- Shoot function
+local function shootParts()
+    local targets = {}
+    for _, player in pairs(selectedTargets) do
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            table.insert(targets, player.Character.HumanoidRootPart)
         end
+    end
+    
+    if #targets == 0 then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "hung",
+            Text = "No valid targets selected!",
+            Duration = 3,
+        })
+        return
+    end
+    
+    local numTargets = #targets
+    local partIndex = 1
+    for i, part in pairs(parts) do
+        if part and part.Parent then
+            local target = targets[partIndex % numTargets + 1] -- Cycle through targets
+            if target then
+                local direction = (target.Position - part.Position).Unit
+                part.Velocity = direction * config.shootSpeed
+            end
+            partIndex = partIndex + 1
+        end
+    end
+    
+    -- Clear parts after shooting
+    parts = {}
+    
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "hung",
+        Text = "Parts shot to targets!",
+        Duration = 3,
+    })
+end
+
+shootButton.MouseButton1Click:Connect(function()
+    if ringPartsEnabled and #parts > 0 then
+        shootParts()
+        ringPartsEnabled = false -- Stop collecting after shooting
+        collectButton.Text = "Collect"
     else
-        -- Release parts when disabling
-        for _, part in pairs(parts) do
-            if part.Parent then
-                part.Anchored = false
-            end
-        end
-        parts = {}
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "hung",
+            Text = "Collect parts first!",
+            Duration = 3,
+        })
     end
 end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
 	Title = "hung",
-	Text = "Player List GUI Loaded",
+	Text = "Floating Collector GUI Loaded (100 Parts Max, Faster, Shoot Added)",
 	Duration = 4,
 })
