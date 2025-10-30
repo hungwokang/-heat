@@ -120,9 +120,9 @@ end)
 -- Configuration table - stores customizable values
 local config = {
     radius = 0, -- Spread radius for floating parts above player
-    height = 40, -- Base height above player for floating
-    rotationSpeed = 5, -- How fast parts rotate while floating
-    attractionStrength = 1000, -- Increased base force for faster movement
+    height = 30, -- Base height above player for floating
+    rotationSpeed = 0, -- How fast parts rotate while floating
+    attractionStrength = 300, -- Increased base force for faster movement
     shootSpeed = 300, -- Speed for shooting parts to target
 }
 
@@ -240,8 +240,8 @@ RunService.Heartbeat:Connect(function()
                 local distance = (targetPos - part.Position).Magnitude
 
                 -- Scale speed with distance for far pulls (stronger when farther, increased multiplier for speed)
-                local speed = config.attractionStrength + (distance * 50) -- Increased from 5 to 10 for faster pull
-                speed = math.min(speed, 1000) -- Increased cap from 200 to 300 for faster movement
+                local speed = config.attractionStrength + (distance * 1000) -- Increased from 5 to 10 for faster pull
+                speed = math.min(speed, 200) -- Increased cap from 200 to 300 for faster movement
 
                 -- Apply real velocity (replicates to all clients, allows collision)
                 part.Velocity = direction * speed
