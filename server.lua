@@ -395,6 +395,10 @@ function ResetModule.resetAll()
     NetworkModule.BaseParts = {}
     -- Reinitialize parts for future use
     initializeParts()
+	for player, _ in pairs(ESPModule.esps) do
+        ESPModule.removeESP(player)
+    end
+    selectedTargets = {}
     
 end
 
