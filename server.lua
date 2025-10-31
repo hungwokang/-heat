@@ -575,7 +575,7 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
-    playerScroll.Visible = listHidden 
+     
     GUIModule.updatePlayerList()
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
@@ -586,8 +586,9 @@ function GUIModule.setupGUI()
 
     --// Toggle list visibility when clicking header
     headerButton.MouseButton1Click:Connect(function()
-        playerScroll.Visible = not listHidden
         listHidden = not listHidden
+        playerScroll.Visible = not listHidden
+        
     end)
 
     --// Minimize toggle
@@ -674,7 +675,7 @@ function GUIModule.setupGUI()
         pullText.BackgroundTransparency = 1
         pullText.Font = Enum.Font.Code
         pullText.TextColor3 = Color3.new(1, 1, 1)
-        pullText.TextSize = 11
+        pullText.TextSize = 8
         pullText.Text = "Pull unanchored loose parts."
         pullText.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -774,7 +775,7 @@ function GUIModule.setupGUI()
         shootText.BackgroundTransparency = 1
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
-        shootText.TextSize = 11
+        shootText.TextSize = 8
         shootText.Text = "Shoot parts to target."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
 
