@@ -16,8 +16,8 @@ end
 --// Orbiting state
 local orbitingParts = {}
 local orbitingConnection
-local orbitSpeed = 1 -- radians per second
-local orbitRadius = 0
+local orbitSpeed = 5 -- radians per second
+local orbitRadius = 5
 local orbitHeight = 10
 
 --// GUI Setup
@@ -43,7 +43,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hung"
+title.Text = "hunggggg"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -299,7 +299,7 @@ pullButton.MouseButton1Click:Connect(function()
                 local bp = Instance.new("BodyPosition")
                 bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
                 bp.Position = part.Position -- Start from current to avoid snap
-                bp.P = 100000 -- High power for fast pull
+                bp.P = 10000 -- High power for fast pull
                 bp.D = 1000 -- Damping
                 bp.Parent = part
 
