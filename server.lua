@@ -4,11 +4,6 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
---// Click Sound
-local clickSound = Instance.new("Sound")
-clickSound.SoundId = "rbxassetid://131961136"
-clickSound.Volume = 0.5
-
 --// Bypass for simulation ownership (exploit required)
 local function setupBypass()
     if getgenv().SimRadiusSet ~= true then
@@ -413,7 +408,6 @@ function ResetModule.resetAll()
     for player, _ in pairs(ESPModule.esps) do
         ESPModule.removeESP(player)
     end
-    selectedTargets = {}
     -- Reset GUI states if needed (handled in button clicks)
 end
 
@@ -421,7 +415,6 @@ end
 local GUIModule = {}
 local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
 local footer -- To make it accessible in closure
-local mainButtonsFrame, collectFrame -- New frames for states
 
 function GUIModule.setupGUI()
     setupBypass()
@@ -433,11 +426,17 @@ function GUIModule.setupGUI()
     gui.ResetOnSpawn = false
     gui.Parent = game.CoreGui
 
+    --// Click Sound
+    local clickSound = Instance.new("Sound")
+    clickSound.SoundId = "rbxassetid://131961136"
+    clickSound.Volume = 0.5
+    clickSound.Parent = gui
+
     --// Main Frame
     frame = Instance.new("Frame")
     frame.Parent = gui
-    frame.Size = UDim2.new(0, 120, 0, 240) -- Adjusted height to fit
-    frame.Position = UDim2.new(0.5, -60, 0.5, -120)
+    frame.Size = UDim2.new(0, 120, 0, 220) -- Initial height, will adjust
+    frame.Position = UDim2.new(0.5, -60, 0.5, -110)
     frame.BackgroundColor3 = Color3.new(0, 0, 0)
     frame.BackgroundTransparency = 0.4
     frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -465,6 +464,18 @@ function GUIModule.setupGUI()
     minimize.TextSize = 14
     minimize.BackgroundTransparency = 1
     minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
+    minimize.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        minimized = not minimized
+        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 42)
+        local targetText = minimized and "+" or "-"
+        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+            Size = targetSize
+        }):Play()
+        scroll.Visible = not minimized
+        footer.Visible = not minimized
+        minimize.Text = targetText
+    end)
 
     --// Scroll Holder
     scroll = Instance.new("ScrollingFrame")
@@ -485,6 +496,7 @@ function GUIModule.setupGUI()
 
     local function updateScrollCanvas()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+        frame.Size = UDim2.new(0, 120, 0, math.max(220, layout.AbsoluteContentSize.Y + 42))
     end
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
 
@@ -520,49 +532,26 @@ function GUIModule.setupGUI()
     headerButton.Font = Enum.Font.Code
     headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
     headerButton.TextSize = 12
-    headerButton.Text = "SELECT PLAYER"
+    headerButton.Text = "PLAYER LIST"
     headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
     --// Player list container (slight transparency)
     playerScroll = Instance.new("ScrollingFrame")
     playerScroll.Parent = scroll
     playerScroll.Size = UDim2.new(1, -10, 0, 60)
-    playerScroll.Position = UDim2.new(0, 5, 0, 0)
+    playerScroll.Position = UDim2.new(0, 5, 0, 25)
     playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
     playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
     playerScroll.BorderSizePixel = 0
     playerScroll.ScrollBarThickness = 2
     playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    playerScroll.Visible = false
 
     playerLayout = Instance.new("UIListLayout")
     playerLayout.Parent = playerScroll
     playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
     playerLayout.Padding = UDim.new(0, 1)
-
-    --// Main buttons frame
-    mainButtonsFrame = Instance.new("Frame")
-    mainButtonsFrame.Parent = scroll
-    mainButtonsFrame.BackgroundTransparency = 1
-    mainButtonsFrame.Visible = true
-
-    local mainButtonsLayout = Instance.new("UIListLayout")
-    mainButtonsLayout.Parent = mainButtonsFrame
-    mainButtonsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    mainButtonsLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    mainButtonsLayout.Padding = UDim.new(0, 5)
-
-    --// Collect frame (initially hidden)
-    collectFrame = Instance.new("Frame")
-    collectFrame.Parent = scroll
-    collectFrame.BackgroundTransparency = 1
-    collectFrame.Visible = false
-
-    local collectLayout = Instance.new("UIListLayout")
-    collectLayout.Parent = collectFrame
-    collectLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    collectLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    collectLayout.Padding = UDim.new(0, 5)
 
     --// Player list update function
     function GUIModule.updatePlayerList()
@@ -584,7 +573,6 @@ function GUIModule.setupGUI()
                 btn.TextXAlignment = Enum.TextXAlignment.Left
 
                 btn.MouseButton1Click:Connect(function()
-                    clickSound:Play()
                     if selectedTargets[p.Name] then
                         selectedTargets[p.Name] = nil
                         ESPModule.removeESP(p)
@@ -603,7 +591,6 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
-    playerScroll.Visible = listHidden 
     GUIModule.updatePlayerList()
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
@@ -615,39 +602,102 @@ function GUIModule.setupGUI()
     --// Toggle list visibility when clicking header
     headerButton.MouseButton1Click:Connect(function()
         clickSound:Play()
-        playerScroll.Visible = not listHidden
         listHidden = not listHidden
+        local visible = not listHidden
+        playerScroll.Visible = visible
+        playerScroll.Size = visible and UDim2.new(1, -10, 0, 60) or UDim2.new(1, -10, 0, 0)
+        updateScrollCanvas()
     end)
 
-    --// Minimize toggle
-    minimize.MouseButton1Click:Connect(function()
+    --// Main Action Frame (FLOAT    SHOOT)
+    local mainActionFrame = Instance.new("Frame")
+    mainActionFrame.Parent = scroll
+    mainActionFrame.Size = UDim2.new(1, -10, 0, 25)
+    mainActionFrame.BackgroundTransparency = 1
+    mainActionFrame.Visible = true
+
+    local mainLayout = Instance.new("UIListLayout")
+    mainLayout.Parent = mainActionFrame
+    mainLayout.FillDirection = Enum.FillDirection.Horizontal
+    mainLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    mainLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    mainLayout.Padding = UDim.new(0, 10)
+
+    -- FLOAT Button
+    local floatButton = Instance.new("TextButton")
+    floatButton.Parent = mainActionFrame
+    floatButton.Size = UDim2.new(0, 50, 0, 20)
+    floatButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    floatButton.BackgroundTransparency = 0.4
+    floatButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    floatButton.BorderSizePixel = 1
+    floatButton.Font = Enum.Font.Code
+    floatButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    floatButton.TextSize = 12
+    floatButton.Text = "FLOAT"
+    floatButton.TextXAlignment = Enum.TextXAlignment.Center
+
+    floatButton.MouseButton1Click:Connect(function()
         clickSound:Play()
-        minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 240)
-        local targetText = minimized and "+" or "-"
-        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            Size = targetSize
-        }):Play()
-        scroll.Visible = not minimized
-        footer.Visible = not minimized
-        minimize.Text = targetText
+        CollectModule.startCollect()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "hung",
+            Text = "Collecting Parts!",
+            Duration = 3,
+        })
+        mainActionFrame.Visible = false
+        collectModeFrame.Visible = true
+        updateScrollCanvas()
     end)
 
-    --// Pull Unanchored Parts Button (Fixed with Bypass & Orbit)
-    local pullButton = Instance.new("TextButton")
-    pullButton.Parent = mainButtonsFrame
-    pullButton.Size = UDim2.new(1, -10, 0, 20)
-    pullButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    pullButton.BackgroundTransparency = 0.4
-    pullButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    pullButton.BorderSizePixel = 1
-    pullButton.Font = Enum.Font.Code
-    pullButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    pullButton.TextSize = 12
-    pullButton.Text = "Pull Unanchored & Orbit"
-    pullButton.TextXAlignment = Enum.TextXAlignment.Center
+    -- SHOOT Button
+    local shootEntryButton = Instance.new("TextButton")
+    shootEntryButton.Parent = mainActionFrame
+    shootEntryButton.Size = UDim2.new(0, 50, 0, 20)
+    shootEntryButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    shootEntryButton.BackgroundTransparency = 0.4
+    shootEntryButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    shootEntryButton.BorderSizePixel = 1
+    shootEntryButton.Font = Enum.Font.Code
+    shootEntryButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    shootEntryButton.TextSize = 12
+    shootEntryButton.Text = "SHOOT"
+    shootEntryButton.TextXAlignment = Enum.TextXAlignment.Center
 
-    pullButton.MouseButton1Click:Connect(function()
+    shootEntryButton.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        mainActionFrame.Visible = false
+        shootModeFrame.Visible = true
+        updateScrollCanvas()
+    end)
+
+    --// Collect Mode Frame (for FLOAT click)
+    local collectModeFrame = Instance.new("Frame")
+    collectModeFrame.Parent = scroll
+    collectModeFrame.Size = UDim2.new(1, -10, 0, 65)
+    collectModeFrame.BackgroundTransparency = 1
+    collectModeFrame.Visible = false
+
+    local collectModeLayout = Instance.new("UIListLayout")
+    collectModeLayout.Parent = collectModeFrame
+    collectModeLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    collectModeLayout.Padding = UDim.new(0, 5)
+
+    -- COLLECT Button in collect mode (Pull Unanchored & Orbit logic)
+    local collectButton = Instance.new("TextButton")
+    collectButton.Parent = collectModeFrame
+    collectButton.Size = UDim2.new(1, 0, 0, 20)
+    collectButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    collectButton.BackgroundTransparency = 0.4
+    collectButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    collectButton.BorderSizePixel = 1
+    collectButton.Font = Enum.Font.Code
+    collectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    collectButton.TextSize = 12
+    collectButton.Text = "COLLECT"
+    collectButton.TextXAlignment = Enum.TextXAlignment.Center
+
+    collectButton.MouseButton1Click:Connect(function()
         clickSound:Play()
         pcall(function()
             local character = LocalPlayer.Character
@@ -687,153 +737,10 @@ function GUIModule.setupGUI()
         end)
     end)
 
-    --// Collect and Float Button (now "Float" trigger)
-    local actionButton = Instance.new("TextButton")
-    actionButton.Parent = mainButtonsFrame
-    actionButton.Size = UDim2.new(1, -10, 0, 20)
-    actionButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    actionButton.BackgroundTransparency = 0.4
-    actionButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    actionButton.BorderSizePixel = 1
-    actionButton.Font = Enum.Font.Code
-    actionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    actionButton.TextSize = 12
-    actionButton.Text = "Collect & Float"
-    actionButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    actionButton.MouseButton1Click:Connect(function()
-        clickSound:Play()
-        pcall(function()
-            CollectModule.startCollect()
-            mainButtonsFrame.Visible = false
-            collectFrame.Visible = true
-            updateScrollCanvas()
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "hung v1",
-                Text = "Collecting Parts!",
-                Duration = 3,
-            })
-        end)
-    end)
-
-    --// Collect Frame Components
-    local collectLabel = Instance.new("TextLabel")
-    collectLabel.Parent = collectFrame
-    collectLabel.Size = UDim2.new(1, -10, 0, 20)
-    collectLabel.BackgroundTransparency = 1
-    collectLabel.BorderSizePixel = 0
-    collectLabel.Font = Enum.Font.Code
-    collectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    collectLabel.TextSize = 12
-    collectLabel.Text = "COLLECT"
-    collectLabel.TextXAlignment = Enum.TextXAlignment.Center
-
-    local stopSubButton = Instance.new("TextButton")
-    stopSubButton.Parent = collectFrame
-    stopSubButton.Name = "StopSub"
-    stopSubButton.Size = UDim2.new(1, -10, 0, 20)
-    stopSubButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    stopSubButton.BackgroundTransparency = 0.4
-    stopSubButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    stopSubButton.BorderSizePixel = 1
-    stopSubButton.Font = Enum.Font.Code
-    stopSubButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    stopSubButton.TextSize = 12
-    stopSubButton.Text = "STOP"
-    stopSubButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    stopSubButton.MouseButton1Click:Connect(function()
-        clickSound:Play()
-        CollectModule.stopCollect()
-        -- Clean up shoot status if exists
-        local shootStatus = collectFrame:FindFirstChild("ShootStatus")
-        if shootStatus then shootStatus:Destroy() end
-        collectFrame.Visible = false
-        mainButtonsFrame.Visible = true
-        updateScrollCanvas()
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "hung v1",
-            Text = "Collection stopped!",
-            Duration = 3,
-        })
-    end)
-
-    local shootSubButton = Instance.new("TextButton")
-    shootSubButton.Parent = collectFrame
-    shootSubButton.Name = "ShootSub"
-    shootSubButton.Size = UDim2.new(1, -10, 0, 20)
-    shootSubButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    shootSubButton.BackgroundTransparency = 0.4
-    shootSubButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    shootSubButton.BorderSizePixel = 1
-    shootSubButton.Font = Enum.Font.Code
-    shootSubButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    shootSubButton.TextSize = 12
-    shootSubButton.Text = "SHOOT TO TARGETS"
-    shootSubButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    shootSubButton.MouseButton1Click:Connect(function()
-        clickSound:Play()
-        local success = CollectModule.shootToTargets(selectedTargets)
-        if success then
-            -- Replace STOP with SHOOT label
-            stopSubButton:Destroy()
-            local shootStatus = Instance.new("TextLabel")
-            shootStatus.Name = "ShootStatus"
-            shootStatus.Parent = collectFrame
-            shootStatus.Size = UDim2.new(1, -10, 0, 20)
-            shootStatus.BackgroundTransparency = 1
-            shootStatus.BorderSizePixel = 0
-            shootStatus.Font = Enum.Font.Code
-            shootStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
-            shootStatus.TextSize = 12
-            shootStatus.Text = "SHOOT"
-            shootStatus.TextXAlignment = Enum.TextXAlignment.Center
-            -- Since parts cleared, stop collect
-            CollectModule.stopCollect()
-            updateScrollCanvas()
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "hung v1",
-                Text = "Parts shot to targets!",
-                Duration = 3,
-            })
-        else
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "hung v1",
-                Text = "Collect parts first or select targets!",
-                Duration = 3,
-            })
-        end
-    end)
-
-    local backButton = Instance.new("TextButton")
-    backButton.Parent = collectFrame
-    backButton.Size = UDim2.new(1, -10, 0, 20)
-    backButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    backButton.BackgroundTransparency = 0.4
-    backButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    backButton.BorderSizePixel = 1
-    backButton.Font = Enum.Font.Code
-    backButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    backButton.TextSize = 12
-    backButton.Text = "BACK"
-    backButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    backButton.MouseButton1Click:Connect(function()
-        clickSound:Play()
-        CollectModule.stopCollect()
-        -- Clean up shoot status if exists
-        local shootStatus = collectFrame:FindFirstChild("ShootStatus")
-        if shootStatus then shootStatus:Destroy() end
-        collectFrame.Visible = false
-        mainButtonsFrame.Visible = true
-        updateScrollCanvas()
-    end)
-
-    --// Stop All & Reset Button
+    -- STOP Button in collect mode
     local stopButton = Instance.new("TextButton")
-    stopButton.Parent = mainButtonsFrame
-    stopButton.Size = UDim2.new(1, -10, 0, 20)
+    stopButton.Parent = collectModeFrame
+    stopButton.Size = UDim2.new(1, 0, 0, 20)
     stopButton.BackgroundColor3 = Color3.new(0, 0, 0)
     stopButton.BackgroundTransparency = 0.4
     stopButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -841,23 +748,160 @@ function GUIModule.setupGUI()
     stopButton.Font = Enum.Font.Code
     stopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     stopButton.TextSize = 12
-    stopButton.Text = "Stop All & Reset"
+    stopButton.Text = "STOP"
     stopButton.TextXAlignment = Enum.TextXAlignment.Center
 
     stopButton.MouseButton1Click:Connect(function()
         clickSound:Play()
         ResetModule.resetAll()
-        actionButton.Text = "Collect & Float"
-        -- Ensure main frame visible
-        collectFrame.Visible = false
-        mainButtonsFrame.Visible = true
-        updateScrollCanvas()
+        CollectModule.stopCollect()
         game.StarterGui:SetCore("SendNotification", {
-            Title = "hung v1",
+            Title = "hung",
             Text = "All effects stopped and reset!",
             Duration = 3,
         })
     end)
+
+    -- BACK Button in collect mode
+    local backButtonCollect = Instance.new("TextButton")
+    backButtonCollect.Parent = collectModeFrame
+    backButtonCollect.Size = UDim2.new(1, 0, 0, 20)
+    backButtonCollect.BackgroundColor3 = Color3.new(0, 0, 0)
+    backButtonCollect.BackgroundTransparency = 0.4
+    backButtonCollect.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    backButtonCollect.BorderSizePixel = 1
+    backButtonCollect.Font = Enum.Font.Code
+    backButtonCollect.TextColor3 = Color3.fromRGB(255, 255, 255)
+    backButtonCollect.TextSize = 12
+    backButtonCollect.Text = "BACK"
+    backButtonCollect.TextXAlignment = Enum.TextXAlignment.Center
+
+    backButtonCollect.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        mainActionFrame.Visible = true
+        collectModeFrame.Visible = false
+        updateScrollCanvas()
+    end)
+
+    --// Shoot Mode Frame (for SHOOT click)
+    local shootModeFrame = Instance.new("Frame")
+    shootModeFrame.Parent = scroll
+    shootModeFrame.Size = UDim2.new(1, -10, 0, 65)
+    shootModeFrame.BackgroundTransparency = 1
+    shootModeFrame.Visible = false
+
+    local shootModeLayout = Instance.new("UIListLayout")
+    shootModeLayout.Parent = shootModeFrame
+    shootModeLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    shootModeLayout.Padding = UDim.new(0, 5)
+
+    -- COLLECT Button in shoot mode (same as above)
+    local collectButtonShoot = Instance.new("TextButton")
+    collectButtonShoot.Parent = shootModeFrame
+    collectButtonShoot.Size = UDim2.new(1, 0, 0, 20)
+    collectButtonShoot.BackgroundColor3 = Color3.new(0, 0, 0)
+    collectButtonShoot.BackgroundTransparency = 0.4
+    collectButtonShoot.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    collectButtonShoot.BorderSizePixel = 1
+    collectButtonShoot.Font = Enum.Font.Code
+    collectButtonShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+    collectButtonShoot.TextSize = 12
+    collectButtonShoot.Text = "COLLECT"
+    collectButtonShoot.TextXAlignment = Enum.TextXAlignment.Center
+
+    collectButtonShoot.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        pcall(function()
+            local character = LocalPlayer.Character
+            if not character or not character:FindFirstChild("HumanoidRootPart") then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Error",
+                    Text = "No character found",
+                    Duration = 3,
+                })
+                return
+            end
+
+            local root = character.HumanoidRootPart
+            local partsToOrbit = {}
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
+                    table.insert(partsToOrbit, obj)
+                end
+            end
+
+            if #partsToOrbit == 0 then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Info",
+                    Text = "No unanchored parts found",
+                    Duration = 3,
+                })
+                return
+            end
+
+            OrbitModule.startOrbit(partsToOrbit, root)
+
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Success",
+                Text = #partsToOrbit .. " unanchored parts pulled and orbiting above you (replicated & lag-optimized)",
+                Duration = 4,
+            })
+        end)
+    end)
+
+    -- SHOOT Button in shoot mode
+    local shootActionButton = Instance.new("TextButton")
+    shootActionButton.Parent = shootModeFrame
+    shootActionButton.Size = UDim2.new(1, 0, 0, 20)
+    shootActionButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    shootActionButton.BackgroundTransparency = 0.4
+    shootActionButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    shootActionButton.BorderSizePixel = 1
+    shootActionButton.Font = Enum.Font.Code
+    shootActionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    shootActionButton.TextSize = 12
+    shootActionButton.Text = "SHOOT"
+    shootActionButton.TextXAlignment = Enum.TextXAlignment.Center
+
+    shootActionButton.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        if CollectModule.shootToTargets(selectedTargets) then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "Parts shot to targets!",
+                Duration = 3,
+            })
+        else
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "Collect parts first or select targets!",
+                Duration = 3,
+            })
+        end
+    end)
+
+    -- BACK Button in shoot mode
+    local backButtonShoot = Instance.new("TextButton")
+    backButtonShoot.Parent = shootModeFrame
+    backButtonShoot.Size = UDim2.new(1, 0, 0, 20)
+    backButtonShoot.BackgroundColor3 = Color3.new(0, 0, 0)
+    backButtonShoot.BackgroundTransparency = 0.4
+    backButtonShoot.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    backButtonShoot.BorderSizePixel = 1
+    backButtonShoot.Font = Enum.Font.Code
+    backButtonShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+    backButtonShoot.TextSize = 12
+    backButtonShoot.Text = "BACK"
+    backButtonShoot.TextXAlignment = Enum.TextXAlignment.Center
+
+    backButtonShoot.MouseButton1Click:Connect(function()
+        clickSound:Play()
+        mainActionFrame.Visible = true
+        shootModeFrame.Visible = false
+        updateScrollCanvas()
+    end)
+
+    updateScrollCanvas()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
