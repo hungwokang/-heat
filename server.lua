@@ -299,7 +299,7 @@ pullButton.MouseButton1Click:Connect(function()
                 local bp = Instance.new("BodyPosition")
                 bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
                 bp.Position = part.Position -- Start from current to avoid snap
-                bp.P = 10000 -- High power for fast pull
+                bp.P = 5000 -- High power for fast pull
                 bp.D = 1000 -- Damping
                 bp.Parent = part
 
