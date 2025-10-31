@@ -404,10 +404,7 @@ function ResetModule.resetAll()
     NetworkModule.BaseParts = {}
     -- Reinitialize parts for future use
     initializeParts()
-    -- Clear all ESPs and selected targets
-    for player, _ in pairs(ESPModule.esps) do
-        ESPModule.removeESP(player)
-    end
+    
     -- selectedTargets = {} -- DONT INCLUDE target list to be reset
 end
 
@@ -734,7 +731,8 @@ function GUIModule.setupGUI()
                         Duration = 4,
                     })
                 else
-                    OrbitModule.stopOrbit()
+                    
+                    ResetModule.resetAll()
 
                     orbitButtonText = "GATHER"
                     gatherStopBtn.Text = "GATHER"
@@ -804,7 +802,7 @@ function GUIModule.setupGUI()
                     Duration = 3,
                 })
             else
-                CollectModule.stopCollect()
+                ResetModule.resetAll()
                 if CollectModule.shootToTargets(selectedTargets) then
                     actionButton.Text = "GATHER"
                     shootButtonText = "GATHER"
