@@ -479,7 +479,7 @@ function GUIModule.setupGUI()
     footer.Position = UDim2.new(0, 0, 1, -20)
     footer.BackgroundTransparency = 1
     footer.Font = Enum.Font.Code
-    footer.Text = "published by server on youtube"
+    footer.Text = "published by server yt"
     footer.TextColor3 = Color3.fromRGB(255, 0, 0)
     footer.TextSize = 10
     footer.TextXAlignment = Enum.TextXAlignment.Center
@@ -504,7 +504,7 @@ function GUIModule.setupGUI()
     headerButton.Font = Enum.Font.Code
     headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
     headerButton.TextSize = 12
-    headerButton.Text = "SELECT PLAYER"
+    headerButton.Text = "PLAYER LIST"
     headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
     --// Player list container (slight transparency)
