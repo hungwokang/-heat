@@ -1,8 +1,24 @@
 --// Services
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
+
+--// Bypass for simulation ownership (exploit required)
+if getgenv().SimRadiusSet ~= true then
+    getgenv().SimRadiusSet = true
+    pcall(function()
+        LocalPlayer.ReplicationFocus = workspace
+        sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+    end)
+end
+
+--// Orbiting state
+local orbitingParts = {}
+local orbitingConnection
+local orbitSpeed = 1 -- radians per second
+local orbitRadius = 0
+local orbitHeight = 10
 
 --// GUI Setup
 local gui = Instance.new("ScreenGui")
@@ -27,7 +43,7 @@ title.Parent = frame
 title.Size = UDim2.new(1, 0, 0, 20)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.Code
-title.Text = "hungg v1"
+title.Text = "hung"
 title.TextColor3 = Color3.fromRGB(255, 0, 0)
 title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -84,9 +100,9 @@ headerButton.Size = UDim2.new(1, -10, 0, 20)
 headerButton.BackgroundTransparency = 1 -- fully transparent header
 headerButton.BorderSizePixel = 0
 headerButton.Font = Enum.Font.Code
-headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+headerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 headerButton.TextSize = 12
-headerButton.Text = "SELECT PLAYER"
+headerButton.Text = "Select Target"
 headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
 --// Player list container (slight transparency)
@@ -106,156 +122,39 @@ playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 playerLayout.Padding = UDim.new(0, 1)
 
--- Rainbow TextLabel
-local textHue = 0
-local rainbowTexts = {title, footer}
-RunService.Heartbeat:Connect(function()
-    textHue = (textHue + 0.01) % 1
-    local color = Color3.fromHSV(textHue, 1, 1)
-    for _, text in pairs(rainbowTexts) do
-        text.TextColor3 = color
-    end
-end)
-
--- Configuration table - stores customizable values
-local config = {
-    radius = 0, -- Spread radius for floating parts above player
-    height = 30, -- Base height above player for floating
-    rotationSpeed = 0, -- How fast parts rotate while floating
-    attractionStrength = 300, -- Increased base force for faster movement
-    shootSpeed = 300, -- Speed for shooting parts to target
-}
-
--- Network ownership bypass to control distant parts
-if not getgenv().Network then
-    getgenv().Network = {
-        BaseParts = {},
-        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
-    }
-
-    -- Retain network ownership of parts (preserve collidability)
-    Network.RetainPart = function(Part)
-        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
-            table.insert(Network.BaseParts, Part)
-            -- Remove CustomPhysicalProperties to allow real physics
-            if Part:FindFirstChildOfClass("CustomPhysicalProperties") then
-                Part:FindFirstChildOfClass("CustomPhysicalProperties"):Destroy()
-            end
-            -- Preserve or enable collision
-            Part.CanCollide = true
-        end
-    end
-
-    -- Force server to replicate part changes
-    local function EnablePartControl()
-        LocalPlayer.ReplicationFocus = Workspace
-        RunService.Heartbeat:Connect(function()
-            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge) -- Bypass distance limit
-            for _, Part in pairs(Network.BaseParts) do
-                if Part:IsDescendantOf(Workspace) and Part.Parent then
-                    -- Removed fixed velocity override to allow per-part control
-                end
-            end
-        end)
-    end
-
-    EnablePartControl()
-end
-
--- Filters parts to include in the collection (unanchored only)
-local function RetainPart(Part)
-    if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
-        if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
-            return false -- Exclude player
-        end
-        -- Enable collision for all collected parts
-        Part.CanCollide = true
-        -- Retain network ownership
-        Network.RetainPart(Part)
-        return true
-    end
-    return false
-end
-
-local parts = {} -- Table of parts in the collection
-
--- Add part to collection list (no limit)
-local function addPart(part)
-    if RetainPart(part) then
-        if not table.find(parts, part) then
-            table.insert(parts, part)
-        end
-    end
-end
-
--- Remove part when destroyed
-local function removePart(part)
-    local index = table.find(parts, part)
-    if index then
-        table.remove(parts, index)
-    end
-    -- Clean up from network list if needed
-    local netIndex = table.find(Network.BaseParts, part)
-    if netIndex then
-        table.remove(Network.BaseParts, netIndex)
-    end
-end
-
--- Initialize with existing unanchored parts (no limit)
-local tempParts = {}
-for _, part in pairs(workspace:GetDescendants()) do
-    if RetainPart(part) and not table.find(tempParts, part) then
-        table.insert(tempParts, part)
-    end
-end
-for _, part in pairs(tempParts) do
-    table.insert(parts, part)
-end
-
--- Listen for new/destroyed parts
-workspace.DescendantAdded:Connect(addPart)
-workspace.DescendantRemoving:Connect(removePart)
-
--- Main collection loop - runs every frame (floating above and following)
-local ringPartsEnabled = false
-RunService.Heartbeat:Connect(function()
-    if not ringPartsEnabled then return end
-
-    local character = LocalPlayer.Character
-    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart then
-        local playerPos = humanoidRootPart.Position
-        local time = tick()
-        for i, part in pairs(parts) do
-            if part.Parent and part and part.Parent ~= nil and part:IsDescendantOf(workspace) then
-                -- Calculate floating position above player (orbiting for spread)
-                local angle = (time * config.rotationSpeed) + (i * math.pi * 2 / math.max(#parts, 1)) -- Unique angle per part, avoid div0
-                local offsetX = math.sin(angle) * config.radius
-                local offsetZ = math.cos(angle) * config.radius
-                local floatHeight = config.height + math.sin(time * 2 + i) * 2 -- Slight bobbing for floating effect
-                local targetPos = playerPos + Vector3.new(offsetX, floatHeight, offsetZ)
-
-                -- Direction and distance
-                local direction = (targetPos - part.Position).Unit
-                local distance = (targetPos - part.Position).Magnitude
-
-                -- Scale speed with distance for far pulls (stronger when farther, increased multiplier for speed)
-                local speed = config.attractionStrength + (distance * 1000) -- Increased from 5 to 10 for faster pull
-                speed = math.min(speed, 200) -- Increased cap from 200 to 300 for faster movement
-
-                -- Apply real velocity (replicates to all clients, allows collision)
-                part.Velocity = direction * speed
-
-                -- Ensure collidable and unanchored
-                part.CanCollide = true
-                part.Anchored = false
-            end
-        end
-    end
-end)
-
 local selectedTargets = {}
 local listHidden = false
+
+local espHighlights = {}
+
+local function addESP(player)
+    if espHighlights[player.Name] then return end
+
+    local function onCharacterAdded(char)
+        if espHighlights[player.Name] then
+            espHighlights[player.Name]:Destroy()
+        end
+        local highlight = Instance.new("Highlight")
+        highlight.Parent = char
+        highlight.FillColor = Color3.new(0, 1, 0)
+        highlight.OutlineColor = Color3.new(1, 1, 1)
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        espHighlights[player.Name] = highlight
+    end
+
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+    player.CharacterAdded:Connect(onCharacterAdded)
+end
+
+local function removeESP(player)
+    if espHighlights[player.Name] then
+        espHighlights[player.Name]:Destroy()
+        espHighlights[player.Name] = nil
+    end
+end
 
 --// Player list update
 local function updatePlayerList()
@@ -281,30 +180,35 @@ local function updatePlayerList()
 					selectedTargets[p.Name] = nil
 					btn.Text = p.Name
 					btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+					removeESP(p)
 				else
-					selectedTargets[p.Name] = p
+					selectedTargets[p.Name] = true
 					btn.Text = p.Name .. " ✓"
 					btn.TextColor3 = Color3.fromRGB(0, 255, 0)
+					addESP(p)
 				end
 			end)
+
+			if selectedTargets[p.Name] then
+				addESP(p)
+			end
 		end
 	end
 	playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
 	updateScrollCanvas()
 end
 
-playerScroll.Visible = listHidden 
 updatePlayerList()
 Players.PlayerAdded:Connect(updatePlayerList)
 Players.PlayerRemoving:Connect(function(p)
-    selectedTargets[p.Name] = nil
-    updatePlayerList()
+	removeESP(p)
 end)
+Players.PlayerRemoving:Connect(updatePlayerList)
 
 --// Toggle list visibility when clicking header
 headerButton.MouseButton1Click:Connect(function()
-	playerScroll.Visible = not listHidden
 	listHidden = not listHidden
+	playerScroll.Visible = not listHidden
 end)
 
 --// Minimize toggle
@@ -321,86 +225,137 @@ minimize.MouseButton1Click:Connect(function()
 	minimize.Text = targetText
 end)
 
--- Collect and Shoot container
-local buttonContainer = Instance.new("Frame")
-buttonContainer.Parent = scroll
-buttonContainer.Size = UDim2.new(1, -10, 0, 20)
-buttonContainer.BackgroundTransparency = 1
-buttonContainer.BorderSizePixel = 0
+--// Pull Unanchored Parts Button (Fixed with Bypass & Orbit)
+local pullButton = Instance.new("TextButton")
+pullButton.Parent = scroll
+pullButton.Size = UDim2.new(1, -10, 0, 20)
+pullButton.BackgroundColor3 = Color3.new(0, 0, 0)
+pullButton.BackgroundTransparency = 0.4
+pullButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+pullButton.BorderSizePixel = 1
+pullButton.Font = Enum.Font.Code
+pullButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+pullButton.TextSize = 12
+pullButton.Text = "Pull"
+pullButton.TextXAlignment = Enum.TextXAlignment.Center
 
--- Main button (switches between collect and shot)
-local actionButton = Instance.new("TextButton")
-actionButton.Parent = buttonContainer
-actionButton.Size = UDim2.new(1, 0, 1, 0)
-actionButton.Position = UDim2.new(0, 0, 0, 0)
-actionButton.BackgroundTransparency = 1
-actionButton.BorderSizePixel = 0
-actionButton.Font = Enum.Font.Code
-actionButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-actionButton.TextSize = 12
-actionButton.Text = "collect"
-actionButton.TextXAlignment = Enum.TextXAlignment.Center
+pullButton.MouseButton1Click:Connect(function()
+    pcall(function()
+        local character = LocalPlayer.Character
+        if not character or not character:FindFirstChild("HumanoidRootPart") then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Error",
+                Text = "No character found",
+                Duration = 3,
+            })
+            return
+        end
 
-actionButton.MouseButton1Click:Connect(function()
-    if actionButton.Text == "collect" then
-        ringPartsEnabled = true
-        actionButton.Text = "shot"
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "hung",
-            Text = "Collecting Parts!",
-            Duration = 3,
-        })
-    else
-        ringPartsEnabled = false
-        actionButton.Text = "collect"
+        local root = character.HumanoidRootPart
+        local parts = {}
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
+                table.insert(parts, obj)
+            end
+        end
+
         if #parts == 0 then
             game.StarterGui:SetCore("SendNotification", {
-                Title = "hung",
-                Text = "Collect parts first!",
+                Title = "Info",
+                Text = "No unanchored parts found",
                 Duration = 3,
             })
             return
         end
-        local targets = {}
-        for _, player in pairs(selectedTargets) do
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                table.insert(targets, player.Character.HumanoidRootPart)
-            end
+
+        -- Stop previous orbit
+        if orbitingConnection then
+            orbitingConnection:Disconnect()
+            orbitingConnection = nil
         end
-        if #targets == 0 then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "hung",
-                Text = "No valid targets selected!",
-                Duration = 3,
-            })
-            return
-        end
-        -- Shoot
-        local numTargets = #targets
-        local partIndex = 1
-        for i, part in pairs(parts) do
-            if part and part.Parent then
-                local target = targets[partIndex % numTargets + 1] -- Cycle through targets
-                if target then
-                    local direction = (target.Position - part.Position).Unit
-                    part.Velocity = direction * config.shootSpeed
+        orbitingParts = {}
+
+        -- Process parts
+        for i, part in ipairs(parts) do
+            pcall(function()
+                -- Clean existing controllers
+                for _, child in ipairs(part:GetChildren()) do
+                    if child:IsA("BodyMover") or child:IsA("AlignPosition") or child:IsA("VectorForce") or child:IsA("Torque") then
+                        child:Destroy()
+                    end
                 end
-                partIndex = partIndex + 1
-            end
+
+                -- Optimize physics
+                part.CanCollide = false
+                part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+
+                -- Add spinning
+                local bav = Instance.new("BodyAngularVelocity")
+                bav.MaxTorque = Vector3.new(0, math.huge, 0)
+                bav.AngularVelocity = Vector3.new(0, 20, 0)
+                bav.Parent = part
+
+                -- Add position control for orbit
+                local bp = Instance.new("BodyPosition")
+                bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+                bp.Position = part.Position -- Start from current to avoid snap
+                bp.P = 100000 -- High power for fast pull
+                bp.D = 1000 -- Damping
+                bp.Parent = part
+
+                -- Store data
+                local baseAngle = (i / #parts) * math.pi * 2
+                local heightOffset = math.floor((i - 1) / 20) * 1 -- Stack every 20 parts
+                local partRadius = orbitRadius + ((i - 1) % 20) * 0.2 -- Slight radius variation
+                table.insert(orbitingParts, {
+                    part = part,
+                    bp = bp,
+                    bav = bav,
+                    baseAngle = baseAngle,
+                    heightOffset = heightOffset,
+                    radius = partRadius
+                })
+            end)
         end
-        -- Clear parts after shooting
-        parts = {}
+
+        -- Start orbiting loop (efficient Heartbeat)
+        local lastTime = tick()
+        orbitingConnection = RunService.Heartbeat:Connect(function()
+            local deltaTime = tick() - lastTime
+            lastTime = tick()
+
+            if not character or not root or #orbitingParts == 0 then
+                return
+            end
+
+            local cf = root.CFrame
+            local rightVec = cf.RightVector
+            local lookVec = cf.LookVector
+            local upVec = cf.UpVector
+
+            for _, data in ipairs(orbitingParts) do
+                if data.part.Parent and data.bp.Parent then
+                    local currentTime = tick()
+                    local angle = data.baseAngle + (orbitSpeed * currentTime)
+                    local xOffset = math.cos(angle) * data.radius
+                    local zOffset = math.sin(angle) * data.radius
+                    local targetPos = root.Position + (upVec * (orbitHeight + data.heightOffset)) + (rightVec * xOffset) + (lookVec * zOffset)
+                    data.bp.Position = targetPos
+                end
+            end
+        end)
+
         game.StarterGui:SetCore("SendNotification", {
-            Title = "hung",
-            Text = "Parts shot to targets!",
-            Duration = 3,
+            Title = "Success",
+            Text = #parts .. " unanchored parts pulled and orbiting above you (replicated & lag-optimized)",
+            Duration = 4,
         })
-    end
+    end)
 end)
 
 --// Notification
 game.StarterGui:SetCore("SendNotification", {
 	Title = "hung",
-	Text = "Floating Collector GUI Loaded (Unlimited Parts)",
+	Text = "Player List GUI Loaded (with Orbit Bypass)",
 	Duration = 4,
 })
