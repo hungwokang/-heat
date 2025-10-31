@@ -73,9 +73,10 @@ function OrbitModule.startOrbit(partsToOrbit, root)
     -- Process parts
     for i, part in ipairs(partsToOrbit) do
         pcall(function()
+            NetworkModule.RetainPart(part)
             -- Clean existing controllers
             for _, child in ipairs(part:GetChildren()) do
-                if child:IsA("BodyMover") or child:IsA("AlignPosition") or child:IsA("VectorForce") or child:IsA("Torque") then
+                if child:IsA("BodyPosition") or child:IsA("BodyVelocity") or child:IsA("BodyAngularVelocity") or child:IsA("AlignPosition") or child:IsA("VectorForce") or child:IsA("AlignOrientation") or child:IsA("Torque") then
                     child:Destroy()
                 end
             end
@@ -235,7 +236,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
     if humanoidRootPart then
         local playerPos = humanoidRootPart.Position
         local time = tick()
-        for i, part in pairs(CollectModule.parts) do
+        for i, part in ipairs(CollectModule.parts) do
             if part.Parent and part and part.Parent ~= nil and part:IsDescendantOf(workspace) then
                 -- Calculate floating position above player (orbiting for spread)
                 local angle = (time * CollectModule.config.rotationSpeed) + (i * math.pi * 2 / math.max(#CollectModule.parts, 1)) -- Unique angle per part, avoid div0
@@ -354,6 +355,15 @@ function ESPModule.createESP(player)
     ESPModule.esps[player] = esp
 end
 
+function ESPModule.removeESP(player)
+    local esp = ESPModule.esps[player]
+    if esp then
+        esp.box:Remove()
+        esp.name:Remove()
+        ESPModule.esps[player] = nil
+    end
+end
+
 -- ESP update loop
 local espConnection = RunService.RenderStepped:Connect(function()
     for player, esp in pairs(ESPModule.esps) do
@@ -371,14 +381,15 @@ local espConnection = RunService.RenderStepped:Connect(function()
                 esp.box.Visible = true
 
                 esp.name.Position = Vector2.new(pos.X, pos.Y - height / 2 - 20)
-                
+                esp.name.Text = player.Name
+                esp.name.Visible = true
             else
                 esp.box.Visible = false
-                
+                esp.name.Visible = false
             end
         else
             esp.box.Visible = false
-            
+            esp.name.Visible = false
         end
     end
 end)
@@ -391,20 +402,14 @@ function ResetModule.resetAll()
     OrbitModule.stopOrbit()
     -- Stop collect
     CollectModule.stopCollect()
+    CollectModule.parts = {}
     -- Clear network parts
     NetworkModule.BaseParts = {}
-    -- Reinitialize parts for future use
-    initializeParts()
-	for player, _ in pairs(ESPModule.esps) do
-        ESPModule.removeESP(player)
-    end
-    selectedTargets = {}
-    
 end
 
 --// GUI Module
 local GUIModule = {}
-local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
+local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, minimized = nil, nil, nil, nil, nil, nil, {}, false
 local footer -- To make it accessible in closure
 
 function GUIModule.setupGUI()
@@ -420,8 +425,8 @@ function GUIModule.setupGUI()
     --// Main Frame
     frame = Instance.new("Frame")
     frame.Parent = gui
-    frame.Size = UDim2.new(0, 120, 0, 220) -- Taller for extra button
-    frame.Position = UDim2.new(0.5, -60, 0.5, -110)
+    frame.Size = UDim2.new(0, 120, 0, 140)
+    frame.Position = UDim2.new(0.5, -60, 0.5, -70)
     frame.BackgroundColor3 = Color3.new(0, 0, 0)
     frame.BackgroundTransparency = 0.4
     frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -517,6 +522,7 @@ function GUIModule.setupGUI()
     playerScroll.BorderSizePixel = 0
     playerScroll.ScrollBarThickness = 2
     playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    playerScroll.Visible = false
 
     playerLayout = Instance.new("UIListLayout")
     playerLayout.Parent = playerScroll
@@ -563,7 +569,6 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
-    playerScroll.Visible = listHidden 
     GUIModule.updatePlayerList()
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
@@ -574,14 +579,18 @@ function GUIModule.setupGUI()
 
     --// Toggle list visibility when clicking header
     headerButton.MouseButton1Click:Connect(function()
-        playerScroll.Visible = not listHidden
-        listHidden = not listHidden
+        local wasVisible = playerScroll.Visible
+        playerScroll.Visible = not wasVisible
+        local targetSize = playerScroll.Visible and UDim2.new(0, 120, 0, 200) or UDim2.new(0, 120, 0, 140)
+        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+            Size = targetSize
+        }):Play()
     end)
 
     --// Minimize toggle
     minimize.MouseButton1Click:Connect(function()
         minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 220)
+        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or (playerScroll.Visible and UDim2.new(0, 120, 0, 200) or UDim2.new(0, 120, 0, 140))
         local targetText = minimized and "+" or "-"
         TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
             Size = targetSize
@@ -684,10 +693,11 @@ end)
                 Duration = 3,
             })
         else
-            CollectModule.stopCollect()
-			ResetModule.resetAll()
             if CollectModule.shootToTargets(selectedTargets) then
                 actionButton.Text = "Collect"
+                CollectModule.parts = {}
+                CollectModule.stopCollect()
+                NetworkModule.BaseParts = {}
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung",
                     Text = "Parts shot to targets!",
