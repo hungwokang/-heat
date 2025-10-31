@@ -225,7 +225,7 @@ end
 
 
 
-875333334467880
+
 --// Collect/Shoot module
 local CollectModule = {}
 CollectModule.ringPartsEnabled = false
