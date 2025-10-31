@@ -794,7 +794,7 @@ function GUIModule.setupGUI()
         actionButton.MouseButton1Click:Connect(function()
             if actionButton.Text == "GATHER" then
                 OrbitModule.startOrbit(partsToOrbit, root)
-                CollectModule.startCollect()
+                
                 actionButton.Text = "SHOT"
                 shootButtonText = "SHOT"
                 game.StarterGui:SetCore("SendNotification", {
