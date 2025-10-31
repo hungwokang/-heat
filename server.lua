@@ -60,7 +60,7 @@ NetworkModule = getgenv().Network
 local OrbitModule = {}
 OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
-OrbitModule.orbitSpeed = 0.1 -- radians per second
+OrbitModule.orbitSpeed = 5 -- radians per second
 OrbitModule.orbitRadius = 15
 OrbitModule.orbitHeight = 10
 
@@ -73,10 +73,9 @@ function OrbitModule.startOrbit(partsToOrbit, root)
     -- Process parts
     for i, part in ipairs(partsToOrbit) do
         pcall(function()
-            NetworkModule.RetainPart(part)
             -- Clean existing controllers
             for _, child in ipairs(part:GetChildren()) do
-                if child:IsA("BodyPosition") or child:IsA("BodyVelocity") or child:IsA("BodyAngularVelocity") or child:IsA("AlignPosition") or child:IsA("VectorForce") or child:IsA("AlignOrientation") or child:IsA("Torque") then
+                if child:IsA("BodyMover") or child:IsA("AlignPosition") or child:IsA("VectorForce") or child:IsA("Torque") then
                     child:Destroy()
                 end
             end
@@ -167,7 +166,7 @@ CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 5, -- Reduced spread radius to minimize scattering
     height = 30, -- Base height above player for floating
-    rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
+    rotationSpeed = 0.5, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
@@ -236,7 +235,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
     if humanoidRootPart then
         local playerPos = humanoidRootPart.Position
         local time = tick()
-        for i, part in ipairs(CollectModule.parts) do
+        for i, part in pairs(CollectModule.parts) do
             if part.Parent and part and part.Parent ~= nil and part:IsDescendantOf(workspace) then
                 -- Calculate floating position above player (orbiting for spread)
                 local angle = (time * CollectModule.config.rotationSpeed) + (i * math.pi * 2 / math.max(#CollectModule.parts, 1)) -- Unique angle per part, avoid div0
@@ -356,10 +355,9 @@ function ESPModule.createESP(player)
 end
 
 function ESPModule.removeESP(player)
-    local esp = ESPModule.esps[player]
-    if esp then
-        esp.box:Remove()
-        esp.name:Remove()
+    if ESPModule.esps[player] then
+        ESPModule.esps[player].box:Remove()
+        ESPModule.esps[player].name:Remove()
         ESPModule.esps[player] = nil
     end
 end
@@ -402,14 +400,21 @@ function ResetModule.resetAll()
     OrbitModule.stopOrbit()
     -- Stop collect
     CollectModule.stopCollect()
-    CollectModule.parts = {}
     -- Clear network parts
     NetworkModule.BaseParts = {}
+    -- Reinitialize parts for future use
+    initializeParts()
+    -- Clear all ESPs and selected targets
+    for player, _ in pairs(ESPModule.esps) do
+        ESPModule.removeESP(player)
+    end
+    selectedTargets = {}
+    -- Reset GUI states if needed (handled in button clicks)
 end
 
 --// GUI Module
 local GUIModule = {}
-local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, minimized = nil, nil, nil, nil, nil, nil, {}, false
+local gui, frame, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, {}, false, false
 local footer -- To make it accessible in closure
 
 function GUIModule.setupGUI()
@@ -425,13 +430,25 @@ function GUIModule.setupGUI()
     --// Main Frame
     frame = Instance.new("Frame")
     frame.Parent = gui
-    frame.Size = UDim2.new(0, 120, 0, 140)
-    frame.Position = UDim2.new(0.5, -60, 0.5, -70)
+    frame.Size = UDim2.new(0, 120, 0, 0)
+    frame.Position = UDim2.new(0.5, -60, 0.5, 0)
     frame.BackgroundColor3 = Color3.new(0, 0, 0)
     frame.BackgroundTransparency = 0.4
     frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
     frame.Active = true
     frame.Draggable = true
+
+    --// Layout for auto-fit
+    layout = Instance.new("UIListLayout")
+    layout.Parent = frame
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 5)
+
+    local function updateFrameSize()
+        frame.Size = UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 20)
+    end
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateFrameSize)
 
     --// Title bar
     local title = Instance.new("TextLabel")
@@ -439,10 +456,11 @@ function GUIModule.setupGUI()
     title.Size = UDim2.new(1, 0, 0, 20)
     title.BackgroundTransparency = 1
     title.Font = Enum.Font.Code
-    title.Text = "hung v2"
+    title.Text = "hung v1"
     title.TextColor3 = Color3.fromRGB(255, 0, 0)
     title.TextSize = 13
     title.TextXAlignment = Enum.TextXAlignment.Center
+    title.LayoutOrder = 0
 
     --// Minimize button
     local minimize = Instance.new("TextButton")
@@ -455,74 +473,29 @@ function GUIModule.setupGUI()
     minimize.BackgroundTransparency = 1
     minimize.TextColor3 = Color3.fromRGB(255, 0, 0)
 
-    --// Scroll Holder
-    scroll = Instance.new("ScrollingFrame")
-    scroll.Parent = frame
-    scroll.Position = UDim2.new(0, 0, 0, 22)
-    scroll.Size = UDim2.new(1, 0, 1, -42)
-    scroll.BackgroundTransparency = 1
-    scroll.BorderSizePixel = 0
-    scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-    scroll.ScrollBarThickness = 2
-
-    --// Layout
-    layout = Instance.new("UIListLayout")
-    layout.Parent = scroll
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Padding = UDim.new(0, 5)
-
-    local function updateScrollCanvas()
-        scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-    end
-    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
-
-    --// Footer
-    footer = Instance.new("TextLabel")
-    footer.Parent = frame
-    footer.Size = UDim2.new(1, 0, 0, 20)
-    footer.Position = UDim2.new(0, 0, 1, -20)
-    footer.BackgroundTransparency = 1
-    footer.Font = Enum.Font.Code
-    footer.Text = "published by server yt"
-    footer.TextColor3 = Color3.fromRGB(255, 0, 0)
-    footer.TextSize = 10
-    footer.TextXAlignment = Enum.TextXAlignment.Center
-
-    --// Rainbow TextLabel
-    local textHue = 0
-    local rainbowTexts = {title, footer}
-    RunService.Heartbeat:Connect(function()
-        textHue = (textHue + 0.01) % 1
-        local color = Color3.fromHSV(textHue, 1, 1)
-        for _, text in pairs(rainbowTexts) do
-            text.TextColor3 = color
-        end
-    end)
-
     --// Header (Select Target)
     local headerButton = Instance.new("TextButton")
-    headerButton.Parent = scroll
-    headerButton.Size = UDim2.new(1, -10, 0, 20)
+    headerButton.Parent = frame
+    headerButton.Size = UDim2.new(1, 0, 0, 20)
     headerButton.BackgroundTransparency = 1 -- fully transparent header
     headerButton.BorderSizePixel = 0
     headerButton.Font = Enum.Font.Code
     headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
     headerButton.TextSize = 12
-    headerButton.Text = "PLAYER LIST"
+    headerButton.Text = "SELECT PLAYER"
     headerButton.TextXAlignment = Enum.TextXAlignment.Center
+    headerButton.LayoutOrder = 1
 
     --// Player list container (slight transparency)
     playerScroll = Instance.new("ScrollingFrame")
-    playerScroll.Parent = scroll
-    playerScroll.Size = UDim2.new(1, -10, 0, 60)
-    playerScroll.Position = UDim2.new(0, 5, 0, 0)
+    playerScroll.Parent = frame
+    playerScroll.Size = UDim2.new(1, 0, 0, 0)
     playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
     playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
     playerScroll.BorderSizePixel = 0
     playerScroll.ScrollBarThickness = 2
     playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-    playerScroll.Visible = false
+    playerScroll.LayoutOrder = 2
 
     playerLayout = Instance.new("UIListLayout")
     playerLayout.Parent = playerScroll
@@ -530,8 +503,7 @@ function GUIModule.setupGUI()
     playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
     playerLayout.Padding = UDim.new(0, 1)
 
-    
-	--// Player list update function
+    --// Player list update function
     function GUIModule.updatePlayerList()
         for _, btn in pairs(playerScroll:GetChildren()) do
             if btn:IsA("TextButton") then btn:Destroy() end
@@ -566,9 +538,10 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-        updateScrollCanvas()
+        updateFrameSize()
     end
 
+    playerScroll.Visible = listHidden 
     GUIModule.updatePlayerList()
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
@@ -579,144 +552,175 @@ function GUIModule.setupGUI()
 
     --// Toggle list visibility when clicking header
     headerButton.MouseButton1Click:Connect(function()
-        local wasVisible = playerScroll.Visible
-        playerScroll.Visible = not wasVisible
-        local targetSize = playerScroll.Visible and UDim2.new(0, 120, 0, 200) or UDim2.new(0, 120, 0, 140)
-        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            Size = targetSize
-        }):Play()
+        if minimized then return end
+        listHidden = not listHidden
+        playerScroll.Visible = listHidden
+        playerScroll.Size = UDim2.new(1, 0, 0, listHidden and 60 or 0)
+        updateFrameSize()
     end)
 
-    --// Minimize toggle
-    minimize.MouseButton1Click:Connect(function()
-        minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or (playerScroll.Visible and UDim2.new(0, 120, 0, 200) or UDim2.new(0, 120, 0, 140))
-        local targetText = minimized and "+" or "-"
-        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            Size = targetSize
-        }):Play()
-        scroll.Visible = not minimized
-        footer.Visible = not minimized
-        minimize.Text = targetText
-    end)
+    --// Button Container for FLOAT and SHOOT
+    local buttonContainer = Instance.new("Frame")
+    buttonContainer.Parent = frame
+    buttonContainer.Size = UDim2.new(1, 0, 0, 20)
+    buttonContainer.BackgroundTransparency = 1
+    buttonContainer.LayoutOrder = 3
 
-	--// Pull Unanchored Parts Button (Toggle Start/Stop)
-local isOrbiting = false
-local pullButton = Instance.new("TextButton")
-pullButton.Parent = scroll
-pullButton.Size = UDim2.new(1, -10, 0, 20)
-pullButton.BackgroundColor3 = Color3.new(0, 0, 0)
-pullButton.BackgroundTransparency = 0.4
-pullButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-pullButton.BorderSizePixel = 1
-pullButton.Font = Enum.Font.Code
-pullButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-pullButton.TextSize = 12
-pullButton.Text = "Collect Unanchored"
-pullButton.TextXAlignment = Enum.TextXAlignment.Center
+    local hLayout = Instance.new("UIListLayout")
+    hLayout.Parent = buttonContainer
+    hLayout.FillDirection = Enum.FillDirection.Horizontal
+    hLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    hLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    hLayout.Padding = UDim.new(0, 5)
+    hLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-pullButton.MouseButton1Click:Connect(function()
-    pcall(function()
-        local character = LocalPlayer.Character
-        if not character or not character:FindFirstChild("HumanoidRootPart") then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Error",
-                Text = "No character found",
-                Duration = 3,
-            })
-            return
-        end
+    -- FLOAT Button
+    local floatButton = Instance.new("TextButton")
+    floatButton.Parent = buttonContainer
+    floatButton.Size = UDim2.new(0, 55, 1, 0)
+    floatButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    floatButton.BackgroundTransparency = 0.4
+    floatButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    floatButton.BorderSizePixel = 1
+    floatButton.Font = Enum.Font.Code
+    floatButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    floatButton.TextSize = 12
+    floatButton.Text = "FLOAT"
+    floatButton.TextXAlignment = Enum.TextXAlignment.Center
+    floatButton.LayoutOrder = 1
 
-        local root = character.HumanoidRootPart
-
-        if not isOrbiting then
-            local partsToOrbit = {}
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
-                    table.insert(partsToOrbit, obj)
+    floatButton.MouseButton1Click:Connect(function()
+        if floatButton.Text == "FLOAT" then
+            pcall(function()
+                local character = LocalPlayer.Character
+                if not character or not character:FindFirstChild("HumanoidRootPart") then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Error",
+                        Text = "No character found",
+                        Duration = 3,
+                    })
+                    return
                 end
-            end
-
-            if #partsToOrbit == 0 then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Info",
-                    Text = "No unanchored parts found",
-                    Duration = 3,
-                })
-                return
-            end
-
-            OrbitModule.startOrbit(partsToOrbit, root)
-            isOrbiting = true
-            pullButton.Text = "Stop"
-
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Success",
-                Text = #partsToOrbit .. " unanchored parts pulled and orbiting above you (replicated & lag-optimized)",
-                Duration = 4,
-            })
-        else
-            ResetModule.resetAll()
-            isOrbiting = false
-            pullButton.Text = "Collect Unanchored"
-
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Info",
-                Text = "Orbit stopped!",
-                Duration = 3,
-            })
-        end
-    end)
-end)
-	
-    --// Collect and Shoot Button
-    local actionButton = Instance.new("TextButton")
-    actionButton.Parent = scroll
-    actionButton.Size = UDim2.new(1, -10, 0, 20)
-    actionButton.BackgroundColor3 = Color3.new(0, 0, 0)
-    actionButton.BackgroundTransparency = 0.4
-    actionButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    actionButton.BorderSizePixel = 1
-    actionButton.Font = Enum.Font.Code
-    actionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    actionButton.TextSize = 12
-    actionButton.Text = "Collect"
-    actionButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    actionButton.MouseButton1Click:Connect(function()
-        if actionButton.Text == "Collect" then
+            end)
             CollectModule.startCollect()
-            actionButton.Text = "Shoot"
+            floatButton.Text = "COLLECT"
+            shootButton.Text = "BACK"
             game.StarterGui:SetCore("SendNotification", {
                 Title = "hung",
                 Text = "Collecting Parts!",
                 Duration = 3,
             })
-        else
-            if CollectModule.shootToTargets(selectedTargets) then
-                actionButton.Text = "Collect"
-                CollectModule.parts = {}
-                CollectModule.stopCollect()
-                NetworkModule.BaseParts = {}
+        elseif floatButton.Text == "COLLECT" then
+            CollectModule.stopCollect()
+            floatButton.Text = "FLOAT"
+            shootButton.Text = "SHOOT"
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "Stopped collecting!",
+                Duration = 3,
+            })
+        elseif floatButton.Text == "COLLECT/SHOOT" then
+            CollectModule.stopCollect()
+            local success = CollectModule.shootToTargets(selectedTargets)
+            if success then
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung",
                     Text = "Parts shot to targets!",
                     Duration = 3,
                 })
             else
-                actionButton.Text = "Collect"
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung",
-                    Text = "Collect parts first or select targets!",
+                    Text = "No parts or targets, stopped collecting!",
                     Duration = 3,
                 })
             end
+            floatButton.Text = "FLOAT"
+            shootButton.Text = "SHOOT"
         end
     end)
 
+    -- SHOOT Button
+    local shootButton = Instance.new("TextButton")
+    shootButton.Parent = buttonContainer
+    shootButton.Size = UDim2.new(0, 55, 1, 0)
+    shootButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    shootButton.BackgroundTransparency = 0.4
+    shootButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    shootButton.BorderSizePixel = 1
+    shootButton.Font = Enum.Font.Code
+    shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    shootButton.TextSize = 12
+    shootButton.Text = "SHOOT"
+    shootButton.TextXAlignment = Enum.TextXAlignment.Center
+    shootButton.LayoutOrder = 2
+
+    shootButton.MouseButton1Click:Connect(function()
+        if shootButton.Text == "SHOOT" then
+            CollectModule.startCollect()
+            floatButton.Text = "COLLECT/SHOOT"
+            shootButton.Text = "BACK"
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "Collecting for quick shoot!",
+                Duration = 3,
+            })
+        elseif shootButton.Text == "BACK" then
+            ResetModule.resetAll()
+            floatButton.Text = "FLOAT"
+            shootButton.Text = "SHOOT"
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "hung",
+                Text = "All effects stopped and reset!",
+                Duration = 3,
+            })
+        end
+    end)
+
+    --// Footer
+    footer = Instance.new("TextLabel")
+    footer.Parent = frame
+    footer.Size = UDim2.new(1, 0, 0, 20)
+    footer.BackgroundTransparency = 1
+    footer.Font = Enum.Font.Code
+    footer.Text = "published by server"
+    footer.TextColor3 = Color3.fromRGB(255, 0, 0)
+    footer.TextSize = 10
+    footer.TextXAlignment = Enum.TextXAlignment.Center
+    footer.LayoutOrder = 4
+
+    --// Minimize toggle
+    minimize.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        local targetText = minimized and "+" or "-"
+        minimize.Text = targetText
+        local targetVisible = not minimized
+        headerButton.Visible = targetVisible
+        footer.Visible = targetVisible
+        buttonContainer.Visible = targetVisible
+        playerScroll.Visible = listHidden and targetVisible
+        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 20)
+        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+            Size = targetSize
+        }):Play()
+    end)
+
+    --// Rainbow TextLabel
+    local textHue = 0
+    local rainbowTexts = {title, footer}
+    RunService.Heartbeat:Connect(function()
+        textHue = (textHue + 0.01) % 1
+        local color = Color3.fromHSV(textHue, 1, 1)
+        for _, text in pairs(rainbowTexts) do
+            text.TextColor3 = color
+        end
+    end)
+
+    updateFrameSize()
+
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v2",
+        Title = "hung v1111111111111111",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
