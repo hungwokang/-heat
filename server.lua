@@ -878,7 +878,7 @@ function GUIModule.setupGUI()
                     Duration = 3,
                 })
             else
-                ResetModule.resetAll()
+                
                 if CollectModule.shootToTargets(selectedTargets) then
                     actionButton.Text = "GATHER"
                     shootButtonText = "GATHER"
@@ -887,6 +887,7 @@ function GUIModule.setupGUI()
                         Text = "Parts shot to targets!",
                         Duration = 3,
                     })
+                    ResetModule.resetAll()
                 else
                     actionButton.Text = "GATHER"
                     shootButtonText = "GATHER"
