@@ -159,6 +159,73 @@ function OrbitModule.stopOrbit()
     OrbitModule.orbitingParts = {}
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+875333334467880
 --// Collect/Shoot module
 local CollectModule = {}
 CollectModule.ringPartsEnabled = false
@@ -327,6 +394,14 @@ function CollectModule.shootToTargets(selectedTargets)
     CollectModule.parts = {}
     return true
 end
+
+
+
+
+
+
+
+
 
 --// ESP module for dynamic target players
 local ESPModule = {}
