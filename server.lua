@@ -61,7 +61,7 @@ local OrbitModule = {}
 OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
 OrbitModule.orbitSpeed = 0.1 -- radians per second
-OrbitModule.orbitRadius = 0
+OrbitModule.orbitRadius = 30
 OrbitModule.orbitHeight = 10
 
 function OrbitModule.startOrbit(partsToOrbit, root)
@@ -229,11 +229,13 @@ end
 --// Collect/Shoot module
 local CollectModule = {}
 CollectModule.ringPartsEnabled = false
+CollectModule.isShooting = false
+CollectModule.shootingConnection = nil
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
-    rotationSpeed = 0.01, -- Slower rotation to reduce erratic movement
+    rotationSpeed = 0, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
@@ -362,37 +364,52 @@ function CollectModule.stopCollect()
     end
 end
 
-function CollectModule.shootToTargets(selectedTargets)
-    if #CollectModule.parts == 0 then return false end
-    local targets = {}
-    for _, player in pairs(selectedTargets) do
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            table.insert(targets, player.Character.HumanoidRootPart)
-        end
-    end
-    if #targets == 0 then return false end
-    -- Re-enable collision for shooting (optional, for impact)
-    for _, part in pairs(CollectModule.parts) do
-        if part and part.Parent then
-            part.CanCollide = true
-        end
-    end
-    -- Shoot
-    local numTargets = #targets
-    local partIndex = 1
-    for i, part in pairs(CollectModule.parts) do
-        if part and part.Parent then
-            local target = targets[partIndex % numTargets + 1] -- Cycle through targets
-            if target then
+function CollectModule.startShooting(selectedTargets)
+    if CollectModule.isShooting then return false end
+    if not next(selectedTargets) then return false end
+
+    CollectModule.isShooting = true
+    local currentSelectedTargets = selectedTargets
+    local lastShotTime = 0
+
+    CollectModule.shootingConnection = RunService.Heartbeat:Connect(function()
+        if not CollectModule.isShooting then return end
+
+        local now = tick()
+        if now - lastShotTime >= 1 and #CollectModule.parts > 0 then
+            local validTargets = {}
+            for _, player in pairs(currentSelectedTargets) do
+                if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Parent then
+                    table.insert(validTargets, player.Character.HumanoidRootPart)
+                end
+            end
+
+            if #validTargets == 0 then
+                CollectModule.stopShooting()
+                return
+            end
+
+            local part = table.remove(CollectModule.parts, 1)
+            if part and part.Parent then
+                local target = validTargets[math.random(1, #validTargets)]
                 local direction = (target.Position - part.Position).Unit
                 part.Velocity = direction * CollectModule.config.shootSpeed
+                part.CanCollide = true
             end
-            partIndex = partIndex + 1
+
+            lastShotTime = now
         end
-    end
-    -- Clear parts after shooting
-    CollectModule.parts = {}
+    end)
+
     return true
+end
+
+function CollectModule.stopShooting()
+    CollectModule.isShooting = false
+    if CollectModule.shootingConnection then
+        CollectModule.shootingConnection:Disconnect()
+        CollectModule.shootingConnection = nil
+    end
 end
 
 
@@ -475,6 +492,8 @@ function ResetModule.resetAll()
     OrbitModule.stopOrbit()
     -- Stop collect
     CollectModule.stopCollect()
+    -- Stop shooting
+    CollectModule.stopShooting()
     -- Clear network parts
     NetworkModule.BaseParts = {}
     -- Reinitialize parts for future use
@@ -894,41 +913,52 @@ function GUIModule.setupGUI()
         searchBtn.TextXAlignment = Enum.TextXAlignment.Center
 
         local isCollecting = false
+        local isShooting = false
         searchBtn.MouseButton1Click:Connect(function()
-            if not isCollecting then
-                shootText.Text = "Searching Parts..."
-                CollectModule.startCollect()
-                isCollecting = true
-                searchBtn.Text = "SHOT"
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "hung v1",
-                    Text = "Collecting Parts!",
-                    Duration = 3,
-                })
-            else
-                CollectModule.stopCollect()
-                if CollectModule.shootToTargets(selectedTargets) then
-                    searchBtn.Text = "SEARCH"
+            pcall(function()
+                if not isCollecting then
+                    shootText.Text = "Searching Parts..."
+                    CollectModule.startCollect()
+                    isCollecting = true
+                    searchBtn.Text = "SHOT"
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "hung v1",
+                        Text = "Collecting Parts!",
+                        Duration = 3,
+                    })
+                elseif not CollectModule.isShooting then
+                    if CollectModule.startShooting(selectedTargets) then
+                        isShooting = true
+                        searchBtn.Text = "STOP"
+                        shootText.Text = "Shooting one by one..."
+                        game.StarterGui:SetCore("SendNotification", {
+                            Title = "hung v1",
+                            Text = "Started shooting one by one!",
+                            Duration = 3,
+                        })
+                    else
+                        game.StarterGui:SetCore("SendNotification", {
+                            Title = "hung v1",
+                            Text = "Select targets first!",
+                            Duration = 3,
+                        })
+                    end
+                else
+                    CollectModule.stopShooting()
+                    CollectModule.stopCollect()
+                    isShooting = false
                     isCollecting = false
+                    searchBtn.Text = "SEARCH"
                     shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Parts shot to targets!",
+                        Text = "Stopped!",
                         Duration = 3,
                     })
                     ResetModule.resetAll()
-                else
-                    searchBtn.Text = "SEARCH"
-                    isCollecting = false
-                    shootText.Text = "Shoot parts to target."
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "hung v1",
-                        Text = "Collect parts first or select targets!",
-                        Duration = 3,
-                    })
                 end
-            end
-            updateScrollCanvas()
+                updateScrollCanvas()
+            end)
         end)
 
         local backBtn = Instance.new("TextButton")
