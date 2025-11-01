@@ -985,7 +985,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v11",
+        Title = "hung v1",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
