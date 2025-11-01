@@ -231,10 +231,10 @@ local CollectModule = {}
 CollectModule.ringPartsEnabled = false
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
-    radius = 5, -- Reduced spread radius to minimize scattering
-    height = 30, -- Base height above player for floating
-    rotationSpeed = 0.5, -- Slower rotation to reduce erratic movement
-    attractionStrength = 30, -- Base velocity for close parts
+    radius = 0, -- Reduced spread radius to minimize scattering
+    height = 10, -- Base height above player for floating
+    rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
+    attractionStrength = 50, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
 
@@ -245,7 +245,7 @@ function CollectModule.retainPart(Part)
             return false -- Exclude player
         end
         -- Disable collision for all collected parts to prevent scattering
-        Part.CanCollide = false
+        Part.CanCollide = true
         -- Retain network ownership (now includes SetNetworkOwner)
         NetworkModule.RetainPart(Part)
         return true
@@ -502,8 +502,8 @@ function GUIModule.setupGUI()
     --// Main Frame
     frame = Instance.new("Frame")
     frame.Parent = gui
-    frame.Size = UDim2.new(0, 120, 0, 180)
-    frame.Position = UDim2.new(0.5, -60, 0.5, -90)
+    frame.Size = UDim2.new(0, 120, 0, 100) -- Initial smaller height
+    frame.Position = UDim2.new(0.5, -60, 0.5, -50)
     frame.BackgroundColor3 = Color3.new(0, 0, 0)
     frame.BackgroundTransparency = 0.4
     frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -551,6 +551,11 @@ function GUIModule.setupGUI()
 
     local function updateScrollCanvas()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+        -- Auto-fit frame height
+        local newHeight = math.max(100, layout.AbsoluteContentSize.Y + 42) -- Min height 100, + title 20 + footer 20 + padding
+        frame.Size = UDim2.new(0, 120, 0, newHeight)
+        -- Adjust position to center
+        frame.Position = UDim2.new(0.5, -60, 0.5, -newHeight / 2)
     end
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
 
@@ -628,7 +633,8 @@ function GUIModule.setupGUI()
     --// Minimize toggle
     minimize.MouseButton1Click:Connect(function()
         minimized = not minimized
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, 180)
+        local currentHeight = frame.Size.Y.Offset
+        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, currentHeight)
         local targetText = minimized and "+" or "-"
         TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
             Size = targetSize
@@ -674,7 +680,7 @@ function GUIModule.setupGUI()
         orbitTabBtn.Parent = tabFrame
         orbitTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
         orbitTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        orbitTabBtn.BackgroundTransparency = 0.4
+        orbitTabBtn.BackgroundTransparency = 0
         orbitTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         orbitTabBtn.BorderSizePixel = 1
         orbitTabBtn.Font = Enum.Font.Code
@@ -692,7 +698,7 @@ function GUIModule.setupGUI()
         shootTabBtn.Parent = tabFrame
         shootTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
         shootTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        shootTabBtn.BackgroundTransparency = 0.4
+        shootTabBtn.BackgroundTransparency = 0
         shootTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         shootTabBtn.BorderSizePixel = 1
         shootTabBtn.Font = Enum.Font.Code
@@ -704,6 +710,7 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildShootTab()
         end)
+        updateScrollCanvas()
     end
 
     function buildOrbitTab()
@@ -724,7 +731,7 @@ function GUIModule.setupGUI()
         pullBtn.Parent = scroll
         pullBtn.Size = UDim2.new(1, -10, 0, 20)
         pullBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        pullBtn.BackgroundTransparency = 0.4
+        pullBtn.BackgroundTransparency = 0
         pullBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         pullBtn.BorderSizePixel = 1
         pullBtn.Font = Enum.Font.Code
@@ -736,6 +743,7 @@ function GUIModule.setupGUI()
             pullText.Text = "Searching Parts..."
             pullBtn.Visible = false
             gatherStopBtn.Visible = true
+            updateScrollCanvas()
         end)
 
         local gatherStopBtn = Instance.new("TextButton")
@@ -743,7 +751,7 @@ function GUIModule.setupGUI()
         gatherStopBtn.Parent = scroll
         gatherStopBtn.Size = UDim2.new(1, -10, 0, 20)
         gatherStopBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        gatherStopBtn.BackgroundTransparency = 0.4
+        gatherStopBtn.BackgroundTransparency = 0
         gatherStopBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         gatherStopBtn.BorderSizePixel = 1
         gatherStopBtn.Font = Enum.Font.Code
@@ -814,7 +822,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0.4
+        backBtn.BackgroundTransparency = 0
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -826,6 +834,7 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildMainTab()
         end)
+        updateScrollCanvas()
     end
 
     function buildShootTab()
@@ -887,7 +896,7 @@ function GUIModule.setupGUI()
         findBtn.Parent = scroll
         findBtn.Size = UDim2.new(1, -10, 0, 20)
         findBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        findBtn.BackgroundTransparency = 0.4
+        findBtn.BackgroundTransparency = 0
         findBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         findBtn.BorderSizePixel = 1
         findBtn.Font = Enum.Font.Code
@@ -899,6 +908,7 @@ function GUIModule.setupGUI()
             shootText.Text = "Searching Parts..."
             findBtn.Visible = false
             actionButton.Visible = true
+            updateScrollCanvas()
         end)
 
         local actionButton = Instance.new("TextButton")
@@ -906,7 +916,7 @@ function GUIModule.setupGUI()
         actionButton.Parent = scroll
         actionButton.Size = UDim2.new(1, -10, 0, 20)
         actionButton.BackgroundColor3 = Color3.new(0, 0, 0)
-        actionButton.BackgroundTransparency = 0.4
+        actionButton.BackgroundTransparency = 0
         actionButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
         actionButton.BorderSizePixel = 1
         actionButton.Font = Enum.Font.Code
@@ -920,14 +930,15 @@ function GUIModule.setupGUI()
             if actionButton.Text == "SEARCH" then
                 CollectModule.startCollect()
                 
-                actionButton.Text = "SHOT"
-                shootButtonText = "SHOT"
+                actionButton.Text = "STOP"
+                shootButtonText = "STOP"
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
                     Text = "Collecting Parts!",
                     Duration = 3,
                 })
             else
+                CollectModule.stopCollect()
                 
                 if CollectModule.shootToTargets(selectedTargets) then
                     actionButton.Text = "SEARCH"
@@ -955,7 +966,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0.4
+        backBtn.BackgroundTransparency = 0
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -967,6 +978,7 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildMainTab()
         end)
+        updateScrollCanvas()
     end
 
     buildMainTab()
