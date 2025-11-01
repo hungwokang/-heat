@@ -488,6 +488,7 @@ local GUIModule = {}
 local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
 local footer -- To make it accessible in closure
 
+
 function GUIModule.setupGUI()
     setupBypass()
     initializeParts()
@@ -677,8 +678,8 @@ function GUIModule.setupGUI()
     end)
 
     -- Tab system
-    local orbitButtonText = "GATHER"
-    local shootButtonText = "GATHER"
+    local orbitButtonText = "SEARCH"
+    local shootButtonText = "SEARCH"
 
     local function clearTabContent()
         for _, child in pairs(scroll:GetChildren()) do
@@ -690,6 +691,7 @@ function GUIModule.setupGUI()
     end
 
     local function buildMainTab()
+        headerButton.Text = "PLAYER LIST"
         local tabFrame = Instance.new("Frame")
         tabFrame.Name = "MainTabFrame"
         tabFrame.Size = UDim2.new(1, 0, 0, 25)
@@ -702,44 +704,45 @@ function GUIModule.setupGUI()
         hLayout.Padding = UDim.new(0, 5)
         hLayout.Parent = tabFrame
 
-        local gatherBtn = Instance.new("TextButton")
-        gatherBtn.Name = "GatherTabBtn"
-        gatherBtn.Parent = tabFrame
-        gatherBtn.Size = UDim2.new(0.45, 0, 1, 0)
-        gatherBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        gatherBtn.BackgroundTransparency = 0.4
-        gatherBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        gatherBtn.BorderSizePixel = 1
-        gatherBtn.Font = Enum.Font.Code
-        gatherBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        gatherBtn.TextSize = 12
-        gatherBtn.Text = "GATHER"
-        gatherBtn.TextXAlignment = Enum.TextXAlignment.Center
-        gatherBtn.MouseButton1Click:Connect(function()
+        local orbitTabBtn = Instance.new("TextButton")
+        orbitTabBtn.Name = "OrbitTabBtn"
+        orbitTabBtn.Parent = tabFrame
+        orbitTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        orbitTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        orbitTabBtn.BackgroundTransparency = 0.4
+        orbitTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        orbitTabBtn.BorderSizePixel = 1
+        orbitTabBtn.Font = Enum.Font.Code
+        orbitTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        orbitTabBtn.TextSize = 12
+        orbitTabBtn.Text = "ORBIT"
+        orbitTabBtn.TextXAlignment = Enum.TextXAlignment.Center
+        orbitTabBtn.MouseButton1Click:Connect(function()
             clearTabContent()
-            buildGatherTab()
+            buildOrbitTab()
         end)
 
-        local shootBtn = Instance.new("TextButton")
-        shootBtn.Name = "ShootTabBtn"
-        shootBtn.Parent = tabFrame
-        shootBtn.Size = UDim2.new(0.45, 0, 1, 0)
-        shootBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        shootBtn.BackgroundTransparency = 0.4
-        shootBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        shootBtn.BorderSizePixel = 1
-        shootBtn.Font = Enum.Font.Code
-        shootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootBtn.TextSize = 12
-        shootBtn.Text = "SHOOT"
-        shootBtn.TextXAlignment = Enum.TextXAlignment.Center
-        shootBtn.MouseButton1Click:Connect(function()
+        local shootTabBtn = Instance.new("TextButton")
+        shootTabBtn.Name = "ShootTabBtn"
+        shootTabBtn.Parent = tabFrame
+        shootTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        shootTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        shootTabBtn.BackgroundTransparency = 0.4
+        shootTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        shootTabBtn.BorderSizePixel = 1
+        shootTabBtn.Font = Enum.Font.Code
+        shootTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootTabBtn.TextSize = 12
+        shootTabBtn.Text = "SHOOT"
+        shootTabBtn.TextXAlignment = Enum.TextXAlignment.Center
+        shootTabBtn.MouseButton1Click:Connect(function()
             clearTabContent()
             buildShootTab()
         end)
     end
 
-    function buildGatherTab()
+    function buildOrbitTab()
+        headerButton.Text = "PLAYER LIST"
         local pullText = Instance.new("TextLabel")
         pullText.Name = "PullText"
         pullText.Parent = scroll
@@ -750,6 +753,25 @@ function GUIModule.setupGUI()
         pullText.TextSize = 8
         pullText.Text = "Pull unanchored loose parts."
         pullText.TextXAlignment = Enum.TextXAlignment.Center
+
+        local pullBtn = Instance.new("TextButton")
+        pullBtn.Name = "PullBtn"
+        pullBtn.Parent = scroll
+        pullBtn.Size = UDim2.new(1, -10, 0, 20)
+        pullBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        pullBtn.BackgroundTransparency = 0.4
+        pullBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        pullBtn.BorderSizePixel = 1
+        pullBtn.Font = Enum.Font.Code
+        pullBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        pullBtn.TextSize = 8
+        pullBtn.Text = "PULL"
+        pullBtn.TextXAlignment = Enum.TextXAlignment.Center
+        pullBtn.MouseButton1Click:Connect(function()
+            pullText.Text = "Searching Parts..."
+            pullBtn.Visible = false
+            gatherStopBtn.Visible = true
+        end)
 
         local gatherStopBtn = Instance.new("TextButton")
         gatherStopBtn.Name = "GatherStopBtn"
@@ -764,6 +786,7 @@ function GUIModule.setupGUI()
         gatherStopBtn.TextSize = 12
         gatherStopBtn.Text = orbitButtonText
         gatherStopBtn.TextXAlignment = Enum.TextXAlignment.Center
+        gatherStopBtn.Visible = false
 
         gatherStopBtn.MouseButton1Click:Connect(function()
             pcall(function()
@@ -778,7 +801,7 @@ function GUIModule.setupGUI()
                 end
 
                 local root = character.HumanoidRootPart
-                if gatherStopBtn.Text == "GATHER" then
+                if gatherStopBtn.Text == "SEARCH" then
                     local partsToOrbit = {}
                     for _, obj in pairs(workspace:GetDescendants()) do
                         if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
@@ -809,8 +832,8 @@ function GUIModule.setupGUI()
                     
                     ResetModule.resetAll()
 
-                    orbitButtonText = "GATHER"
-                    gatherStopBtn.Text = "GATHER"
+                    orbitButtonText = "SEARCH"
+                    gatherStopBtn.Text = "SEARCH"
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
@@ -841,6 +864,7 @@ function GUIModule.setupGUI()
     end
 
     function buildShootTab()
+        headerButton.Text = "CHOOSE PLAYER"
         local shootText = Instance.new("TextLabel")
         shootText.Name = "ShootText"
         shootText.Parent = scroll
@@ -851,6 +875,25 @@ function GUIModule.setupGUI()
         shootText.TextSize = 8
         shootText.Text = "Shoot parts to target."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
+
+        local findBtn = Instance.new("TextButton")
+        findBtn.Name = "FindBtn"
+        findBtn.Parent = scroll
+        findBtn.Size = UDim2.new(1, -10, 0, 20)
+        findBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        findBtn.BackgroundTransparency = 0.4
+        findBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        findBtn.BorderSizePixel = 1
+        findBtn.Font = Enum.Font.Code
+        findBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        findBtn.TextSize = 8
+        findBtn.Text = "FIND"
+        findBtn.TextXAlignment = Enum.TextXAlignment.Center
+        findBtn.MouseButton1Click:Connect(function()
+            shootText.Text = "Searching Parts..."
+            findBtn.Visible = false
+            actionButton.Visible = true
+        end)
 
         local actionButton = Instance.new("TextButton")
         actionButton.Name = "ActionButton"
@@ -865,9 +908,10 @@ function GUIModule.setupGUI()
         actionButton.TextSize = 12
         actionButton.Text = shootButtonText
         actionButton.TextXAlignment = Enum.TextXAlignment.Center
+        actionButton.Visible = false
 
         actionButton.MouseButton1Click:Connect(function()
-            if actionButton.Text == "GATHER" then
+            if actionButton.Text == "SEARCH" then
                 CollectModule.startCollect()
                 
                 actionButton.Text = "SHOT"
@@ -880,8 +924,8 @@ function GUIModule.setupGUI()
             else
                 
                 if CollectModule.shootToTargets(selectedTargets) then
-                    actionButton.Text = "GATHER"
-                    shootButtonText = "GATHER"
+                    actionButton.Text = "SEARCH"
+                    shootButtonText = "SEARCH"
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Parts shot to targets!",
@@ -889,8 +933,8 @@ function GUIModule.setupGUI()
                     })
                     ResetModule.resetAll()
                 else
-                    actionButton.Text = "GATHER"
-                    shootButtonText = "GATHER"
+                    actionButton.Text = "SEARCH"
+                    shootButtonText = "SEARCH"
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Collect parts first or select targets!",
