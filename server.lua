@@ -232,7 +232,7 @@ CollectModule.ringPartsEnabled = false
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
-    height = 10, -- Base height above player for floating
+    height = 20, -- Base height above player for floating
     rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
     attractionStrength = 50, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
@@ -317,8 +317,8 @@ collectConnection = RunService.Heartbeat:Connect(function()
                 if distance > 0 then
                     local direction = directionVector.Unit
                     -- More aggressive pull for far distances: higher multiplier and cap
-                    local speed = CollectModule.config.attractionStrength + (distance * 20) -- Increased multiplier for stronger far pull
-                    speed = math.min(speed, 1500) -- Higher cap for very far parts
+                    local speed = CollectModule.config.attractionStrength + (distance * 50) -- Increased multiplier for stronger far pull 20
+                    speed = math.min(speed, 5000) -- Higher cap for very far parts 1500
                     -- Stronger damping when close to prevent overshoot and reverse movement
                     if distance < 10 then
                         speed = speed * 0.4
@@ -328,7 +328,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     end
                     -- Additional anti-reverse: if moving away, boost pull slightly
                     local currentVelDot = part.Velocity:Dot(direction)
-                    if currentVelDot < 0 and distance < 20 then
+                    if currentVelDot < 0 and distance < 500 then -- 20
                         speed = speed * 1.5
                     end
 
@@ -336,7 +336,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     part.Velocity = direction * speed
 
                     -- Ensure non-collidable and unanchored
-                    part.CanCollide = false
+                    part.CanCollide = true
                     part.Anchored = false
                 else
                     -- If already at target, zero velocity to stop
@@ -724,7 +724,7 @@ function GUIModule.setupGUI()
         pullText.Name = "PullText"
         pullText.Parent = scroll
         pullText.Size = UDim2.new(1, -10, 0, 15)
-        pullText.BackgroundTransparency = 0
+        pullText.BackgroundTransparency = 1
         pullText.Font = Enum.Font.Code
         pullText.TextColor3 = Color3.new(1, 1, 1)
         pullText.TextSize = 8
@@ -872,7 +872,7 @@ function GUIModule.setupGUI()
         shootText.Name = "ShootText"
         shootText.Parent = scroll
         shootText.Size = UDim2.new(1, -10, 0, 15)
-        shootText.BackgroundTransparency = 0
+        shootText.BackgroundTransparency = 1
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
         shootText.TextSize = 8
