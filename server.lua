@@ -547,7 +547,7 @@ function GUIModule.setupGUI()
     layout.Parent = scroll
     layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Padding = UDim.new(0, 5)
+    layout.Padding = UDim.new(0, 8)
 
     local function updateScrollCanvas()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
@@ -625,7 +625,7 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-        playerScroll.Size = UDim2.new(1, -10, 0, math.max(60, playerLayout.AbsoluteContentSize.Y + 5))
+        playerScroll.Size = UDim2.new(1, -10, 0, math.max(60, playerLayout.AbsoluteContentSize.Y + 4))
     end
 
     local function connectPlayers()
@@ -660,18 +660,32 @@ function GUIModule.setupGUI()
     end)
 
     -- Tab system
-    local orbitState = {text = "SEARCH", active = false, label = Instance.new("TextLabel")}
-    local shootState = {text = "SEARCH", active = false, label = Instance.new("TextLabel")}
-
     local function clearTabContent()
         for _, child in pairs(scroll:GetChildren()) do
             if child.Name ~= "ScrollLayout" and child.Name ~= "PlayerListScroll" then
                 child:Destroy()
             end
         end
+        updateScrollCanvas()
     end
 
-    local function createToggleButton(parent, state, onStart, onStop, onTextChange)
+    local function addMargins(parent)
+        local topMargin = Instance.new("Frame")
+        topMargin.Name = "TopMargin"
+        topMargin.Size = UDim2.new(1, 0, 0, 10)
+        topMargin.BackgroundTransparency = 1
+        topMargin.Parent = parent
+
+        return function addBottom()
+            local bottomMargin = Instance.new("Frame")
+            bottomMargin.Name = "BottomMargin"
+            bottomMargin.Size = UDim2.new(1, 0, 0, 10)
+            bottomMargin.BackgroundTransparency = 1
+            bottomMargin.Parent = parent
+        end
+    end
+
+    local function createToggleButton(parent, state, onStart, onStop)
         local btn = Instance.new("TextButton")
         btn.Name = state.text .. "Btn"
         btn.Parent = parent
@@ -688,17 +702,24 @@ function GUIModule.setupGUI()
 
         btn.MouseButton1Click:Connect(function()
             if not state.active then
-                pcall(onStart)
-                state.active = true
-                state.text = onTextChange or "STOP"
-                btn.Text = state.text
-                if state.label then state.label.Text = "Searching Parts..." end
+                state.label.Text = "Searching Parts..."
+                local p_success, p_result = pcall(onStart)
+                if p_success and p_result == true then
+                    state.active = true
+                    state.text = "STOP"
+                    btn.Text = state.text
+                else
+                    state.label.Text = state.defaultLabelText
+                    if not p_success then
+                        warn("Error in onStart: " .. tostring(p_result))
+                    end
+                end
             else
+                state.label.Text = state.defaultLabelText
                 pcall(onStop)
                 state.active = false
                 state.text = "SEARCH"
                 btn.Text = state.text
-                if state.label then state.label.Text = state.label.Name end
             end
         end)
         return btn
@@ -724,12 +745,9 @@ function GUIModule.setupGUI()
 
     local function buildMainTab()
         if playerScroll then playerScroll.Visible = false end
+        clearTabContent()
 
-        local marginFrame = Instance.new("Frame")
-        marginFrame.Name = "MarginFrame"
-        marginFrame.Size = UDim2.new(1, 0, 0, 10)
-        marginFrame.BackgroundTransparency = 1
-        marginFrame.Parent = scroll
+        local addBottom = addMargins(scroll)()
 
         local tabFrame = Instance.new("Frame")
         tabFrame.Name = "MainTabFrame"
@@ -772,10 +790,15 @@ function GUIModule.setupGUI()
         shootBtn.Text = "SHOOT"
         shootBtn.TextXAlignment = Enum.TextXAlignment.Center
         shootBtn.MouseButton1Click:Connect(function() clearTabContent() buildShootTab() end)
+
+        addBottom()
     end
 
     function buildOrbitTab()
         if playerScroll then playerScroll.Visible = false end
+        clearTabContent()
+
+        local addBottom = addMargins(scroll)
 
         local pullText = Instance.new("TextLabel")
         pullText.Name = "PullText"
@@ -787,13 +810,19 @@ function GUIModule.setupGUI()
         pullText.TextSize = 8
         pullText.Text = "Pull unanchored loose parts."
         pullText.TextXAlignment = Enum.TextXAlignment.Center
-        orbitState.label = pullText
+
+        local orbitState = {
+            text = "SEARCH",
+            active = false,
+            label = pullText,
+            defaultLabelText = pullText.Text
+        }
 
         createToggleButton(scroll, orbitState, function()
             local character = LocalPlayer.Character
             if not character or not character:FindFirstChild("HumanoidRootPart") then
                 game.StarterGui:SetCore("SendNotification", {Title = "Error", Text = "No character found", Duration = 3})
-                return
+                return false
             end
             local root = character.HumanoidRootPart
             local partsToOrbit = {}
@@ -804,27 +833,33 @@ function GUIModule.setupGUI()
             end
             if #partsToOrbit == 0 then
                 game.StarterGui:SetCore("SendNotification", {Title = "Info", Text = "No unanchored parts found", Duration = 3})
-                orbitState.active = false
-                orbitState.text = "SEARCH"
-                pullText.Text = "Pull unanchored loose parts."
-                return
+                return false
             end
-            for _, part in ipairs(partsToOrbit) do NetworkModule.RetainPart(part) end
+            for _, part in ipairs(partsToOrbit) do
+                NetworkModule.RetainPart(part)
+            end
             OrbitModule.startOrbit(partsToOrbit, root)
             game.StarterGui:SetCore("SendNotification", {
                 Title = "hung v1",
                 Text = #partsToOrbit .. " unanchored parts pulled and orbiting above you",
                 Duration = 4,
             })
+            return true
         end, function()
             OrbitModule.stopOrbit()
             game.StarterGui:SetCore("SendNotification", {Title = "hung v1", Text = "Orbit stopped!", Duration = 3})
         end)
 
         createBackButton(scroll, function() clearTabContent() buildMainTab() end)
+
+        addBottom()
     end
 
     function buildShootTab()
+        clearTabContent()
+
+        local addBottom = addMargins(scroll)
+
         local selectLabel = Instance.new("TextLabel")
         selectLabel.Name = "SelectPlayerLabel"
         selectLabel.Parent = scroll
@@ -851,7 +886,7 @@ function GUIModule.setupGUI()
             playerLayout.Parent = playerScroll
             playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
             playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            playerLayout.Padding = UDim.new(0, 1)
+            playerLayout.Padding = UDim.new(0, 2)
 
             playerLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 if playerScroll then
@@ -873,11 +908,18 @@ function GUIModule.setupGUI()
         shootText.TextSize = 8
         shootText.Text = "Shoot parts to target."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
-        shootState.label = shootText
+
+        local shootState = {
+            text = "SEARCH",
+            active = false,
+            label = shootText,
+            defaultLabelText = shootText.Text
+        }
 
         createToggleButton(scroll, shootState, function()
             CollectModule.startCollect()
             game.StarterGui:SetCore("SendNotification", {Title = "hung v1", Text = "Collecting Parts!", Duration = 3})
+            return true
         end, function()
             local success = CollectModule.shootToTargets(selectedTargets)
             if success then
@@ -885,16 +927,15 @@ function GUIModule.setupGUI()
                 game.StarterGui:SetCore("SendNotification", {Title = "hung v1", Text = "Parts shot to targets!", Duration = 3})
             else
                 game.StarterGui:SetCore("SendNotification", {Title = "hung v1", Text = "Collect parts first or select targets!", Duration = 3})
-                shootState.active = false
-                shootState.text = "SEARCH"
             end
         end)
 
         createBackButton(scroll, function() clearTabContent() buildMainTab() end)
+
+        addBottom()
     end
 
     buildMainTab()
-    frame.Size = UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 42)
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
