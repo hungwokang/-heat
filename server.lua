@@ -683,7 +683,7 @@ function GUIModule.setupGUI()
         local orbitTabBtn = Instance.new("TextButton")
         orbitTabBtn.Name = "OrbitTabBtn"
         orbitTabBtn.Parent = tabFrame
-        orbitTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        orbitTabBtn.Size = UDim2.new(0.3, 0, 1, 0)
         orbitTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
         orbitTabBtn.BackgroundTransparency = 0.6
         orbitTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -701,7 +701,7 @@ function GUIModule.setupGUI()
         local shootTabBtn = Instance.new("TextButton")
         shootTabBtn.Name = "ShootTabBtn"
         shootTabBtn.Parent = tabFrame
-        shootTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        shootTabBtn.Size = UDim2.new(0.3, 0, 1, 0)
         shootTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
         shootTabBtn.BackgroundTransparency = 0.6
         shootTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -714,6 +714,24 @@ function GUIModule.setupGUI()
         shootTabBtn.MouseButton1Click:Connect(function()
             clearTabContent()
             buildShootTab()
+        end)
+
+        local kickTabBtn = Instance.new("TextButton")
+        kickTabBtn.Name = "KickTabBtn"
+        kickTabBtn.Parent = tabFrame
+        kickTabBtn.Size = UDim2.new(0.3, 0, 1, 0)
+        kickTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        kickTabBtn.BackgroundTransparency = 0.6
+        kickTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        kickTabBtn.BorderSizePixel = 1
+        kickTabBtn.Font = Enum.Font.Code
+        kickTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        kickTabBtn.TextSize = 12
+        kickTabBtn.Text = "KICK"
+        kickTabBtn.TextXAlignment = Enum.TextXAlignment.Center
+        kickTabBtn.MouseButton1Click:Connect(function()
+            clearTabContent()
+            buildKickTab()
         end)
         updateScrollCanvas()
     end
@@ -951,6 +969,123 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
+    function buildKickTab()
+        clearTabContent()
+        --// Header (Select Target)
+        local headerButton = Instance.new("TextButton")
+        headerButton.Parent = scroll
+        headerButton.Name = "PlayerListHeader"
+        headerButton.Size = UDim2.new(1, -10, 0, 20)
+        headerButton.BackgroundTransparency = 1
+        headerButton.BorderSizePixel = 0
+        headerButton.Font = Enum.Font.Code
+        headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+        headerButton.TextSize = 12
+        headerButton.Text = "SELECT TARGET"
+        headerButton.TextXAlignment = Enum.TextXAlignment.Center
+
+        --// Player list container
+        playerScroll = Instance.new("ScrollingFrame")
+        playerScroll.Name = "PlayerListScroll"
+        playerScroll.Parent = scroll
+        playerScroll.Size = UDim2.new(1, -10, 0, 60)
+        playerScroll.Position = UDim2.new(0, 5, 0, 0)
+        playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
+        playerScroll.BackgroundTransparency = 0.6
+        playerScroll.BorderSizePixel = 0
+        playerScroll.ScrollBarThickness = 2
+        playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+        playerLayout = Instance.new("UIListLayout")
+        playerLayout.Parent = playerScroll
+        playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        playerLayout.Padding = UDim.new(0, 1)
+
+        GUIModule.updatePlayerList()
+
+        --// Toggle list visibility when clicking header
+        headerButton.MouseButton1Click:Connect(function()
+            listHidden = not listHidden
+            playerScroll.Visible = not listHidden
+            updateScrollCanvas()
+        end)
+
+        playerScroll.Visible = true
+
+        local kickText = Instance.new("TextLabel")
+        kickText.Name = "KickText"
+        kickText.Parent = scroll
+        kickText.Size = UDim2.new(1, -10, 0, 15)
+        kickText.BackgroundTransparency = 1
+        kickText.Font = Enum.Font.Code
+        kickText.TextColor3 = Color3.new(1, 1, 1)
+        kickText.TextSize = 8
+        kickText.Text = "Kick player"
+        kickText.TextXAlignment = Enum.TextXAlignment.Center
+
+        local kickBtn = Instance.new("TextButton")
+        kickBtn.Name = "KickBtn"
+        kickBtn.Parent = scroll
+        kickBtn.Size = UDim2.new(1, -10, 0, 20)
+        kickBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        kickBtn.BackgroundTransparency = 0.6
+        kickBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        kickBtn.BorderSizePixel = 1
+        kickBtn.Font = Enum.Font.Code
+        kickBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        kickBtn.TextSize = 12
+        kickBtn.Text = "KICK"
+        kickBtn.TextXAlignment = Enum.TextXAlignment.Center
+        kickBtn.MouseButton1Click:Connect(function()
+            local kickedCount = 0
+            for name, player in pairs(selectedTargets) do
+                if player and player.Character then
+                    pcall(function()
+                        player.Character:Destroy()
+                        ESPModule.removeESP(player)
+                        kickedCount = kickedCount + 1
+                    end)
+                end
+            end
+            if kickedCount > 0 then
+                selectedTargets = {}
+                GUIModule.updatePlayerList()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "hung v1",
+                    Text = kickedCount .. " player(s) kicked!",
+                    Duration = 3,
+                })
+            else
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "hung v1",
+                    Text = "Select targets first!",
+                    Duration = 3,
+                })
+            end
+            updateScrollCanvas()
+        end)
+
+        local backBtn = Instance.new("TextButton")
+        backBtn.Name = "BackBtn"
+        backBtn.Parent = scroll
+        backBtn.Size = UDim2.new(1, -10, 0, 20)
+        backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        backBtn.BackgroundTransparency = 0.6
+        backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        backBtn.BorderSizePixel = 1
+        backBtn.Font = Enum.Font.Code
+        backBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        backBtn.TextSize = 12
+        backBtn.Text = "BACK"
+        backBtn.TextXAlignment = Enum.TextXAlignment.Center
+        backBtn.MouseButton1Click:Connect(function()
+            clearTabContent()
+            buildMainTab()
+        end)
+        updateScrollCanvas()
+    end
+
     buildMainTab()
 
     --// Notification
@@ -963,4 +1098,3 @@ end
 
 --// Initialize
 GUIModule.setupGUI()
-
