@@ -61,7 +61,7 @@ local OrbitModule = {}
 OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
 OrbitModule.orbitSpeed = 0.1 -- radians per second
-OrbitModule.orbitRadius = 30
+OrbitModule.orbitRadius = 0
 OrbitModule.orbitHeight = 10
 
 function OrbitModule.startOrbit(partsToOrbit, root)
@@ -233,11 +233,11 @@ CollectModule.isShooting = false
 CollectModule.shootingConnection = nil
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
-    radius = 50, -- Reduced spread radius to minimize scattering
+    radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
-    rotationSpeed = 0, -- Slower rotation to reduce erratic movement
+    rotationSpeed = 0.01, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- 30 Base velocity for close parts
-    shootSpeed = 500, -- Increased speed for shooting parts to target
+    shootSpeed = 1000, -- Increased speed for shooting parts to target
 }
 
 -- Filters parts to include in the collection (unanchored only)
@@ -329,20 +329,20 @@ collectConnection = RunService.Heartbeat:Connect(function()
                         speed = speed * 0.1
                     end
                     -- Additional anti-reverse: if moving away, boost pull slightly
-                    local currentVelDot = part.Velocity:Dot(direction)
+                    local currentVelDot = part.AssemblyLinearVelocity:Dot(direction)
                     if currentVelDot < 0 and distance < 20 then -- 20
                         speed = speed * 1.5
                     end
 
                     -- Apply real velocity (replicates to all clients, allows collision)
-                    part.Velocity = direction * speed
+                    part.AssemblyLinearVelocity = direction * speed
 
                     -- Ensure non-collidable and unanchored
                     part.CanCollide = false
                     part.Anchored = false
                 else
                     -- If already at target, zero velocity to stop
-                    part.Velocity = Vector3.new(0, 0, 0)
+                    part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                 end
             end
         end
@@ -358,7 +358,7 @@ function CollectModule.stopCollect()
     -- Reset velocities on parts
     for _, part in pairs(CollectModule.parts) do
         if part and part.Parent then
-            part.Velocity = Vector3.new(0, 0, 0)
+            part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
             part.CanCollide = true -- Reset collision
         end
     end
@@ -399,8 +399,9 @@ function CollectModule.startShooting(selectedTargets)
                 
                 local target = validTargets[math.random(1, #validTargets)]
                 local direction = (target.Position - part.Position).Unit
-                part.Velocity = direction * CollectModule.config.shootSpeed
+                part.AssemblyLinearVelocity = direction * CollectModule.config.shootSpeed
                 part.CanCollide = true
+                part.Anchored = false
             end
 
             lastShotTime = now
@@ -991,7 +992,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v1",
+        Title = "hung v11",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
