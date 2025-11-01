@@ -233,7 +233,7 @@ CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
-    rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
+    rotationSpeed = 0.01, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
@@ -317,7 +317,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                 if distance > 0 then
                     local direction = directionVector.Unit
                     -- More aggressive pull for far distances: higher multiplier and cap
-                    local speed = CollectModule.config.attractionStrength + (distance * 50) -- Increased multiplier for stronger far pull 20
+                    local speed = CollectModule.config.attractionStrength + (distance * 20) -- Increased multiplier for stronger far pull 20
                     speed = math.min(speed, 1500) -- Higher cap for very far parts 1500
                     -- Stronger damping when close to prevent overshoot and reverse movement
                     if distance < 10 then
