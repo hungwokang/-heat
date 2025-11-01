@@ -233,11 +233,11 @@ CollectModule.isShooting = false
 CollectModule.shootingConnection = nil
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
-    radius = 0, -- Reduced spread radius to minimize scattering
+    radius = 50, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
     rotationSpeed = 0, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- 30 Base velocity for close parts
-    shootSpeed = 300, -- Speed for shooting parts to target
+    shootSpeed = 500, -- Increased speed for shooting parts to target
 }
 
 -- Filters parts to include in the collection (unanchored only)
@@ -391,6 +391,12 @@ function CollectModule.startShooting(selectedTargets)
 
             local part = table.remove(CollectModule.parts, 1)
             if part and part.Parent then
+                -- Remove from network base parts to prevent ongoing control (CanCollide=false every frame)
+                local netIndex = table.find(NetworkModule.BaseParts, part)
+                if netIndex then
+                    table.remove(NetworkModule.BaseParts, netIndex)
+                end
+                
                 local target = validTargets[math.random(1, #validTargets)]
                 local direction = (target.Position - part.Position).Unit
                 part.Velocity = direction * CollectModule.config.shootSpeed
