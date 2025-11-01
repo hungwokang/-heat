@@ -62,7 +62,7 @@ OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
 OrbitModule.orbitSpeed = 0.1 -- radians per second
 OrbitModule.orbitRadius = 0
-OrbitModule.orbitHeight = 20
+OrbitModule.orbitHeight = 10
 
 function OrbitModule.startOrbit(partsToOrbit, root)
     if #partsToOrbit == 0 then return end
@@ -234,7 +234,7 @@ CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
     rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
-    attractionStrength = 50, -- 30 Base velocity for close parts
+    attractionStrength = 30, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
 
@@ -317,8 +317,8 @@ collectConnection = RunService.Heartbeat:Connect(function()
                 if distance > 0 then
                     local direction = directionVector.Unit
                     -- More aggressive pull for far distances: higher multiplier and cap
-                    local speed = CollectModule.config.attractionStrength + (distance * 30) -- Increased multiplier for stronger far pull 20
-                    speed = math.min(speed, 3000) -- Higher cap for very far parts 1500
+                    local speed = CollectModule.config.attractionStrength + (distance * 50) -- Increased multiplier for stronger far pull 20
+                    speed = math.min(speed, 1500) -- Higher cap for very far parts 1500
                     -- Stronger damping when close to prevent overshoot and reverse movement
                     if distance < 10 then
                         speed = speed * 0.4
@@ -328,7 +328,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     end
                     -- Additional anti-reverse: if moving away, boost pull slightly
                     local currentVelDot = part.Velocity:Dot(direction)
-                    if currentVelDot < 0 and distance < 50 then -- 20
+                    if currentVelDot < 0 and distance < 20 then -- 20
                         speed = speed * 1.5
                     end
 
@@ -955,7 +955,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v1",
+        Title = "hung v11",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
