@@ -746,30 +746,9 @@ function GUIModule.setupGUI()
         searchBtn.TextSize = 12
         searchBtn.Text = "SEARCH"
         searchBtn.TextXAlignment = Enum.TextXAlignment.Center
+
+        local isOrbiting = false
         searchBtn.MouseButton1Click:Connect(function()
-            pullText.Text = "Searching Parts..."
-            searchBtn.Text = "STOP"
-            searchBtn.MouseButton1Click:Disconnect()
-            searchBtn.MouseButton1Click:Connect(gatherStopBtn.MouseButton1Click) -- Reuse the stop function
-            updateScrollCanvas()
-        end)
-
-        local gatherStopBtn = Instance.new("TextButton")
-        gatherStopBtn.Name = "GatherStopBtn"
-        gatherStopBtn.Parent = scroll
-        gatherStopBtn.Size = UDim2.new(1, -10, 0, 20)
-        gatherStopBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        gatherStopBtn.BackgroundTransparency = 0
-        gatherStopBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        gatherStopBtn.BorderSizePixel = 1
-        gatherStopBtn.Font = Enum.Font.Code
-        gatherStopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        gatherStopBtn.TextSize = 12
-        gatherStopBtn.Text = "STOP"
-        gatherStopBtn.TextXAlignment = Enum.TextXAlignment.Center
-        gatherStopBtn.Visible = false
-
-        gatherStopBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local character = LocalPlayer.Character
                 if not character or not character:FindFirstChild("HumanoidRootPart") then
@@ -782,7 +761,8 @@ function GUIModule.setupGUI()
                 end
 
                 local root = character.HumanoidRootPart
-                if searchBtn.Text == "SEARCH" then
+                if not isOrbiting then
+                    pullText.Text = "Searching Parts..."
                     local partsToOrbit = {}
                     for _, obj in pairs(workspace:GetDescendants()) do
                         if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
@@ -796,12 +776,13 @@ function GUIModule.setupGUI()
                             Text = "No unanchored parts found",
                             Duration = 3,
                         })
+                        pullText.Text = "Pull unanchored loose parts."
                         return
                     end
 
                     OrbitModule.startOrbit(partsToOrbit, root)
 
-                    orbitButtonText = "STOP"
+                    isOrbiting = true
                     searchBtn.Text = "STOP"
 
                     game.StarterGui:SetCore("SendNotification", {
@@ -810,19 +791,11 @@ function GUIModule.setupGUI()
                         Duration = 4,
                     })
                 else
-                    
                     ResetModule.resetAll()
 
-                    orbitButtonText = "SEARCH"
+                    isOrbiting = false
                     searchBtn.Text = "SEARCH"
-                    searchBtn.MouseButton1Click:Disconnect()
-                    searchBtn.MouseButton1Click:Connect(function()
-                        pullText.Text = "Searching Parts..."
-                        searchBtn.Text = "STOP"
-                        searchBtn.MouseButton1Click:Disconnect()
-                        searchBtn.MouseButton1Click:Connect(gatherStopBtn.MouseButton1Click)
-                        updateScrollCanvas()
-                    end)
+                    pullText.Text = "Pull unanchored loose parts."
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
@@ -921,15 +894,25 @@ function GUIModule.setupGUI()
         searchBtn.TextSize = 12
         searchBtn.Text = "SEARCH"
         searchBtn.TextXAlignment = Enum.TextXAlignment.Center
+
+        local isCollecting = false
         searchBtn.MouseButton1Click:Connect(function()
-            shootText.Text = "Searching Parts..."
-            searchBtn.Text = "SHOT"
-            searchBtn.MouseButton1Click:Disconnect()
-            searchBtn.MouseButton1Click:Connect(function()
+            if not isCollecting then
+                shootText.Text = "Searching Parts..."
+                CollectModule.startCollect()
+                isCollecting = true
+                searchBtn.Text = "SHOT"
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "hung v1",
+                    Text = "Collecting Parts!",
+                    Duration = 3,
+                })
+            else
                 CollectModule.stopCollect()
                 if CollectModule.shootToTargets(selectedTargets) then
                     searchBtn.Text = "SEARCH"
-                    shootButtonText = "SEARCH"
+                    isCollecting = false
+                    shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Parts shot to targets!",
@@ -938,73 +921,47 @@ function GUIModule.setupGUI()
                     ResetModule.resetAll()
                 else
                     searchBtn.Text = "SEARCH"
-                    shootButtonText = "SEARCH"
+                    isCollecting = false
+                    shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Collect parts first or select targets!",
                         Duration = 3,
                     })
                 end
-                searchBtn.MouseButton1Click:Disconnect()
-                searchBtn.MouseButton1Click:Connect(function()
-                    shootText.Text = "Searching Parts..."
-                    searchBtn.Text = "SHOT"
-                    CollectModule.startCollect()
-                    shootButtonText = "SHOT"
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "hung v1",
-                        Text = "Collecting Parts!",
-                        Duration = 3,
-                    })
-                    searchBtn.MouseButton1Click:Disconnect()
-                    searchBtn.MouseButton1Click:Connect(function()
-                        CollectModule.stopCollect()
-                        if CollectModule.shootToTargets(selectedTargets) then
-                            searchBtn.Text = "SEARCH"
-                            shootButtonText = "SEARCH"
-                            game.StarterGui:SetCore("SendNotification", {
-                                Title = "hung v1",
-                                Text = "Parts shot to targets!",
-                                Duration = 3,
-                            })
-                            ResetModule.resetAll()
-                        else
-                            searchBtn.Text = "SEARCH"
-                            shootButtonText = "SEARCH"
-                            game.StarterGui:SetCore("SendNotification", {
-                                Title = "hung v1",
-                                Text = "Collect parts first or select targets!",
-                                Duration = 3,
-                            })
-                        end
-                        searchBtn.MouseButton1Click:Disconnect()
-                        searchBtn.MouseButton1Click:Connect(function()
-                            shootText.Text = "Searching Parts..."
-                            searchBtn.Text = "SHOT"
-                            CollectModule.startCollect()
-                            shootButtonText = "SHOT"
-                            game.StarterGui:SetCore("SendNotification", {
-                                Title = "hung v1",
-                                Text = "Collecting Parts!",
-                                Duration = 3,
-                            })
-                            searchBtn.MouseButton1Click:Disconnect()
-                            searchBtn.MouseButton1Click:Connect(function()
-                                CollectModule.stopCollect()
-                                if CollectModule.shootToTargets(selectedTargets) then
-                                    searchBtn.Text = "SEARCH"
-                                    shootButtonText = "SEARCH"
-                                    game.StarterGui:SetCore("SendNotification", {
-                                        Title = "hung v1",
-                                        Text = "Parts shot to targets!",
-                                        Duration = 3,
-                                    })
-                                    ResetModule.resetAll()
-                                else
-                                    searchBtn.Text = "SEARCH"
-                                    shootButtonText = "SEARCH"
-                                    game.StarterGui:SetCore("SendNotification", {
-                                        Title = "hung
+            end
+            updateScrollCanvas()
+        end)
+
+        local backBtn = Instance.new("TextButton")
+        backBtn.Name = "BackBtn"
+        backBtn.Parent = scroll
+        backBtn.Size = UDim2.new(1, -10, 0, 20)
+        backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        backBtn.BackgroundTransparency = 0
+        backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        backBtn.BorderSizePixel = 1
+        backBtn.Font = Enum.Font.Code
+        backBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        backBtn.TextSize = 12
+        backBtn.Text = "BACK"
+        backBtn.TextXAlignment = Enum.TextXAlignment.Center
+        backBtn.MouseButton1Click:Connect(function()
+            clearTabContent()
+            buildMainTab()
+        end)
+        updateScrollCanvas()
+    end
+
+    buildMainTab()
+
+    --// Notification
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "hung v1",
+        Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
+        Duration = 4,
+    })
+end
 
 --// Initialize
 GUIModule.setupGUI()
