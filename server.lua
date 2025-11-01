@@ -317,8 +317,8 @@ collectConnection = RunService.Heartbeat:Connect(function()
                 if distance > 0 then
                     local direction = directionVector.Unit
                     -- More aggressive pull for far distances: higher multiplier and cap
-                    local speed = CollectModule.config.attractionStrength + (distance * 50) -- Increased multiplier for stronger far pull 20
-                    speed = math.min(speed, 5000) -- Higher cap for very far parts 1500
+                    local speed = CollectModule.config.attractionStrength + (distance * 30) -- Increased multiplier for stronger far pull 20
+                    speed = math.min(speed, 2000) -- Higher cap for very far parts 1500
                     -- Stronger damping when close to prevent overshoot and reverse movement
                     if distance < 10 then
                         speed = speed * 0.4
@@ -328,7 +328,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     end
                     -- Additional anti-reverse: if moving away, boost pull slightly
                     local currentVelDot = part.Velocity:Dot(direction)
-                    if currentVelDot < 0 and distance < 500 then -- 20
+                    if currentVelDot < 0 and distance < 30 then -- 20
                         speed = speed * 1.5
                     end
 
