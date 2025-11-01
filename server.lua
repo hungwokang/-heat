@@ -159,24 +159,97 @@ function OrbitModule.stopOrbit()
     OrbitModule.orbitingParts = {}
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --// Collect/Shoot module
 local CollectModule = {}
 CollectModule.ringPartsEnabled = false
+CollectModule.collectNew = true
 CollectModule.isShooting = false
-CollectModule.parts = {} -- Table of {part, relPos} in the collection
-CollectModule.selectedTargets = {}
+CollectModule.shootComplete = Instance.new("BindableEvent")
+CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
+    radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
-    attractionStrength = 30, -- Base velocity for close parts
+    rotationSpeed = 0.01, -- Slower rotation to reduce erratic movement
+    attractionStrength = 30, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
 
 -- Filters parts to include in the collection (unanchored only)
 function CollectModule.retainPart(Part)
     if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
+        if Part:GetAttribute("Shot") then return false end
         if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
             return false -- Exclude player
         end
+        -- Disable collision for all collected parts to prevent scattering
+        Part.CanCollide = true
         -- Retain network ownership (now includes SetNetworkOwner)
         NetworkModule.RetainPart(Part)
         return true
@@ -185,26 +258,20 @@ function CollectModule.retainPart(Part)
 end
 
 -- Add part to collection list (no limit)
-function CollectModule.addPart(newPart)
-    local part = newPart
+function CollectModule.addPart(part)
+    if not CollectModule.collectNew then return end
     if CollectModule.retainPart(part) then
-        local relPos = Vector3.new(
-            math.random(-15, 15),
-            math.random(12, 18),
-            math.random(-15, 15)
-        )
-        local data = {part = part, relPos = relPos}
-        table.insert(CollectModule.parts, data)
+        if not table.find(CollectModule.parts, part) then
+            table.insert(CollectModule.parts, part)
+        end
     end
 end
 
 -- Remove part when destroyed
 function CollectModule.removePart(part)
-    for i = #CollectModule.parts, 1, -1 do
-        if CollectModule.parts[i].part == part then
-            table.remove(CollectModule.parts, i)
-            break
-        end
+    local index = table.find(CollectModule.parts, part)
+    if index then
+        table.remove(CollectModule.parts, index)
     end
     -- Clean up from network list if needed
     local netIndex = table.find(NetworkModule.BaseParts, part)
@@ -217,18 +284,12 @@ end
 local function initializeParts()
     local tempParts = {}
     for _, part in pairs(workspace:GetDescendants()) do
-        if CollectModule.retainPart(part) then
+        if CollectModule.retainPart(part) and not table.find(tempParts, part) then
             table.insert(tempParts, part)
         end
     end
     for _, part in pairs(tempParts) do
-        local relPos = Vector3.new(
-            math.random(-15, 15),
-            math.random(12, 18),
-            math.random(-15, 15)
-        )
-        local data = {part = part, relPos = relPos}
-        table.insert(CollectModule.parts, data)
+        table.insert(CollectModule.parts, part)
     end
 end
 
@@ -236,7 +297,7 @@ end
 workspace.DescendantAdded:Connect(CollectModule.addPart)
 workspace.DescendantRemoving:Connect(CollectModule.removePart)
 
--- Main collection loop - runs every frame (positioning above and following)
+-- Main collection loop - runs every frame (floating above and following)
 local collectConnection
 collectConnection = RunService.Heartbeat:Connect(function()
     if not CollectModule.ringPartsEnabled then return end
@@ -245,13 +306,15 @@ collectConnection = RunService.Heartbeat:Connect(function()
     local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
     if humanoidRootPart then
         local playerPos = humanoidRootPart.Position
-        local i = 1
-        while i <= #CollectModule.parts do
-            local data = CollectModule.parts[i]
-            local part = data.part
-            if part and part.Parent and part:IsDescendantOf(workspace) then
-                -- Calculate target position above player (random relative)
-                local targetPos = playerPos + data.relPos
+        local time = tick()
+        for i, part in pairs(CollectModule.parts) do
+            if part.Parent and part and part.Parent ~= nil and part:IsDescendantOf(workspace) then
+                -- Calculate floating position above player (orbiting for spread)
+                local angle = (time * CollectModule.config.rotationSpeed) + (i * math.pi * 2 / math.max(#CollectModule.parts, 1)) -- Unique angle per part, avoid div0
+                local offsetX = math.sin(angle) * CollectModule.config.radius
+                local offsetZ = math.cos(angle) * CollectModule.config.radius
+                local floatHeight = CollectModule.config.height + math.sin(time * 2 + i) * 2 -- Slight bobbing for floating effect
+                local targetPos = playerPos + Vector3.new(offsetX, floatHeight, offsetZ)
 
                 -- Direction and distance
                 local directionVector = (targetPos - part.Position)
@@ -277,16 +340,13 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     -- Apply real velocity (replicates to all clients, allows collision)
                     part.Velocity = direction * speed
 
-                    -- Ensure non-collidable and unanchored for collected parts
+                    -- Ensure non-collidable and unanchored
                     part.CanCollide = false
                     part.Anchored = false
                 else
                     -- If already at target, zero velocity to stop
                     part.Velocity = Vector3.new(0, 0, 0)
                 end
-                i = i + 1
-            else
-                table.remove(CollectModule.parts, i)
             end
         end
     end
@@ -294,53 +354,73 @@ end)
 
 function CollectModule.startCollect()
     CollectModule.ringPartsEnabled = true
+    CollectModule.collectNew = true
 end
 
 function CollectModule.stopCollect()
     CollectModule.ringPartsEnabled = false
-    -- Reset velocities and collision on parts
-    for _, data in ipairs(CollectModule.parts) do
-        local part = data.part
+    CollectModule.collectNew = false
+    -- Reset velocities on parts
+    for _, part in pairs(CollectModule.parts) do
         if part and part.Parent then
             part.Velocity = Vector3.new(0, 0, 0)
-            part.CanCollide = true
+            part.CanCollide = true -- Reset collision
         end
     end
 end
 
-function CollectModule.startShooting()
-    if CollectModule.isShooting then return end
+function CollectModule.shootToTargets(selectedTargets)
+    if #CollectModule.parts == 0 then return false end
+    if CollectModule.isShooting then return false end
+    local targets = {}
+    for _, player in pairs(selectedTargets) do
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            table.insert(targets, player.Character.HumanoidRootPart)
+        end
+    end
+    if #targets == 0 then return false end
     CollectModule.isShooting = true
+    CollectModule.collectNew = false -- Stop adding new parts
+    -- Start sequential shooting
     spawn(function()
+        local currentParts = {}
+        for _, p in ipairs(CollectModule.parts) do
+            table.insert(currentParts, p)
+        end
+        local numTargets = #targets
         local targetIndex = 1
-        while CollectModule.isShooting do
-            if #CollectModule.parts > 0 then
-                local data = table.remove(CollectModule.parts, 1)
-                local part = data.part
-                if part and part.Parent then
-                    local targets = {}
-                    for _, player in pairs(CollectModule.selectedTargets) do
-                        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                            table.insert(targets, player.Character.HumanoidRootPart)
-                        end
-                    end
-                    if #targets > 0 then
-                        local target = targets[targetIndex]
-                        targetIndex = (targetIndex % #targets) + 1
+        for i, part in ipairs(currentParts) do
+            if i > 1 then
+                wait(1)
+            end
+            if part and part.Parent and table.find(CollectModule.parts, part) then
+                local idx = table.find(CollectModule.parts, part)
+                if idx then
+                    table.remove(CollectModule.parts, idx)
+                    local target = targets[targetIndex % numTargets + 1]
+                    if target then
+                        part.CanCollide = true
                         local direction = (target.Position - part.Position).Unit
                         part.Velocity = direction * CollectModule.config.shootSpeed
-                        part.CanCollide = true
+                        part:SetAttribute("Shot", true)
                     end
+                    targetIndex = targetIndex + 1
                 end
             end
-            wait(1)
         end
+        CollectModule.isShooting = false
+        CollectModule.shootComplete:Fire()
     end)
+    return true
 end
 
-function CollectModule.stopShooting()
-    CollectModule.isShooting = false
-end
+
+
+
+
+
+
+
 
 --// ESP module for dynamic target players
 local ESPModule = {}
@@ -414,8 +494,6 @@ function ResetModule.resetAll()
     OrbitModule.stopOrbit()
     -- Stop collect
     CollectModule.stopCollect()
-    CollectModule.stopShooting()
-    CollectModule.parts = {}
     -- Clear network parts
     NetworkModule.BaseParts = {}
     -- Reinitialize parts for future use
@@ -426,7 +504,7 @@ end
 
 --// GUI Module
 local GUIModule = {}
-local gui, frame, scroll, layout, playerScroll, playerLayout, listHidden, minimized = nil, nil, nil, nil, nil, nil, false, false
+local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
 local footer -- To make it accessible in closure
 
 
@@ -537,20 +615,20 @@ function GUIModule.setupGUI()
                 btn.Parent = playerScroll
                 btn.Size = UDim2.new(0.95, 0, 0, 16)
                 btn.BackgroundTransparency = 1
-                btn.Text = CollectModule.selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
-                btn.TextColor3 = CollectModule.selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+                btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
+                btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
                 btn.Font = Enum.Font.Code
                 btn.TextSize = 10
                 btn.TextXAlignment = Enum.TextXAlignment.Left
 
                 btn.MouseButton1Click:Connect(function()
-                    if CollectModule.selectedTargets[p.Name] then
-                        CollectModule.selectedTargets[p.Name] = nil
+                    if selectedTargets[p.Name] then
+                        selectedTargets[p.Name] = nil
                         ESPModule.removeESP(p)
                         btn.Text = p.Name
                         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
                     else
-                        CollectModule.selectedTargets[p.Name] = p
+                        selectedTargets[p.Name] = p
                         ESPModule.createESP(p)
                         btn.Text = p.Name .. " ✓"
                         btn.TextColor3 = Color3.fromRGB(0, 255, 0)
@@ -564,7 +642,7 @@ function GUIModule.setupGUI()
 
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
-        CollectModule.selectedTargets[p.Name] = nil
+        selectedTargets[p.Name] = nil
         ESPModule.removeESP(p)
         GUIModule.updatePlayerList()
     end)
@@ -809,50 +887,6 @@ function GUIModule.setupGUI()
 
         playerScroll.Visible = true
 
-        local collectText = Instance.new("TextLabel")
-        collectText.Name = "CollectText"
-        collectText.Parent = scroll
-        collectText.Size = UDim2.new(1, -10, 0, 15)
-        collectText.BackgroundTransparency = 1
-        collectText.Font = Enum.Font.Code
-        collectText.TextColor3 = Color3.new(1, 1, 1)
-        collectText.TextSize = 8
-        collectText.Text = "Collect and randomly position parts above you."
-        collectText.TextXAlignment = Enum.TextXAlignment.Center
-
-        local collectBtn = Instance.new("TextButton")
-        collectBtn.Name = "CollectBtn"
-        collectBtn.Parent = scroll
-        collectBtn.Size = UDim2.new(1, -10, 0, 20)
-        collectBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        collectBtn.BackgroundTransparency = 0.6
-        collectBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        collectBtn.BorderSizePixel = 1
-        collectBtn.Font = Enum.Font.Code
-        collectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        collectBtn.TextSize = 12
-        collectBtn.Text = "SEARCH"
-        collectBtn.TextXAlignment = Enum.TextXAlignment.Center
-        collectBtn.MouseButton1Click:Connect(function()
-            if CollectModule.ringPartsEnabled then
-                CollectModule.stopCollect()
-                collectBtn.Text = "SEARCH"
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "hung v1",
-                    Text = "Collecting stopped!",
-                    Duration = 3,
-                })
-            else
-                CollectModule.startCollect()
-                collectBtn.Text = "STOP"
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "hung v1",
-                    Text = "Started collecting and positioning parts!",
-                    Duration = 3,
-                })
-            end
-        end)
-
         local shootText = Instance.new("TextLabel")
         shootText.Name = "ShootText"
         shootText.Parent = scroll
@@ -861,80 +895,60 @@ function GUIModule.setupGUI()
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
         shootText.TextSize = 8
-        shootText.Text = "Shoot one part per second to targets."
+        shootText.Text = "Shoot parts to target."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
 
-        local shootBtn = Instance.new("TextButton")
-        shootBtn.Name = "ShootBtn"
-        shootBtn.Parent = scroll
-        shootBtn.Size = UDim2.new(1, -10, 0, 20)
-        shootBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        shootBtn.BackgroundTransparency = 0.6
-        shootBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        shootBtn.BorderSizePixel = 1
-        shootBtn.Font = Enum.Font.Code
-        shootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootBtn.TextSize = 12
-        shootBtn.Text = "SHOT"
-        shootBtn.TextXAlignment = Enum.TextXAlignment.Center
-        shootBtn.MouseButton1Click:Connect(function()
-            if CollectModule.isShooting then
-                CollectModule.stopShooting()
-                shootBtn.Text = "SHOT"
+        local searchBtn = Instance.new("TextButton")
+        searchBtn.Name = "SearchBtn"
+        searchBtn.Parent = scroll
+        searchBtn.Size = UDim2.new(1, -10, 0, 20)
+        searchBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        searchBtn.BackgroundTransparency = 0.6
+        searchBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        searchBtn.BorderSizePixel = 1
+        searchBtn.Font = Enum.Font.Code
+        searchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        searchBtn.TextSize = 12
+        searchBtn.Text = "SEARCH"
+        searchBtn.TextXAlignment = Enum.TextXAlignment.Center
+
+        local isCollecting = false
+        searchBtn.MouseButton1Click:Connect(function()
+            if not isCollecting then
+                shootText.Text = "Searching Parts..."
+                CollectModule.startCollect()
+                isCollecting = true
+                searchBtn.Text = "SHOT"
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
-                    Text = "Shooting stopped!",
+                    Text = "Collecting Parts!",
                     Duration = 3,
                 })
             else
-                local numTargets = 0
-                for _ in pairs(CollectModule.selectedTargets) do
-                    numTargets = numTargets + 1
-                end
-                if numTargets == 0 then
+                if CollectModule.shootToTargets(selectedTargets) then
+                    searchBtn.Text = "SHOOTING"
+                    isCollecting = false
+                    local completeConn = CollectModule.shootComplete.Event:Connect(function()
+                        completeConn:Disconnect()
+                        searchBtn.Text = "SEARCH"
+                        shootText.Text = "Shoot parts to target."
+                        isCollecting = false
+                    end)
+                    shootText.Text = "Shooting one by one..."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Select at least one target!",
+                        Text = "Started sequential shooting!",
                         Duration = 3,
                     })
-                    return
+                else
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "hung v1",
+                        Text = "Collect parts first or select targets!",
+                        Duration = 3,
+                    })
                 end
-                CollectModule.startShooting()
-                shootBtn.Text = "STOP SHOT"
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "hung v1",
-                    Text = "Started shooting one part per second!",
-                    Duration = 3,
-                })
             end
-        end)
-
-        local stopBtn = Instance.new("TextButton")
-        stopBtn.Name = "StopBtn"
-        stopBtn.Parent = scroll
-        stopBtn.Size = UDim2.new(1, -10, 0, 20)
-        stopBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        stopBtn.BackgroundTransparency = 0.6
-        stopBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        stopBtn.BorderSizePixel = 1
-        stopBtn.Font = Enum.Font.Code
-        stopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        stopBtn.TextSize = 12
-        stopBtn.Text = "STOP"
-        stopBtn.TextXAlignment = Enum.TextXAlignment.Center
-        stopBtn.MouseButton1Click:Connect(function()
-            CollectModule.stopCollect()
-            CollectModule.stopShooting()
-            CollectModule.parts = {}
-            collectBtn.Text = "SEARCH"
-            shootBtn.Text = "SHOT"
-            CollectModule.ringPartsEnabled = false
-            CollectModule.isShooting = false
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "hung v1",
-                Text = "All stopped and cleared!",
-                Duration = 3,
-            })
+            updateScrollCanvas()
         end)
 
         local backBtn = Instance.new("TextButton")
