@@ -552,10 +552,8 @@ function GUIModule.setupGUI()
     local function updateScrollCanvas()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
         -- Auto-fit frame height
-        local newHeight = math.max(100, layout.AbsoluteContentSize.Y + 42) -- Min height 100, + title 20 + footer 20 + padding
+        local newHeight = math.max(110, layout.AbsoluteContentSize.Y + 42) -- Min height 100, + title 20 + footer 20 + padding
         frame.Size = UDim2.new(0, 120, 0, newHeight)
-        -- Adjust position to center
-        frame.Position = UDim2.new(0.5, -60, 0.5, -newHeight / 2)
     end
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
 
@@ -666,7 +664,7 @@ function GUIModule.setupGUI()
         -- Add margin above buttons
         local marginFrame = Instance.new("Frame")
         marginFrame.Name = "MarginFrame"
-        marginFrame.Size = UDim2.new(1, 0, 0, 10)
+        marginFrame.Size = UDim2.new(1, 0, 0, 3)
         marginFrame.BackgroundTransparency = 1
         marginFrame.Parent = scroll
 
@@ -687,7 +685,7 @@ function GUIModule.setupGUI()
         orbitTabBtn.Parent = tabFrame
         orbitTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
         orbitTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        orbitTabBtn.BackgroundTransparency = 0
+        orbitTabBtn.BackgroundTransparency = 0.6
         orbitTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         orbitTabBtn.BorderSizePixel = 1
         orbitTabBtn.Font = Enum.Font.Code
@@ -705,7 +703,7 @@ function GUIModule.setupGUI()
         shootTabBtn.Parent = tabFrame
         shootTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
         shootTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        shootTabBtn.BackgroundTransparency = 0
+        shootTabBtn.BackgroundTransparency = 0.6
         shootTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         shootTabBtn.BorderSizePixel = 1
         shootTabBtn.Font = Enum.Font.Code
@@ -726,7 +724,7 @@ function GUIModule.setupGUI()
         pullText.Name = "PullText"
         pullText.Parent = scroll
         pullText.Size = UDim2.new(1, -10, 0, 15)
-        pullText.BackgroundTransparency = 1
+        pullText.BackgroundTransparency = 0.6
         pullText.Font = Enum.Font.Code
         pullText.TextColor3 = Color3.new(1, 1, 1)
         pullText.TextSize = 8
@@ -738,7 +736,7 @@ function GUIModule.setupGUI()
         searchBtn.Parent = scroll
         searchBtn.Size = UDim2.new(1, -10, 0, 20)
         searchBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        searchBtn.BackgroundTransparency = 0
+        searchBtn.BackgroundTransparency = 0.6
         searchBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         searchBtn.BorderSizePixel = 1
         searchBtn.Font = Enum.Font.Code
@@ -811,7 +809,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0
+        backBtn.BackgroundTransparency = 1
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -874,7 +872,7 @@ function GUIModule.setupGUI()
         shootText.Name = "ShootText"
         shootText.Parent = scroll
         shootText.Size = UDim2.new(1, -10, 0, 15)
-        shootText.BackgroundTransparency = 1
+        shootText.BackgroundTransparency = 0.6
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
         shootText.TextSize = 8
@@ -886,7 +884,7 @@ function GUIModule.setupGUI()
         searchBtn.Parent = scroll
         searchBtn.Size = UDim2.new(1, -10, 0, 20)
         searchBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        searchBtn.BackgroundTransparency = 0
+        searchBtn.BackgroundTransparency = 0.6
         searchBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         searchBtn.BorderSizePixel = 1
         searchBtn.Font = Enum.Font.Code
@@ -938,7 +936,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0
+        backBtn.BackgroundTransparency = 0.6
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
