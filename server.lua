@@ -60,9 +60,9 @@ NetworkModule = getgenv().Network
 local OrbitModule = {}
 OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
-OrbitModule.orbitSpeed = 5 -- radians per second
-OrbitModule.orbitRadius = 15
-OrbitModule.orbitHeight = 10
+OrbitModule.orbitSpeed = 0.1 -- radians per second
+OrbitModule.orbitRadius = 0
+OrbitModule.orbitHeight = 20
 
 function OrbitModule.startOrbit(partsToOrbit, root)
     if #partsToOrbit == 0 then return end
@@ -94,8 +94,8 @@ function OrbitModule.startOrbit(partsToOrbit, root)
             local bp = Instance.new("BodyPosition")
             bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
             bp.Position = part.Position -- Start from current to avoid snap
-            bp.P = 5000 -- High power for fast pull
-            bp.D = 1000 -- Damping
+            bp.P = 10000 -- High power for fast pull 5000
+            bp.D = 5000 -- Damping 1000
             bp.Parent = part
 
             -- Store data
@@ -955,7 +955,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v1",
+        Title = "hunggggg v1",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
