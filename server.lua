@@ -724,7 +724,7 @@ function GUIModule.setupGUI()
         pullText.Name = "PullText"
         pullText.Parent = scroll
         pullText.Size = UDim2.new(1, -10, 0, 15)
-        pullText.BackgroundTransparency = 0.6
+        pullText.BackgroundTransparency = 0
         pullText.Font = Enum.Font.Code
         pullText.TextColor3 = Color3.new(1, 1, 1)
         pullText.TextSize = 8
@@ -809,7 +809,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 1
+        backBtn.BackgroundTransparency = 0.6
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -872,7 +872,7 @@ function GUIModule.setupGUI()
         shootText.Name = "ShootText"
         shootText.Parent = scroll
         shootText.Size = UDim2.new(1, -10, 0, 15)
-        shootText.BackgroundTransparency = 0.6
+        shootText.BackgroundTransparency = 0
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
         shootText.TextSize = 8
