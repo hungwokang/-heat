@@ -94,8 +94,8 @@ function OrbitModule.startOrbit(partsToOrbit, root)
             local bp = Instance.new("BodyPosition")
             bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
             bp.Position = part.Position -- Start from current to avoid snap
-            bp.P = 10000 -- High power for fast pull 5000
-            bp.D = 5000 -- Damping 1000
+            bp.P = 5000 -- High power for fast pull 5000
+            bp.D = 1000 -- Damping 1000
             bp.Parent = part
 
             -- Store data
@@ -232,7 +232,7 @@ CollectModule.ringPartsEnabled = false
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
-    height = 20, -- Base height above player for floating
+    height = 15, -- Base height above player for floating
     rotationSpeed = 0.1, -- Slower rotation to reduce erratic movement
     attractionStrength = 50, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
@@ -318,7 +318,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     local direction = directionVector.Unit
                     -- More aggressive pull for far distances: higher multiplier and cap
                     local speed = CollectModule.config.attractionStrength + (distance * 30) -- Increased multiplier for stronger far pull 20
-                    speed = math.min(speed, 2000) -- Higher cap for very far parts 1500
+                    speed = math.min(speed, 3000) -- Higher cap for very far parts 1500
                     -- Stronger damping when close to prevent overshoot and reverse movement
                     if distance < 10 then
                         speed = speed * 0.4
@@ -328,7 +328,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     end
                     -- Additional anti-reverse: if moving away, boost pull slightly
                     local currentVelDot = part.Velocity:Dot(direction)
-                    if currentVelDot < 0 and distance < 30 then -- 20
+                    if currentVelDot < 0 and distance < 50 then -- 20
                         speed = speed * 1.5
                     end
 
@@ -336,7 +336,7 @@ collectConnection = RunService.Heartbeat:Connect(function()
                     part.Velocity = direction * speed
 
                     -- Ensure non-collidable and unanchored
-                    part.CanCollide = true
+                    part.CanCollide = false
                     part.Anchored = false
                 else
                     -- If already at target, zero velocity to stop
@@ -955,7 +955,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hunggggg v1",
+        Title = "hung v1",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
