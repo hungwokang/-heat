@@ -577,41 +577,11 @@ function GUIModule.setupGUI()
         end
     end)
 
-    --// Header (Select Target)
-    local headerButton = Instance.new("TextButton")
-    headerButton.Parent = scroll
-    headerButton.Name = "PlayerListHeader"
-    headerButton.Size = UDim2.new(1, -10, 0, 20)
-    headerButton.BackgroundTransparency = 1 -- fully transparent header
-    headerButton.BorderSizePixel = 0
-    headerButton.Font = Enum.Font.Code
-    headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-    headerButton.TextSize = 12
-    headerButton.Text = "PLAYER LIST"
-    headerButton.TextXAlignment = Enum.TextXAlignment.Center
-
-    --// Player list container (slight transparency)
-    playerScroll = Instance.new("ScrollingFrame")
-    playerScroll.Name = "PlayerListScroll"
-    playerScroll.Parent = scroll
-    playerScroll.Size = UDim2.new(1, -10, 0, 60)
-    playerScroll.Position = UDim2.new(0, 5, 0, 0)
-    playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
-    playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
-    playerScroll.BorderSizePixel = 0
-    playerScroll.ScrollBarThickness = 2
-    playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-
-    playerLayout = Instance.new("UIListLayout")
-    playerLayout.Parent = playerScroll
-    playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    playerLayout.Padding = UDim.new(0, 1)
-
     layout.Name = "ScrollLayout"
 
     --// Player list update function
     function GUIModule.updatePlayerList()
+        if not playerScroll then return end
         for _, btn in pairs(playerScroll:GetChildren()) do
             if btn:IsA("TextButton") then btn:Destroy() end
         end
@@ -648,20 +618,11 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
-     
-    GUIModule.updatePlayerList()
     Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
     Players.PlayerRemoving:Connect(function(p)
         selectedTargets[p.Name] = nil
         ESPModule.removeESP(p)
         GUIModule.updatePlayerList()
-    end)
-
-    --// Toggle list visibility when clicking header
-    headerButton.MouseButton1Click:Connect(function()
-        listHidden = not listHidden
-        playerScroll.Visible = not listHidden
-        
     end)
 
     --// Minimize toggle
@@ -684,14 +645,18 @@ function GUIModule.setupGUI()
     local function clearTabContent()
         for _, child in pairs(scroll:GetChildren()) do
             local name = child.Name
-            if name ~= "PlayerListHeader" and name ~= "PlayerListScroll" and name ~= "ScrollLayout" then
+            if name ~= "ScrollLayout" then
                 child:Destroy()
             end
         end
+        playerScroll = nil
+        playerLayout = nil
+        headerButton = nil
+        listHidden = false
     end
 
     local function buildMainTab()
-        headerButton.Text = "PLAYER LIST"
+        clearTabContent()
         local tabFrame = Instance.new("Frame")
         tabFrame.Name = "MainTabFrame"
         tabFrame.Size = UDim2.new(1, 0, 0, 25)
@@ -742,7 +707,7 @@ function GUIModule.setupGUI()
     end
 
     function buildOrbitTab()
-        headerButton.Text = "PLAYER LIST"
+        clearTabContent()
         local pullText = Instance.new("TextLabel")
         pullText.Name = "PullText"
         pullText.Parent = scroll
@@ -764,7 +729,7 @@ function GUIModule.setupGUI()
         pullBtn.BorderSizePixel = 1
         pullBtn.Font = Enum.Font.Code
         pullBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        pullBtn.TextSize = 8
+        pullBtn.TextSize = 12
         pullBtn.Text = "PULL"
         pullBtn.TextXAlignment = Enum.TextXAlignment.Center
         pullBtn.MouseButton1Click:Connect(function()
@@ -864,7 +829,48 @@ function GUIModule.setupGUI()
     end
 
     function buildShootTab()
+        clearTabContent()
+        --// Header (Select Target)
+        local headerButton = Instance.new("TextButton")
+        headerButton.Parent = scroll
+        headerButton.Name = "PlayerListHeader"
+        headerButton.Size = UDim2.new(1, -10, 0, 20)
+        headerButton.BackgroundTransparency = 1 -- fully transparent header
+        headerButton.BorderSizePixel = 0
+        headerButton.Font = Enum.Font.Code
+        headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+        headerButton.TextSize = 12
         headerButton.Text = "CHOOSE PLAYER"
+        headerButton.TextXAlignment = Enum.TextXAlignment.Center
+
+        --// Player list container (slight transparency)
+        playerScroll = Instance.new("ScrollingFrame")
+        playerScroll.Name = "PlayerListScroll"
+        playerScroll.Parent = scroll
+        playerScroll.Size = UDim2.new(1, -10, 0, 60)
+        playerScroll.Position = UDim2.new(0, 5, 0, 0)
+        playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
+        playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
+        playerScroll.BorderSizePixel = 0
+        playerScroll.ScrollBarThickness = 2
+        playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+        playerLayout = Instance.new("UIListLayout")
+        playerLayout.Parent = playerScroll
+        playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        playerLayout.Padding = UDim.new(0, 1)
+
+        GUIModule.updatePlayerList()
+
+        --// Toggle list visibility when clicking header
+        headerButton.MouseButton1Click:Connect(function()
+            listHidden = not listHidden
+            playerScroll.Visible = not listHidden
+        end)
+
+        playerScroll.Visible = not listHidden
+
         local shootText = Instance.new("TextLabel")
         shootText.Name = "ShootText"
         shootText.Parent = scroll
@@ -886,7 +892,7 @@ function GUIModule.setupGUI()
         findBtn.BorderSizePixel = 1
         findBtn.Font = Enum.Font.Code
         findBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        findBtn.TextSize = 8
+        findBtn.TextSize = 12
         findBtn.Text = "FIND"
         findBtn.TextXAlignment = Enum.TextXAlignment.Center
         findBtn.MouseButton1Click:Connect(function()
