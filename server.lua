@@ -60,9 +60,9 @@ NetworkModule = getgenv().Network
 local OrbitModule = {}
 OrbitModule.orbitingParts = {}
 OrbitModule.orbitingConnection = nil
-OrbitModule.orbitSpeed = 0.1 -- radians per second
+OrbitModule.orbitSpeed = 1 -- radians per second
 OrbitModule.orbitRadius = 0
-OrbitModule.orbitHeight = 10
+OrbitModule.orbitHeight = 15
 
 function OrbitModule.startOrbit(partsToOrbit, root)
     if #partsToOrbit == 0 then return end
@@ -229,14 +229,11 @@ end
 --// Collect/Shoot module
 local CollectModule = {}
 CollectModule.ringPartsEnabled = false
-CollectModule.collectNew = true
-CollectModule.isShooting = false
-CollectModule.shootComplete = Instance.new("BindableEvent")
 CollectModule.parts = {} -- Table of parts in the collection
 CollectModule.config = {
     radius = 0, -- Reduced spread radius to minimize scattering
     height = 15, -- Base height above player for floating
-    rotationSpeed = 0.01, -- Slower rotation to reduce erratic movement
+    rotationSpeed = 0, -- Slower rotation to reduce erratic movement
     attractionStrength = 30, -- 30 Base velocity for close parts
     shootSpeed = 300, -- Speed for shooting parts to target
 }
@@ -244,7 +241,6 @@ CollectModule.config = {
 -- Filters parts to include in the collection (unanchored only)
 function CollectModule.retainPart(Part)
     if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
-        if Part:GetAttribute("Shot") then return false end
         if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
             return false -- Exclude player
         end
@@ -259,7 +255,6 @@ end
 
 -- Add part to collection list (no limit)
 function CollectModule.addPart(part)
-    if not CollectModule.collectNew then return end
     if CollectModule.retainPart(part) then
         if not table.find(CollectModule.parts, part) then
             table.insert(CollectModule.parts, part)
@@ -354,12 +349,10 @@ end)
 
 function CollectModule.startCollect()
     CollectModule.ringPartsEnabled = true
-    CollectModule.collectNew = true
 end
 
 function CollectModule.stopCollect()
     CollectModule.ringPartsEnabled = false
-    CollectModule.collectNew = false
     -- Reset velocities on parts
     for _, part in pairs(CollectModule.parts) do
         if part and part.Parent then
@@ -371,7 +364,6 @@ end
 
 function CollectModule.shootToTargets(selectedTargets)
     if #CollectModule.parts == 0 then return false end
-    if CollectModule.isShooting then return false end
     local targets = {}
     for _, player in pairs(selectedTargets) do
         if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -379,38 +371,27 @@ function CollectModule.shootToTargets(selectedTargets)
         end
     end
     if #targets == 0 then return false end
-    CollectModule.isShooting = true
-    CollectModule.collectNew = false -- Stop adding new parts
-    -- Start sequential shooting
-    spawn(function()
-        local currentParts = {}
-        for _, p in ipairs(CollectModule.parts) do
-            table.insert(currentParts, p)
+    -- Re-enable collision for shooting (optional, for impact)
+    for _, part in pairs(CollectModule.parts) do
+        if part and part.Parent then
+            part.CanCollide = true
         end
-        local numTargets = #targets
-        local targetIndex = 1
-        for i, part in ipairs(currentParts) do
-            if i > 1 then
-                wait(1)
+    end
+    -- Shoot
+    local numTargets = #targets
+    local partIndex = 1
+    for i, part in pairs(CollectModule.parts) do
+        if part and part.Parent then
+            local target = targets[partIndex % numTargets + 1] -- Cycle through targets
+            if target then
+                local direction = (target.Position - part.Position).Unit
+                part.Velocity = direction * CollectModule.config.shootSpeed
             end
-            if part and part.Parent and table.find(CollectModule.parts, part) then
-                local idx = table.find(CollectModule.parts, part)
-                if idx then
-                    table.remove(CollectModule.parts, idx)
-                    local target = targets[targetIndex % numTargets + 1]
-                    if target then
-                        part.CanCollide = true
-                        local direction = (target.Position - part.Position).Unit
-                        part.Velocity = direction * CollectModule.config.shootSpeed
-                        part:SetAttribute("Shot", true)
-                    end
-                    targetIndex = targetIndex + 1
-                end
-            end
+            partIndex = partIndex + 1
         end
-        CollectModule.isShooting = false
-        CollectModule.shootComplete:Fire()
-    end)
+    end
+    -- Clear parts after shooting
+    CollectModule.parts = {}
     return true
 end
 
@@ -925,22 +906,21 @@ function GUIModule.setupGUI()
                     Duration = 3,
                 })
             else
+                CollectModule.stopCollect()
                 if CollectModule.shootToTargets(selectedTargets) then
-                    searchBtn.Text = "SHOOTING"
+                    searchBtn.Text = "SEARCH"
                     isCollecting = false
-                    local completeConn = CollectModule.shootComplete.Event:Connect(function()
-                        completeConn:Disconnect()
-                        searchBtn.Text = "SEARCH"
-                        shootText.Text = "Shoot parts to target."
-                        isCollecting = false
-                    end)
-                    shootText.Text = "Shooting one by one..."
+                    shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Started sequential shooting!",
+                        Text = "Parts shot to targets!",
                         Duration = 3,
                     })
+                    ResetModule.resetAll()
                 else
+                    searchBtn.Text = "SEARCH"
+                    isCollecting = false
+                    shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Collect parts first or select targets!",
@@ -975,7 +955,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hungrergerg v1",
+        Title = "hung v11",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot with Dynamic ESP)",
         Duration = 4,
     })
@@ -983,3 +963,4 @@ end
 
 --// Initialize
 GUIModule.setupGUI()
+
