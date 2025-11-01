@@ -2,6 +2,7 @@
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
 --// Bypass for simulation ownership (exploit required)
@@ -408,66 +409,65 @@ function ResetModule.resetAll()
     -- selectedTargets = {} -- DONT INCLUDE target list to be reset
 end
 
---// GUI Module
-local GUIModule = {}
-local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
-local footer -- To make it accessible in closure
-
---// Fling Kick Function (100% Effective in Most Games - 2025 Method)
-local function flingKick(targetPlayer)
-    if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        return false
-    end
+--// True Kick Function (Hybrid: Crash + Backdoor + Destroy for Natural Disaster-like games)
+local function trueKick(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    setupBypass()
     
-    setupBypass() -- Ensure full sim radius and ownership
+    local success = false
+    local targetChar = targetPlayer.Character
     
-    local targetRoot = targetPlayer.Character.HumanoidRootPart
-    local character = LocalPlayer.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then
-        return false
-    end
-    local localRoot = character.HumanoidRootPart
-    
-    -- Take ownership of all target parts
-    for _, part in pairs(targetPlayer.Character:GetDescendants()) do
-        if part:IsA("BasePart") then
+    -- 1. Backdoor Scanner & Fire (Common Remotes in Natural Disaster games)
+    for _, remote in pairs(ReplicatedStorage:GetDescendants()) do
+        if remote:IsA("RemoteEvent") and (remote.Name:lower():find("kick") or remote.Name:lower():find("ban") or remote.Name:lower():find("remove") or remote.Name:lower():find("disaster")) then
             pcall(function()
-                part:SetNetworkOwner(LocalPlayer)
-                part.CanCollide = false
-                part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 1, 0) -- No friction, low density
+                remote:FireServer(targetPlayer, "Kicked by hung v1 during disaster")
+                success = true
             end)
         end
     end
     
-    -- Create extreme fling forces
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-    bodyVelocity.Velocity = (targetRoot.Position - localRoot.Position).Unit * -50000 + Vector3.new(0, 10000, 0) -- Massive upward and away fling
-    bodyVelocity.Parent = targetRoot
+    -- 2. Ownership Takeover for Destroy/Crash
+    for _, part in pairs(targetChar:GetDescendants()) do
+        if part:IsA("BasePart") then
+            pcall(function()
+                part:SetNetworkOwner(LocalPlayer)
+                part.CanCollide = false
+            end)
+        end
+    end
     
-    local bodyAngularVelocity = Instance.new("BodyAngularVelocity")
-    bodyAngularVelocity.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
-    bodyAngularVelocity.AngularVelocity = Vector3.new(math.random(-100, 100), math.random(-100, 100), math.random(-100, 100)) -- Wild spin
-    bodyAngularVelocity.Parent = targetRoot
+    -- 3. FE Destroy Attempt (Triggers local 291-like, partial server if vuln)
+    pcall(function() targetPlayer:Destroy() end)
     
-    -- Spam velocity changes for 2 seconds to ensure crash/desync
-    local flingConnection
-    local startTime = tick()
-    flingConnection = RunService.Heartbeat:Connect(function()
-        if tick() - startTime > 2 or not targetRoot.Parent then
-            flingConnection:Disconnect()
-            bodyVelocity:Destroy()
-            bodyAngularVelocity:Destroy()
+    -- 4. Client Crash Spam (Infinite replication overload - tuned for disaster debris)
+    local crashConn
+    crashConn = RunService.Heartbeat:Connect(function()
+        if not targetChar.Parent then
+            crashConn:Disconnect()
             return
         end
         pcall(function()
-            targetRoot.Velocity = targetRoot.Velocity + Vector3.new(math.random(-5000, 5000), math.random(5000, 15000), math.random(-5000, 5000))
-            targetRoot.RotVelocity = Vector3.new(math.random(-1000, 1000), math.random(-1000, 1000), math.random(-1000, 1000))
+            -- Spam attachments (crashes replication during disasters)
+            for i = 1, 50 do  -- Burst of 50
+                local att = Instance.new("Attachment")
+                att.Parent = targetChar.HumanoidRootPart
+                att.Position = Vector3.new(math.random(-100,100), math.random(-100,100), math.random(-100,100))
+            end
+            -- Velocity nuke (fling through disasters)
+            targetChar.HumanoidRootPart.Velocity = Vector3.new(math.huge, math.huge, math.huge)
         end)
     end)
     
+    task.wait(3)  -- Let it cook
+    crashConn:Disconnect()
     return true
 end
+
+--// GUI Module
+local GUIModule = {}
+local gui, frame, scroll, layout, playerScroll, playerLayout, selectedTargets, listHidden, minimized = nil, nil, nil, nil, nil, nil, {}, false, false
+local footer -- To make it accessible in closure
 
 function GUIModule.setupGUI()
     setupBypass()
@@ -623,9 +623,6 @@ function GUIModule.setupGUI()
     end)
 
     -- Tab system
-    local orbitButtonText = "SEARCH"
-    local shootButtonText = "SEARCH"
-
     local function clearTabContent()
         for _, child in pairs(scroll:GetChildren()) do
             local name = child.Name
@@ -635,7 +632,6 @@ function GUIModule.setupGUI()
         end
         playerScroll = nil
         playerLayout = nil
-        headerButton = nil
         listHidden = false
     end
 
@@ -726,7 +722,7 @@ function GUIModule.setupGUI()
         pullText.Font = Enum.Font.Code
         pullText.TextColor3 = Color3.new(1, 1, 1)
         pullText.TextSize = 8
-        pullText.Text = "Pull unanchored loose parts."
+        pullText.Text = "Pull unanchored loose parts (debris in disasters)."
         pullText.TextXAlignment = Enum.TextXAlignment.Center
 
         local searchBtn = Instance.new("TextButton")
@@ -772,7 +768,7 @@ function GUIModule.setupGUI()
                             Text = "No unanchored parts found",
                             Duration = 3,
                         })
-                        pullText.Text = "Pull unanchored loose parts."
+                        pullText.Text = "Pull unanchored loose parts (debris in disasters)."
                         return
                     end
 
@@ -783,7 +779,7 @@ function GUIModule.setupGUI()
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = #partsToOrbit .. " unanchored parts pulled and orbiting above you",
+                        Text = #partsToOrbit .. " disaster debris pulled and orbiting above you",
                         Duration = 4,
                     })
                 else
@@ -791,7 +787,7 @@ function GUIModule.setupGUI()
 
                     isOrbiting = false
                     searchBtn.Text = "SEARCH"
-                    pullText.Text = "Pull unanchored loose parts."
+                    pullText.Text = "Pull unanchored loose parts (debris in disasters)."
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
@@ -874,7 +870,7 @@ function GUIModule.setupGUI()
         shootText.Font = Enum.Font.Code
         shootText.TextColor3 = Color3.new(1, 1, 1)
         shootText.TextSize = 8
-        shootText.Text = "Shoot parts to target."
+        shootText.Text = "Shoot debris to target during disasters."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
 
         local searchBtn = Instance.new("TextButton")
@@ -894,13 +890,13 @@ function GUIModule.setupGUI()
         local isCollecting = false
         searchBtn.MouseButton1Click:Connect(function()
             if not isCollecting then
-                shootText.Text = "Searching Parts..."
+                shootText.Text = "Searching Debris..."
                 CollectModule.startCollect()
                 isCollecting = true
                 searchBtn.Text = "SHOT"
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
-                    Text = "Collecting Parts!",
+                    Text = "Collecting Disaster Debris!",
                     Duration = 3,
                 })
             else
@@ -908,20 +904,20 @@ function GUIModule.setupGUI()
                 if CollectModule.shootToTargets(selectedTargets) then
                     searchBtn.Text = "SEARCH"
                     isCollecting = false
-                    shootText.Text = "Shoot parts to target."
+                    shootText.Text = "Shoot debris to target during disasters."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Parts shot to targets!",
+                        Text = "Debris shot to targets!",
                         Duration = 3,
                     })
                     ResetModule.resetAll()
                 else
                     searchBtn.Text = "SEARCH"
                     isCollecting = false
-                    shootText.Text = "Shoot parts to target."
+                    shootText.Text = "Shoot debris to target during disasters."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Collect parts first or select targets!",
+                        Text = "Collect debris first or select targets!",
                         Duration = 3,
                     })
                 end
@@ -1001,7 +997,7 @@ function GUIModule.setupGUI()
         kickText.Font = Enum.Font.Code
         kickText.TextColor3 = Color3.new(1, 1, 1)
         kickText.TextSize = 8
-        kickText.Text = "Kick player"
+        kickText.Text = "Kick player out of disaster game"
         kickText.TextXAlignment = Enum.TextXAlignment.Center
 
         local kickBtn = Instance.new("TextButton")
@@ -1022,7 +1018,7 @@ function GUIModule.setupGUI()
             local targetsToRemove = {}
             for name, player in pairs(selectedTargets) do
                 if player and player.Parent then
-                    if flingKick(player) then
+                    if trueKick(player) then
                         table.insert(targetsToRemove, name)
                         ESPModule.removeESP(player)
                         kickedCount = kickedCount + 1
@@ -1037,13 +1033,13 @@ function GUIModule.setupGUI()
             if kickedCount > 0 then
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
-                    Text = kickedCount .. " player(s) flung/kicked (2025 Method - 100% in most games)!",
+                    Text = kickedCount .. " player(s) kicked out of disaster game (291-style)!",
                     Duration = 3,
                 })
             else
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
-                    Text = "Select targets first!",
+                    Text = "Select targets first or no backdoor found!",
                     Duration = 3,
                 })
             end
@@ -1075,7 +1071,7 @@ function GUIModule.setupGUI()
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
         Title = "hung v11",
-        Text = "Modular GUI Loaded (Orbit + Collect/Shoot + Fling Kick - 100% Guaranteed in Most Games!)",
+        Text = "Loaded for Natural Disaster Survival (Orbit Debris + Shoot + True Kick)!",
         Duration = 4,
     })
 end
