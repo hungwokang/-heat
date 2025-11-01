@@ -502,8 +502,8 @@ function GUIModule.setupGUI()
     --// Main Frame
     frame = Instance.new("Frame")
     frame.Parent = gui
-    frame.Size = UDim2.new(0, 120, 0, 100) -- Initial smaller height
-    frame.Position = UDim2.new(0.5, -60, 0.5, -50)
+    frame.Size = UDim2.new(0, 120, 0, 180)
+    frame.Position = UDim2.new(0.5, -60, 0.5, -90)
     frame.BackgroundColor3 = Color3.new(0, 0, 0)
     frame.BackgroundTransparency = 0.4
     frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -551,13 +551,15 @@ function GUIModule.setupGUI()
 
     local function updateScrollCanvas()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-        -- Auto-fit frame height
-        local newHeight = math.max(100, layout.AbsoluteContentSize.Y + 42) -- Min height 100, + title 20 + footer 20 + padding
-        frame.Size = UDim2.new(0, 120, 0, newHeight)
-        -- Adjust position to center
-        frame.Position = UDim2.new(0.5, -60, 0.5, -newHeight / 2)
     end
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
+
+    local function updateFrameHeight()
+        if not minimized then
+            frame.Size = UDim2.new(0, 120, 0, math.max(80, layout.AbsoluteContentSize.Y + 42))
+        end
+    end
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateFrameHeight)
 
     --// Footer
     footer = Instance.new("TextLabel")
@@ -582,10 +584,13 @@ function GUIModule.setupGUI()
         end
     end)
 
-    layout.Name = "ScrollLayout"
+    -- Player list variables
+    local playerScroll = nil
+    local playerLayout = nil
+    local hasPlayerConnections = false
+    selectedTargets = {}
 
-    --// Player list update function
-    function GUIModule.updatePlayerList()
+    local function updatePlayerList()
         if not playerScroll then return end
         for _, btn in pairs(playerScroll:GetChildren()) do
             if btn:IsA("TextButton") then btn:Destroy() end
@@ -620,49 +625,63 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-        updateScrollCanvas()
+        playerScroll.Size = UDim2.new(1, -10, 0, math.max(60, playerLayout.AbsoluteContentSize.Y + 5))
     end
 
-    Players.PlayerAdded:Connect(GUIModule.updatePlayerList)
-    Players.PlayerRemoving:Connect(function(p)
-        selectedTargets[p.Name] = nil
-        ESPModule.removeESP(p)
-        GUIModule.updatePlayerList()
-    end)
+    local function connectPlayers()
+        if hasPlayerConnections then return end
+        hasPlayerConnections = true
+        Players.PlayerAdded:Connect(updatePlayerList)
+        Players.PlayerRemoving:Connect(function(p)
+            selectedTargets[p.Name] = nil
+            ESPModule.removeESP(p)
+            updatePlayerList()
+        end)
+    end
 
     --// Minimize toggle
     minimize.MouseButton1Click:Connect(function()
         minimized = not minimized
-        local currentHeight = frame.Size.Y.Offset
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, currentHeight)
-        local targetText = minimized and "+" or "-"
-        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            Size = targetSize
-        }):Play()
-        scroll.Visible = not minimized
-        footer.Visible = not minimized
-        minimize.Text = targetText
+        if minimized then
+            TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 120, 0, 25)
+            }):Play()
+            scroll.Visible = false
+            footer.Visible = false
+            minimize.Text = "+"
+        else
+            scroll.Visible = true
+            footer.Visible = true
+            TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 42)
+            }):Play()
+            minimize.Text = "-"
+        end
     end)
 
     -- Tab system
-    local orbitButtonText = "SEARCH"
-    local shootButtonText = "SEARCH"
+    local searchOrbitText = "SEARCH"
+    local searchShootText = "SEARCH"
 
     local function clearTabContent()
         for _, child in pairs(scroll:GetChildren()) do
-            local name = child.Name
-            if name ~= "ScrollLayout" then
+            if child.Name ~= "ScrollLayout" and child.Name ~= "PlayerListScroll" then
                 child:Destroy()
             end
         end
-        playerScroll = nil
-        playerLayout = nil
-        headerButton = nil
-        listHidden = false
     end
 
     local function buildMainTab()
-        clearTabContent()
+        if playerScroll then
+            playerScroll.Visible = false
+        end
+
+        local marginFrame = Instance.new("Frame")
+        marginFrame.Name = "MarginFrame"
+        marginFrame.Size = UDim2.new(1, 0, 0, 10)
+        marginFrame.BackgroundTransparency = 1
+        marginFrame.Parent = scroll
+
         local tabFrame = Instance.new("Frame")
         tabFrame.Name = "MainTabFrame"
         tabFrame.Size = UDim2.new(1, 0, 0, 25)
@@ -675,46 +694,48 @@ function GUIModule.setupGUI()
         hLayout.Padding = UDim.new(0, 5)
         hLayout.Parent = tabFrame
 
-        local orbitTabBtn = Instance.new("TextButton")
-        orbitTabBtn.Name = "OrbitTabBtn"
-        orbitTabBtn.Parent = tabFrame
-        orbitTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
-        orbitTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        orbitTabBtn.BackgroundTransparency = 0
-        orbitTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        orbitTabBtn.BorderSizePixel = 1
-        orbitTabBtn.Font = Enum.Font.Code
-        orbitTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        orbitTabBtn.TextSize = 12
-        orbitTabBtn.Text = "ORBIT"
-        orbitTabBtn.TextXAlignment = Enum.TextXAlignment.Center
-        orbitTabBtn.MouseButton1Click:Connect(function()
+        local orbitBtn = Instance.new("TextButton")
+        orbitBtn.Name = "OrbitTabBtn"
+        orbitBtn.Parent = tabFrame
+        orbitBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        orbitBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        orbitBtn.BackgroundTransparency = 0.4
+        orbitBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        orbitBtn.BorderSizePixel = 1
+        orbitBtn.Font = Enum.Font.Code
+        orbitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        orbitBtn.TextSize = 12
+        orbitBtn.Text = "ORBIT"
+        orbitBtn.TextXAlignment = Enum.TextXAlignment.Center
+        orbitBtn.MouseButton1Click:Connect(function()
             clearTabContent()
             buildOrbitTab()
         end)
 
-        local shootTabBtn = Instance.new("TextButton")
-        shootTabBtn.Name = "ShootTabBtn"
-        shootTabBtn.Parent = tabFrame
-        shootTabBtn.Size = UDim2.new(0.45, 0, 1, 0)
-        shootTabBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        shootTabBtn.BackgroundTransparency = 0
-        shootTabBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        shootTabBtn.BorderSizePixel = 1
-        shootTabBtn.Font = Enum.Font.Code
-        shootTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootTabBtn.TextSize = 12
-        shootTabBtn.Text = "SHOOT"
-        shootTabBtn.TextXAlignment = Enum.TextXAlignment.Center
-        shootTabBtn.MouseButton1Click:Connect(function()
+        local shootBtn = Instance.new("TextButton")
+        shootBtn.Name = "ShootTabBtn"
+        shootBtn.Parent = tabFrame
+        shootBtn.Size = UDim2.new(0.45, 0, 1, 0)
+        shootBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        shootBtn.BackgroundTransparency = 0.4
+        shootBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        shootBtn.BorderSizePixel = 1
+        shootBtn.Font = Enum.Font.Code
+        shootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootBtn.TextSize = 12
+        shootBtn.Text = "SHOOT"
+        shootBtn.TextXAlignment = Enum.TextXAlignment.Center
+        shootBtn.MouseButton1Click:Connect(function()
             clearTabContent()
             buildShootTab()
         end)
-        updateScrollCanvas()
     end
 
     function buildOrbitTab()
-        clearTabContent()
+        if playerScroll then
+            playerScroll.Visible = false
+        end
+
         local pullText = Instance.new("TextLabel")
         pullText.Name = "PullText"
         pullText.Parent = scroll
@@ -726,42 +747,21 @@ function GUIModule.setupGUI()
         pullText.Text = "Pull unanchored loose parts."
         pullText.TextXAlignment = Enum.TextXAlignment.Center
 
-        local pullBtn = Instance.new("TextButton")
-        pullBtn.Name = "PullBtn"
-        pullBtn.Parent = scroll
-        pullBtn.Size = UDim2.new(1, -10, 0, 20)
-        pullBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        pullBtn.BackgroundTransparency = 0
-        pullBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        pullBtn.BorderSizePixel = 1
-        pullBtn.Font = Enum.Font.Code
-        pullBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        pullBtn.TextSize = 12
-        pullBtn.Text = "PULL"
-        pullBtn.TextXAlignment = Enum.TextXAlignment.Center
-        pullBtn.MouseButton1Click:Connect(function()
-            pullText.Text = "Searching Parts..."
-            pullBtn.Visible = false
-            gatherStopBtn.Visible = true
-            updateScrollCanvas()
-        end)
+        local searchStopBtn = Instance.new("TextButton")
+        searchStopBtn.Name = "SearchStopBtn"
+        searchStopBtn.Parent = scroll
+        searchStopBtn.Size = UDim2.new(1, -10, 0, 20)
+        searchStopBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        searchStopBtn.BackgroundTransparency = 0.4
+        searchStopBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        searchStopBtn.BorderSizePixel = 1
+        searchStopBtn.Font = Enum.Font.Code
+        searchStopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        searchStopBtn.TextSize = 12
+        searchStopBtn.Text = searchOrbitText
+        searchStopBtn.TextXAlignment = Enum.TextXAlignment.Center
 
-        local gatherStopBtn = Instance.new("TextButton")
-        gatherStopBtn.Name = "GatherStopBtn"
-        gatherStopBtn.Parent = scroll
-        gatherStopBtn.Size = UDim2.new(1, -10, 0, 20)
-        gatherStopBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        gatherStopBtn.BackgroundTransparency = 0
-        gatherStopBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        gatherStopBtn.BorderSizePixel = 1
-        gatherStopBtn.Font = Enum.Font.Code
-        gatherStopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        gatherStopBtn.TextSize = 12
-        gatherStopBtn.Text = orbitButtonText
-        gatherStopBtn.TextXAlignment = Enum.TextXAlignment.Center
-        gatherStopBtn.Visible = false
-
-        gatherStopBtn.MouseButton1Click:Connect(function()
+        searchStopBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local character = LocalPlayer.Character
                 if not character or not character:FindFirstChild("HumanoidRootPart") then
@@ -774,7 +774,8 @@ function GUIModule.setupGUI()
                 end
 
                 local root = character.HumanoidRootPart
-                if gatherStopBtn.Text == "SEARCH" then
+                if searchStopBtn.Text == "SEARCH" then
+                    pullText.Text = "Searching Parts..."
                     local partsToOrbit = {}
                     for _, obj in pairs(workspace:GetDescendants()) do
                         if obj:IsA("BasePart") and not obj.Anchored and obj.Name ~= "HumanoidRootPart" and not obj:IsDescendantOf(character) then
@@ -788,13 +789,18 @@ function GUIModule.setupGUI()
                             Text = "No unanchored parts found",
                             Duration = 3,
                         })
+                        pullText.Text = "Pull unanchored loose parts."
                         return
+                    end
+
+                    for _, part in ipairs(partsToOrbit) do
+                        NetworkModule.RetainPart(part)
                     end
 
                     OrbitModule.startOrbit(partsToOrbit, root)
 
-                    orbitButtonText = "STOP"
-                    gatherStopBtn.Text = "STOP"
+                    searchOrbitText = "STOP"
+                    searchStopBtn.Text = "STOP"
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
@@ -802,11 +808,11 @@ function GUIModule.setupGUI()
                         Duration = 4,
                     })
                 else
-                    
-                    ResetModule.resetAll()
+                    OrbitModule.stopOrbit()
 
-                    orbitButtonText = "SEARCH"
-                    gatherStopBtn.Text = "SEARCH"
+                    searchOrbitText = "SEARCH"
+                    searchStopBtn.Text = "SEARCH"
+                    pullText.Text = "Pull unanchored loose parts."
 
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
@@ -822,7 +828,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0
+        backBtn.BackgroundTransparency = 0.4
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -834,51 +840,46 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildMainTab()
         end)
-        updateScrollCanvas()
     end
 
     function buildShootTab()
-        clearTabContent()
-        --// Header (Select Target)
-        local headerButton = Instance.new("TextButton")
-        headerButton.Parent = scroll
-        headerButton.Name = "PlayerListHeader"
-        headerButton.Size = UDim2.new(1, -10, 0, 20)
-        headerButton.BackgroundTransparency = 1 -- fully transparent header
-        headerButton.BorderSizePixel = 0
-        headerButton.Font = Enum.Font.Code
-        headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-        headerButton.TextSize = 12
-        headerButton.Text = "CHOOSE PLAYER"
-        headerButton.TextXAlignment = Enum.TextXAlignment.Center
+        local selectLabel = Instance.new("TextLabel")
+        selectLabel.Name = "SelectPlayerLabel"
+        selectLabel.Parent = scroll
+        selectLabel.Size = UDim2.new(1, -10, 0, 15)
+        selectLabel.BackgroundTransparency = 1
+        selectLabel.Font = Enum.Font.Code
+        selectLabel.TextColor3 = Color3.new(1, 1, 1)
+        selectLabel.TextSize = 12
+        selectLabel.Text = "SELECT PLAYER"
+        selectLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-        --// Player list container (slight transparency)
-        playerScroll = Instance.new("ScrollingFrame")
-        playerScroll.Name = "PlayerListScroll"
-        playerScroll.Parent = scroll
-        playerScroll.Size = UDim2.new(1, -10, 0, 60)
-        playerScroll.Position = UDim2.new(0, 5, 0, 0)
-        playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
-        playerScroll.BackgroundTransparency = 0.6 -- slight transparent effect
-        playerScroll.BorderSizePixel = 0
-        playerScroll.ScrollBarThickness = 2
-        playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+        if not playerScroll then
+            playerScroll = Instance.new("ScrollingFrame")
+            playerScroll.Name = "PlayerListScroll"
+            playerScroll.Parent = scroll
+            playerScroll.Size = UDim2.new(1, -10, 0, 60)
+            playerScroll.BackgroundColor3 = Color3.new(0, 0, 0)
+            playerScroll.BackgroundTransparency = 0.6
+            playerScroll.BorderSizePixel = 0
+            playerScroll.ScrollBarThickness = 2
+            playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 
-        playerLayout = Instance.new("UIListLayout")
-        playerLayout.Parent = playerScroll
-        playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-        playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        playerLayout.Padding = UDim.new(0, 1)
+            playerLayout = Instance.new("UIListLayout")
+            playerLayout.Parent = playerScroll
+            playerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            playerLayout.Padding = UDim.new(0, 1)
 
-        GUIModule.updatePlayerList()
-
-        --// Toggle list visibility when clicking header
-        headerButton.MouseButton1Click:Connect(function()
-            listHidden = not listHidden
-            playerScroll.Visible = not listHidden
-        end)
-
-        playerScroll.Visible = not listHidden
+            playerLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                if playerScroll then
+                    playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+                end
+            end)
+        end
+        playerScroll.Visible = true
+        connectPlayers()
+        updatePlayerList()
 
         local shootText = Instance.new("TextLabel")
         shootText.Name = "ShootText"
@@ -891,58 +892,38 @@ function GUIModule.setupGUI()
         shootText.Text = "Shoot parts to target."
         shootText.TextXAlignment = Enum.TextXAlignment.Center
 
-        local findBtn = Instance.new("TextButton")
-        findBtn.Name = "FindBtn"
-        findBtn.Parent = scroll
-        findBtn.Size = UDim2.new(1, -10, 0, 20)
-        findBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        findBtn.BackgroundTransparency = 0
-        findBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
-        findBtn.BorderSizePixel = 1
-        findBtn.Font = Enum.Font.Code
-        findBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        findBtn.TextSize = 12
-        findBtn.Text = "FIND"
-        findBtn.TextXAlignment = Enum.TextXAlignment.Center
-        findBtn.MouseButton1Click:Connect(function()
-            shootText.Text = "Searching Parts..."
-            findBtn.Visible = false
-            actionButton.Visible = true
-            updateScrollCanvas()
-        end)
-
         local actionButton = Instance.new("TextButton")
         actionButton.Name = "ActionButton"
         actionButton.Parent = scroll
         actionButton.Size = UDim2.new(1, -10, 0, 20)
         actionButton.BackgroundColor3 = Color3.new(0, 0, 0)
-        actionButton.BackgroundTransparency = 0
+        actionButton.BackgroundTransparency = 0.4
         actionButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
         actionButton.BorderSizePixel = 1
         actionButton.Font = Enum.Font.Code
         actionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         actionButton.TextSize = 12
-        actionButton.Text = shootButtonText
+        actionButton.Text = searchShootText
         actionButton.TextXAlignment = Enum.TextXAlignment.Center
-        actionButton.Visible = false
 
         actionButton.MouseButton1Click:Connect(function()
             if actionButton.Text == "SEARCH" then
+                shootText.Text = "Searching Parts..."
                 CollectModule.startCollect()
                 
-                actionButton.Text = "STOP"
-                shootButtonText = "STOP"
+                actionButton.Text = "SHOT"
+                searchShootText = "SHOT"
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
                     Text = "Collecting Parts!",
                     Duration = 3,
                 })
             else
-                CollectModule.stopCollect()
-                
+                local oldText = shootText.Text
                 if CollectModule.shootToTargets(selectedTargets) then
+                    shootText.Text = "Shoot parts to target."
                     actionButton.Text = "SEARCH"
-                    shootButtonText = "SEARCH"
+                    searchShootText = "SEARCH"
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Parts shot to targets!",
@@ -950,8 +931,9 @@ function GUIModule.setupGUI()
                     })
                     ResetModule.resetAll()
                 else
+                    shootText.Text = oldText
                     actionButton.Text = "SEARCH"
-                    shootButtonText = "SEARCH"
+                    searchShootText = "SEARCH"
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Collect parts first or select targets!",
@@ -966,7 +948,7 @@ function GUIModule.setupGUI()
         backBtn.Parent = scroll
         backBtn.Size = UDim2.new(1, -10, 0, 20)
         backBtn.BackgroundColor3 = Color3.new(0, 0, 0)
-        backBtn.BackgroundTransparency = 0
+        backBtn.BackgroundTransparency = 0.4
         backBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
         backBtn.BorderSizePixel = 1
         backBtn.Font = Enum.Font.Code
@@ -978,10 +960,10 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildMainTab()
         end)
-        updateScrollCanvas()
     end
 
     buildMainTab()
+    frame.Size = UDim2.new(0, 120, 0, layout.AbsoluteContentSize.Y + 42)
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
