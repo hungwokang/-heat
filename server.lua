@@ -1258,5 +1258,5 @@ end
 GUIModule.setupGUI()
 
 pcall(function()
-    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("hung v4 running server", "All")
+    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("server script by hung v1", "All")
 end)
