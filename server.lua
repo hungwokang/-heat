@@ -371,7 +371,7 @@ function HeadSitModule.startSit(targetPlayer)
     -- Start following loop
     HeadSitModule.sitConnection = RunService.Heartbeat:Connect(function()
         if targetHead and targetHead.Parent and rootPart and rootPart.Parent then
-            local targetPos = targetHead.Position + Vector3.new(0, 0.5, 0) -- Offset above head
+            local targetPos = targetHead.Position + Vector3.new(0, 0.7, 0) -- Offset above head
             bp.Position = targetPos
             -- Optional: Match rotation
             rootPart.CFrame = CFrame.lookAt(targetPos, targetPos + targetHead.CFrame.LookVector)
@@ -409,66 +409,94 @@ function HeadSitModule.stopSit()
     end
 end
 
---// ESP module for dynamic target players
+--// ESP module for dynamic target players (skeleton lines only)
 local ESPModule = {}
 ESPModule.esps = {}
 
+-- Joint connections for skeleton
+local JOINTS = {
+    { "Head", "UpperTorso" },
+    { "UpperTorso", "LowerTorso" },
+    { "UpperTorso", "LeftUpperArm" },
+    { "LeftUpperArm", "LeftLowerArm" },
+    { "LeftLowerArm", "LeftHand" },
+    { "UpperTorso", "RightUpperArm" },
+    { "RightUpperArm", "RightLowerArm" },
+    { "RightLowerArm", "RightHand" },
+    { "LowerTorso", "LeftUpperLeg" },
+    { "LeftUpperLeg", "LeftLowerLeg" },
+    { "LeftLowerLeg", "LeftFoot" },
+    { "LowerTorso", "RightUpperLeg" },
+    { "RightUpperLeg", "RightLowerLeg" },
+    { "RightLowerLeg", "RightFoot" }
+}
+
 function ESPModule.createESP(player)
     local esp = {
-        box = Drawing.new("Square"),
-        name = Drawing.new("Text"),
+        lines = {}
     }
-    esp.box.Visible = false
-    esp.box.Color = Color3.new(1, 0, 0)
-    esp.box.Thickness = 2
-    esp.box.Transparency = 0.5
-    esp.box.Filled = false
-    esp.box.Radius = 0
-
-    esp.name.Visible = false
-    esp.name.Color = Color3.new(1, 0, 0)
-    esp.name.Size = 16
-    esp.name.Center = true
-    esp.name.Outline = true
-    esp.name.Font = 2
-
+    for i = 1, #JOINTS do
+        local line = Drawing.new("Line")
+        line.Visible = false
+        line.Color = Color3.new(1, 0, 0)
+        line.Thickness = 2
+        line.Transparency = 0.5
+        esp.lines[i] = line
+    end
     ESPModule.esps[player] = esp
 end
 
 function ESPModule.removeESP(player)
     if ESPModule.esps[player] then
-        ESPModule.esps[player].box:Remove()
-        ESPModule.esps[player].name:Remove()
+        for _, line in pairs(ESPModule.esps[player].lines) do
+            line:Remove()
+        end
         ESPModule.esps[player] = nil
     end
 end
 
--- ESP update loop
+-- ESP update loop (skeleton lines)
 local espConnection = RunService.RenderStepped:Connect(function()
     for player, esp in pairs(ESPModule.esps) do
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local root = player.Character.HumanoidRootPart
-            local pos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(root.Position)
+        if player and player.Character then
+            local character = player.Character
+            local onScreen = false
+            for _, jointPair in ipairs(JOINTS) do
+                local part1 = character:FindFirstChild(jointPair[1])
+                local part2 = character:FindFirstChild(jointPair[2])
+                if part1 and part2 then
+                    local pos1, onScreen1 = workspace.CurrentCamera:WorldToViewportPoint(part1.Position)
+                    local pos2, onScreen2 = workspace.CurrentCamera:WorldToViewportPoint(part2.Position)
+                    if onScreen1 or onScreen2 then
+                        onScreen = true
+                        break
+                    end
+                end
+            end
+
             if onScreen then
-                local headPos = workspace.CurrentCamera:WorldToViewportPoint(root.Position + Vector3.new(0, 3, 0))
-                local legPos = workspace.CurrentCamera:WorldToViewportPoint(root.Position - Vector3.new(0, 4, 0))
-                local width = math.abs(headPos.X - legPos.X) * 0.5
-                local height = math.abs(headPos.Y - legPos.Y)
-
-                esp.box.Size = Vector2.new(width * 2, height)
-                esp.box.Position = Vector2.new(pos.X - width, pos.Y - height / 2)
-                esp.box.Visible = true
-
-                esp.name.Position = Vector2.new(pos.X, pos.Y - height / 2 - 20)
-                esp.name.Text = player.Name
-                esp.name.Visible = true
+                for i, jointPair in ipairs(JOINTS) do
+                    local part1 = character:FindFirstChild(jointPair[1])
+                    local part2 = character:FindFirstChild(jointPair[2])
+                    if part1 and part2 then
+                        local pos1, onScreen1 = workspace.CurrentCamera:WorldToViewportPoint(part1.Position)
+                        local pos2, onScreen2 = workspace.CurrentCamera:WorldToViewportPoint(part2.Position)
+                        esp.lines[i].From = Vector2.new(pos1.X, pos1.Y)
+                        esp.lines[i].To = Vector2.new(pos2.X, pos2.Y)
+                        esp.lines[i].Visible = (onScreen1 and onScreen2)
+                    else
+                        esp.lines[i].Visible = false
+                    end
+                end
             else
-                esp.box.Visible = false
-                esp.name.Visible = false
+                for _, line in pairs(esp.lines) do
+                    line.Visible = false
+                end
             end
         else
-            esp.box.Visible = false
-            esp.name.Visible = false
+            for _, line in pairs(esp.lines) do
+                line.Visible = false
+            end
         end
     end
 end)
@@ -589,7 +617,7 @@ function GUIModule.setupGUI()
 
     layout.Name = "ScrollLayout"
 
-    --// Player list update function
+    --// Player list update function (single select, display name)
     function GUIModule.updatePlayerList()
         if not playerScroll then return end
         for _, btn in pairs(playerScroll:GetChildren()) do
@@ -598,29 +626,39 @@ function GUIModule.setupGUI()
 
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer then
+                local displayName = p.DisplayName or p.Name -- Use display name if available
                 local btn = Instance.new("TextButton")
                 btn.Name = p.Name
                 btn.Parent = playerScroll
                 btn.Size = UDim2.new(0.95, 0, 0, 16)
                 btn.BackgroundTransparency = 1
-                btn.Text = selectedTargets[p.Name] and (p.Name .. " ✓") or p.Name
-                btn.TextColor3 = selectedTargets[p.Name] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+                local isSelected = selectedTargets[p.Name] ~= nil
+                btn.Text = isSelected and (displayName .. " ✓") or displayName
+                btn.TextColor3 = isSelected and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
                 btn.Font = Enum.Font.Code
                 btn.TextSize = 10
                 btn.TextXAlignment = Enum.TextXAlignment.Left
 
                 btn.MouseButton1Click:Connect(function()
-                    if selectedTargets[p.Name] then
+                    -- Single select: clear previous
+                    for prevName, _ in pairs(selectedTargets) do
+                        selectedTargets[prevName] = nil
+                        ESPModule.removeESP(Players:FindFirstChild(prevName))
+                    end
+                    if isSelected then
                         selectedTargets[p.Name] = nil
                         ESPModule.removeESP(p)
-                        btn.Text = p.Name
+                        btn.Text = displayName
                         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
                     else
+                        selectedTargets = {} -- Reset table
                         selectedTargets[p.Name] = p
                         ESPModule.createESP(p)
-                        btn.Text = p.Name .. " ✓"
+                        btn.Text = displayName .. " ✓"
                         btn.TextColor3 = Color3.fromRGB(0, 255, 0)
                     end
+                    -- Update other buttons if needed (rebuild for simplicity)
+                    GUIModule.updatePlayerList()
                 end)
             end
         end
@@ -674,6 +712,11 @@ function GUIModule.setupGUI()
         playerLayout = nil
         headerButton = nil
         listHidden = false
+        -- Reset selected target on tab switch
+        selectedTargets = {}
+        for _, p in pairs(Players:GetPlayers()) do
+            ESPModule.removeESP(p)
+        end
     end
 
     local function buildMainTab()
@@ -859,7 +902,7 @@ function GUIModule.setupGUI()
         headerButton.Font = Enum.Font.Code
         headerButton.TextColor3 = Color3.fromRGB(255, 0, 0)
         headerButton.TextSize = 12
-        headerButton.Text = "SELECT PLAYER"
+        headerButton.Text = "SELECT TARGET"
         headerButton.TextXAlignment = Enum.TextXAlignment.Center
 
         --// Player list container
@@ -918,6 +961,19 @@ function GUIModule.setupGUI()
 
         local isCollecting = false
         searchBtn.MouseButton1Click:Connect(function()
+            local selectedPlayer = nil
+            for _, p in pairs(selectedTargets) do
+                selectedPlayer = p
+                break
+            end
+            if not selectedPlayer then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "hung v1",
+                    Text = "Select a target first!",
+                    Duration = 3,
+                })
+                return
+            end
             if not isCollecting then
                 shootText.Text = "Searching Parts..."
                 CollectModule.startCollect()
@@ -930,13 +986,14 @@ function GUIModule.setupGUI()
                 })
             else
                 CollectModule.stopCollect()
-                if CollectModule.shootToTargets(selectedTargets) then
+                local tempTargets = {selectedPlayer}
+                if CollectModule.shootToTargets(tempTargets) then
                     searchBtn.Text = "SEARCH"
                     isCollecting = false
                     shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Parts shot to targets!",
+                        Text = "Parts shot to target!",
                         Duration = 3,
                     })
                     ResetModule.resetAll()
@@ -946,7 +1003,7 @@ function GUIModule.setupGUI()
                     shootText.Text = "Shoot parts to target."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
-                        Text = "Collect parts first or select targets!",
+                        Text = "Collect parts first!",
                         Duration = 3,
                     })
                 end
@@ -1026,7 +1083,7 @@ function GUIModule.setupGUI()
         sitText.Font = Enum.Font.Code
         sitText.TextColor3 = Color3.new(1, 1, 1)
         sitText.TextSize = 8
-        sitText.Text = "sit on players head. - just like yields script headsit"
+        sitText.Text = "sit on players head ahh."
         sitText.TextXAlignment = Enum.TextXAlignment.Center
 
         local sitBtn = Instance.new("TextButton")
@@ -1046,13 +1103,12 @@ function GUIModule.setupGUI()
         local isHeadSitting = false
         sitBtn.MouseButton1Click:Connect(function()
             pcall(function()
-                local targets = {}
-                for name, player in pairs(selectedTargets) do
-                    if player then
-                        table.insert(targets, player)
-                    end
+                local selectedPlayer = nil
+                for _, p in pairs(selectedTargets) do
+                    selectedPlayer = p
+                    break
                 end
-                if #targets == 0 then
+                if not selectedPlayer then
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Select a target first!",
@@ -1060,8 +1116,7 @@ function GUIModule.setupGUI()
                     })
                     return
                 end
-                local targetPlayer = targets[1] -- Take first selected
-                if not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("Head") then
+                if not selectedPlayer.Character or not selectedPlayer.Character:FindFirstChild("Head") then
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "Error",
                         Text = "Target has no character or head!",
@@ -1070,13 +1125,13 @@ function GUIModule.setupGUI()
                     return
                 end
                 if not isHeadSitting then
-                    if HeadSitModule.startSit(targetPlayer) then
+                    if HeadSitModule.startSit(selectedPlayer) then
                         isHeadSitting = true
                         sitBtn.Text = "UNSIT"
                         sitText.Text = "Sitting on head..."
                         game.StarterGui:SetCore("SendNotification", {
                             Title = "hung v1",
-                            Text = "Sitting on " .. targetPlayer.Name .. "'s head!",
+                            Text = "Sitting on " .. selectedPlayer.DisplayName .. "'s head!",
                             Duration = 3,
                         })
                     end
