@@ -1179,7 +1179,7 @@ function GUIModule.setupGUI()
                     HeadSitModule.stopSit()
                     isHeadSitting = false
                     sitBtn.Text = "SIT"
-                    sitText.Text = "sit on players head. - just like yields script headsit"
+                    sitText.Text = "sit on players head ahh."
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
                         Text = "Stopped sitting!",
