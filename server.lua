@@ -331,42 +331,82 @@ end
 --// HeadSit module
 local HeadSitModule = {}
 HeadSitModule.isSitting = false
-HeadSitModule.currentWeld = nil
+HeadSitModule.sitConnection = nil
+HeadSitModule.bodyPosition = nil
+HeadSitModule.targetPlayer = nil
 
 function HeadSitModule.startSit(targetPlayer)
     HeadSitModule.stopSit() -- Ensure previous stopped
     local character = LocalPlayer.Character
-    local targetCharacter = targetPlayer.Character
-    if not character or not targetCharacter then return false end
+    if not character then return false end
     local rootPart = character:FindFirstChild("HumanoidRootPart")
-    local targetHead = targetCharacter:FindFirstChild("Head")
+    local targetHead = targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head")
     if not rootPart or not targetHead then return false end
-    -- Remove existing welds
+
+    -- Set network ownership on local root part
+    pcall(function() rootPart:SetNetworkOwner(LocalPlayer) end)
+    NetworkModule.RetainPart(rootPart)
+
+    -- Clean existing controllers on root
     for _, child in ipairs(rootPart:GetChildren()) do
-        if child:IsA("Weld") or child:IsA("WeldConstraint") then
+        if child:IsA("BodyMover") or child:IsA("AlignPosition") or child:IsA("VectorForce") then
             child:Destroy()
         end
     end
-    -- Create weld
-    local weld = Instance.new("Weld")
-    weld.Name = "HeadSitWeld"
-    weld.Part0 = targetHead
-    weld.Part1 = rootPart
-    weld.C0 = CFrame.new(0, 2, 0) -- Adjust as needed, 2 studs above head
-    weld.Parent = targetHead
-    -- Initial position
-    rootPart.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
-    HeadSitModule.currentWeld = weld
+
+    -- Create BodyPosition for following
+    local bp = Instance.new("BodyPosition")
+    bp.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+    bp.P = 10000 -- High power for instant follow
+    bp.D = 2000 -- High damping to prevent oscillation
+    bp.Parent = rootPart
+
+    -- Disable collision on local character parts to avoid pushing
+    for _, part in ipairs(character:GetChildren()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+
+    -- Start following loop
+    HeadSitModule.sitConnection = RunService.Heartbeat:Connect(function()
+        if targetHead and targetHead.Parent and rootPart and rootPart.Parent then
+            local targetPos = targetHead.Position + Vector3.new(0, 2, 0) -- Offset above head
+            bp.Position = targetPos
+            -- Optional: Match rotation
+            rootPart.CFrame = CFrame.lookAt(targetPos, targetPos + targetHead.CFrame.LookVector)
+        else
+            HeadSitModule.stopSit()
+        end
+    end)
+
+    HeadSitModule.bodyPosition = bp
+    HeadSitModule.targetPlayer = targetPlayer
     HeadSitModule.isSitting = true
     return true
 end
 
 function HeadSitModule.stopSit()
-    if HeadSitModule.currentWeld then
-        HeadSitModule.currentWeld:Destroy()
-        HeadSitModule.currentWeld = nil
+    if HeadSitModule.sitConnection then
+        HeadSitModule.sitConnection:Disconnect()
+        HeadSitModule.sitConnection = nil
     end
+    if HeadSitModule.bodyPosition then
+        HeadSitModule.bodyPosition:Destroy()
+        HeadSitModule.bodyPosition = nil
+    end
+    HeadSitModule.targetPlayer = nil
     HeadSitModule.isSitting = false
+
+    -- Reset local character collisions
+    local character = LocalPlayer.Character
+    if character then
+        for _, part in ipairs(character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+    end
 end
 
 --// ESP module for dynamic target players
@@ -598,14 +638,24 @@ function GUIModule.setupGUI()
     --// Minimize toggle
     minimize.MouseButton1Click:Connect(function()
         minimized = not minimized
-        local currentHeight = frame.Size.Y.Offset
-        local targetSize = minimized and UDim2.new(0, 120, 0, 25) or UDim2.new(0, 120, 0, currentHeight)
         local targetText = minimized and "+" or "-"
-        TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            Size = targetSize
-        }):Play()
-        scroll.Visible = not minimized
-        footer.Visible = not minimized
+        if minimized then
+            -- Minimizing
+            TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 120, 0, 25)
+            }):Play()
+            scroll.Visible = false
+            footer.Visible = false
+        else
+            -- Maximizing
+            scroll.Visible = true
+            footer.Visible = true
+            local newHeight = math.max(110, layout.AbsoluteContentSize.Y + 42)
+            TweenService:Create(frame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 120, 0, newHeight)
+            }):Play()
+            scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+        end
         minimize.Text = targetText
     end)
 
@@ -1068,7 +1118,7 @@ function GUIModule.setupGUI()
 
     --// Notification
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hung v1",
+        Title = "hungewfwef v1",
         Text = "Modular GUI Loaded (Orbit + Collect/Shoot + HeadSit with Dynamic ESP)",
         Duration = 4,
     })
