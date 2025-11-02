@@ -439,7 +439,7 @@ function ESPModule.createESP(player)
         local line = Drawing.new("Line")
         line.Visible = false
         line.Color = Color3.new(1, 0, 0)
-        line.Thickness = 20
+        line.Thickness = 50
         line.Transparency = 1
         esp.lines[i] = line
     end
@@ -660,6 +660,9 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+        if selectedPlayer then
+            ESPModule.createESP(selectedPlayer)
+        end
         updateScrollCanvas()
     end
 
@@ -705,6 +708,9 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+        if selectedPlayer then
+            ESPModule.createESP(selectedPlayer)
+        end
         updateScrollCanvas()
     end
 
@@ -1060,6 +1066,9 @@ function GUIModule.setupGUI()
         backBtn.Text = "BACK"
         backBtn.TextXAlignment = Enum.TextXAlignment.Center
         backBtn.MouseButton1Click:Connect(function()
+            if shootSelectedPlayer then
+                ESPModule.removeESP(shootSelectedPlayer)
+            end
             clearTabContent()
             buildMainTab()
         end)
@@ -1194,6 +1203,9 @@ function GUIModule.setupGUI()
         backBtn.Text = "BACK"
         backBtn.TextXAlignment = Enum.TextXAlignment.Center
         backBtn.MouseButton1Click:Connect(function()
+            if headsitSelectedPlayer then
+                ESPModule.removeESP(headsitSelectedPlayer)
+            end
             clearTabContent()
             buildMainTab()
         end)
