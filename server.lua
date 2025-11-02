@@ -1258,5 +1258,20 @@ end
 GUIModule.setupGUI()
 
 pcall(function()
-    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("server script by hung v1", "All")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local DefaultChat = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+    if DefaultChat then
+        local SayMessageRequest = DefaultChat:FindFirstChild("SayMessageRequest")
+        if SayMessageRequest then
+            SayMessageRequest:FireServer("server script by hung v1 loaded", "All")
+            return -- Success, exit early
+        end
+    end
+    -- Fallback: System message (works in both legacy and new TextChatService)
+    game.StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = "[hung v1] server script loaded";
+        Color = Color3.fromRGB(255, 0, 0);
+        Font = Enum.Font.Code;
+        FontSize = Enum.FontSize.Size18;
+    })
 end)
