@@ -439,8 +439,8 @@ function ESPModule.createESP(player)
         local line = Drawing.new("Line")
         line.Visible = false
         line.Color = Color3.new(1, 0, 0)
-        line.Thickness = 2
-        line.Transparency = 0.5
+        line.Thickness = 5
+        line.Transparency = 1
         esp.lines[i] = line
     end
     ESPModule.esps[player] = esp
