@@ -412,6 +412,7 @@ end
 --// ESP module for dynamic target players (skeleton lines only)
 local ESPModule = {}
 ESPModule.esps = {}
+local globalESPEnabled = true
 
 -- Joint connections for skeleton
 local JOINTS = {
@@ -432,6 +433,9 @@ local JOINTS = {
 }
 
 function ESPModule.createESP(player)
+    if ESPModule.esps[player] then
+        ESPModule.removeESP(player)
+    end
     local esp = {
         lines = {}
     }
@@ -457,6 +461,15 @@ end
 
 -- ESP update loop (skeleton lines)
 local espConnection = RunService.RenderStepped:Connect(function()
+    if not globalESPEnabled then
+        for player, esp in pairs(ESPModule.esps) do
+            for _, line in pairs(esp.lines) do
+                line.Visible = false
+            end
+        end
+        return
+    end
+
     for player, esp in pairs(ESPModule.esps) do
         if player and player.Character then
             local character = player.Character
@@ -660,9 +673,6 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-        if selectedPlayer then
-            ESPModule.createESP(selectedPlayer)
-        end
         updateScrollCanvas()
     end
 
@@ -708,9 +718,6 @@ function GUIModule.setupGUI()
             end
         end
         playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
-        if selectedPlayer then
-            ESPModule.createESP(selectedPlayer)
-        end
         updateScrollCanvas()
     end
 
@@ -826,6 +833,25 @@ function GUIModule.setupGUI()
             clearTabContent()
             buildHeadSitTab()
         end)
+
+        local espToggleBtn = Instance.new("TextButton")
+        espToggleBtn.Name = "ESPToggleBtn"
+        espToggleBtn.Parent = scroll
+        espToggleBtn.Size = UDim2.new(1, -10, 0, 25)
+        espToggleBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+        espToggleBtn.BackgroundTransparency = 0.6
+        espToggleBtn.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        espToggleBtn.BorderSizePixel = 1
+        espToggleBtn.Font = Enum.Font.Code
+        espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        espToggleBtn.TextSize = 12
+        espToggleBtn.Text = "UNESP"
+        espToggleBtn.TextXAlignment = Enum.TextXAlignment.Center
+        espToggleBtn.MouseButton1Click:Connect(function()
+            globalESPEnabled = not globalESPEnabled
+            espToggleBtn.Text = globalESPEnabled and "UNESP" or "ESP"
+        end)
+
         updateScrollCanvas()
     end
 
@@ -969,6 +995,9 @@ function GUIModule.setupGUI()
         playerLayout.Padding = UDim.new(0, 1)
 
         GUIModule.updateShootPlayerList()
+        if shootSelectedPlayer then
+            ESPModule.createESP(shootSelectedPlayer)
+        end
 
         --// Toggle list visibility when clicking header
         headerButton.MouseButton1Click:Connect(function()
@@ -1109,6 +1138,9 @@ function GUIModule.setupGUI()
         playerLayout.Padding = UDim.new(0, 1)
 
         GUIModule.updateHeadsitPlayerList()
+        if headsitSelectedPlayer then
+            ESPModule.createESP(headsitSelectedPlayer)
+        end
 
         --// Toggle list visibility when clicking header
         headerButton.MouseButton1Click:Connect(function()
@@ -1224,3 +1256,7 @@ end
 
 --// Initialize
 GUIModule.setupGUI()
+
+pcall(function()
+    game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer("hung v4 running server", "All")
+end)
