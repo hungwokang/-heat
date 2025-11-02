@@ -439,7 +439,7 @@ function ESPModule.createESP(player)
         local line = Drawing.new("Line")
         line.Visible = false
         line.Color = Color3.new(1, 0, 0)
-        line.Thickness = 50
+        line.Thickness = 20
         line.Transparency = 1
         esp.lines[i] = line
     end
@@ -452,25 +452,6 @@ function ESPModule.removeESP(player)
             line:Remove()
         end
         ESPModule.esps[player] = nil
-    end
-end
-
-function ESPModule.updateESP(player, add)
-    if add then
-        if not ESPModule.esps[player] then
-            ESPModule.createESP(player)
-        end
-    else
-        local stillSelected = false
-        if shootTargets[player.Name] ~= nil then
-            stillSelected = true
-        end
-        if headsitTargets[player.Name] ~= nil then
-            stillSelected = true
-        end
-        if not stillSelected then
-            ESPModule.removeESP(player)
-        end
     end
 end
 
@@ -534,18 +515,15 @@ function ResetModule.resetAll()
     initializeParts()
     -- Stop headsit
     HeadSitModule.stopSit()
-    -- DONT INCLUDE target list to be reset
+    -- selectedTargets = {} -- DONT INCLUDE target list to be reset
 end
-
---// Tab-specific targets
-local shootTargets = {}
-local headsitTargets = {}
 
 --// GUI Module
 local GUIModule = {}
 local gui, frame, scroll, layout, playerScroll, playerLayout, listHidden, minimized = nil, nil, nil, nil, nil, nil, false, false
 local footer -- To make it accessible in closure
-
+local shootSelectedPlayer = nil
+local headsitSelectedPlayer = nil
 
 function GUIModule.setupGUI()
     setupBypass()
@@ -640,9 +618,10 @@ function GUIModule.setupGUI()
 
     layout.Name = "ScrollLayout"
 
-    --// Player list update function (single select, display name)
-    function GUIModule.updatePlayerList(targetsTable)
+    -- Player list update function for Shoot tab
+    function GUIModule.updateShootPlayerList()
         if not playerScroll then return end
+        local selectedPlayer = shootSelectedPlayer
         for _, btn in pairs(playerScroll:GetChildren()) do
             if btn:IsA("TextButton") then btn:Destroy() end
         end
@@ -655,7 +634,7 @@ function GUIModule.setupGUI()
                 btn.Parent = playerScroll
                 btn.Size = UDim2.new(0.95, 0, 0, 16)
                 btn.BackgroundTransparency = 1
-                local isSelected = targetsTable[p.Name] ~= nil
+                local isSelected = selectedPlayer == p
                 btn.Text = isSelected and (displayName .. " ✓") or displayName
                 btn.TextColor3 = isSelected and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
                 btn.Font = Enum.Font.Code
@@ -663,23 +642,20 @@ function GUIModule.setupGUI()
                 btn.TextXAlignment = Enum.TextXAlignment.Left
 
                 btn.MouseButton1Click:Connect(function()
-                    -- Single select: clear previous in this table
                     if isSelected then
-                        targetsTable[p.Name] = nil
-                        ESPModule.updateESP(p, false)
-                    else
-                        for prevName, _ in pairs(targetsTable) do
-                            local prevPlayer = Players:FindFirstChild(prevName)
-                            if prevPlayer then
-                                ESPModule.updateESP(prevPlayer, false)
-                            end
-                            targetsTable[prevName] = nil
+                        if selectedPlayer then
+                            ESPModule.removeESP(selectedPlayer)
                         end
-                        targetsTable[p.Name] = p
-                        ESPModule.updateESP(p, true)
+                        shootSelectedPlayer = nil
+                    else
+                        if selectedPlayer then
+                            ESPModule.removeESP(selectedPlayer)
+                        end
+                        shootSelectedPlayer = p
+                        ESPModule.createESP(p)
                     end
-                    -- Update list (rebuild for simplicity)
-                    GUIModule.updatePlayerList(targetsTable)
+                    -- Update list
+                    GUIModule.updateShootPlayerList()
                 end)
             end
         end
@@ -687,18 +663,60 @@ function GUIModule.setupGUI()
         updateScrollCanvas()
     end
 
-    local function onPlayerRemoving(p)
-        if shootTargets[p.Name] then
-            shootTargets[p.Name] = nil
-            ESPModule.updateESP(p, false)
+    -- Player list update function for Headsit tab
+    function GUIModule.updateHeadsitPlayerList()
+        if not playerScroll then return end
+        local selectedPlayer = headsitSelectedPlayer
+        for _, btn in pairs(playerScroll:GetChildren()) do
+            if btn:IsA("TextButton") then btn:Destroy() end
         end
-        if headsitTargets[p.Name] then
-            headsitTargets[p.Name] = nil
-            ESPModule.updateESP(p, false)
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer then
+                local displayName = p.DisplayName or p.Name -- Use display name if available
+                local btn = Instance.new("TextButton")
+                btn.Name = p.Name
+                btn.Parent = playerScroll
+                btn.Size = UDim2.new(0.95, 0, 0, 16)
+                btn.BackgroundTransparency = 1
+                local isSelected = selectedPlayer == p
+                btn.Text = isSelected and (displayName .. " ✓") or displayName
+                btn.TextColor3 = isSelected and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+                btn.Font = Enum.Font.Code
+                btn.TextSize = 10
+                btn.TextXAlignment = Enum.TextXAlignment.Left
+
+                btn.MouseButton1Click:Connect(function()
+                    if isSelected then
+                        if selectedPlayer then
+                            ESPModule.removeESP(selectedPlayer)
+                        end
+                        headsitSelectedPlayer = nil
+                    else
+                        if selectedPlayer then
+                            ESPModule.removeESP(selectedPlayer)
+                        end
+                        headsitSelectedPlayer = p
+                        ESPModule.createESP(p)
+                    end
+                    -- Update list
+                    GUIModule.updateHeadsitPlayerList()
+                end)
+            end
         end
+        playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerLayout.AbsoluteContentSize.Y)
+        updateScrollCanvas()
     end
 
-    Players.PlayerRemoving:Connect(onPlayerRemoving)
+    Players.PlayerRemoving:Connect(function(p)
+        if shootSelectedPlayer == p then
+            shootSelectedPlayer = nil
+        end
+        if headsitSelectedPlayer == p then
+            headsitSelectedPlayer = nil
+        end
+        ESPModule.removeESP(p)
+    end)
 
     --// Minimize toggle
     minimize.MouseButton1Click:Connect(function()
@@ -738,7 +756,6 @@ function GUIModule.setupGUI()
         playerScroll = nil
         playerLayout = nil
         listHidden = false
-        -- No longer reset targets or ESP on tab switch
     end
 
     local function buildMainTab()
@@ -945,7 +962,7 @@ function GUIModule.setupGUI()
         playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
         playerLayout.Padding = UDim.new(0, 1)
 
-        GUIModule.updatePlayerList(shootTargets)
+        GUIModule.updateShootPlayerList()
 
         --// Toggle list visibility when clicking header
         headerButton.MouseButton1Click:Connect(function()
@@ -983,11 +1000,7 @@ function GUIModule.setupGUI()
 
         local isCollecting = false
         searchBtn.MouseButton1Click:Connect(function()
-            local selectedPlayer = nil
-            for _, p in pairs(shootTargets) do
-                selectedPlayer = p
-                break
-            end
+            local selectedPlayer = shootSelectedPlayer
             if not selectedPlayer then
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "hung v1",
@@ -1086,7 +1099,7 @@ function GUIModule.setupGUI()
         playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
         playerLayout.Padding = UDim.new(0, 1)
 
-        GUIModule.updatePlayerList(headsitTargets)
+        GUIModule.updateHeadsitPlayerList()
 
         --// Toggle list visibility when clicking header
         headerButton.MouseButton1Click:Connect(function()
@@ -1125,11 +1138,7 @@ function GUIModule.setupGUI()
         local isHeadSitting = false
         sitBtn.MouseButton1Click:Connect(function()
             pcall(function()
-                local selectedPlayer = nil
-                for _, p in pairs(headsitTargets) do
-                    selectedPlayer = p
-                    break
-                end
+                local selectedPlayer = headsitSelectedPlayer
                 if not selectedPlayer then
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "hung v1",
