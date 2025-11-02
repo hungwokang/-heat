@@ -371,7 +371,7 @@ function HeadSitModule.startSit(targetPlayer)
     -- Start following loop
     HeadSitModule.sitConnection = RunService.Heartbeat:Connect(function()
         if targetHead and targetHead.Parent and rootPart and rootPart.Parent then
-            local targetPos = targetHead.Position + Vector3.new(0, 0, 0) -- Offset above head
+            local targetPos = targetHead.Position + Vector3.new(0, 0.5, 0) -- Offset above head
             bp.Position = targetPos
             -- Optional: Match rotation
             rootPart.CFrame = CFrame.lookAt(targetPos, targetPos + targetHead.CFrame.LookVector)
